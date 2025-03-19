@@ -1,0 +1,177 @@
+<section id="publications" class="container">
+    <h2 class="section-title">Publications</h2>
+  
+    <!-- 两个下拉框位于同一行 -->
+    <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
+      <!-- 年份筛选 -->
+      <div>
+        <label for="yearFilterDropdown" class="form-label me-2">Year</label>
+        <select id="yearFilterDropdown" class="form-select d-inline-block w-auto">
+          <option value="">All Years</option>
+          <option value="2025">2025</option>
+          <option value="2020">2020</option>
+          <!-- 根据实际需要可增加其他年份 -->
+        </select>
+      </div>
+      <!-- 作者筛选 -->
+      <div>
+        <label for="authorFilterDropdown" class="form-label me-2">Author</label>
+        <select id="authorFilterDropdown" class="form-select d-inline-block w-auto">
+          <option value="">All Authors</option>
+          <option value="Qi (Cheems) Wang">Qi (Cheems) Wang</option>
+          <option value="Zehao Xiao">Zehao Xiao</option>
+          <option value="Yixiu Mao">Yixiu Mao</option>
+          <!-- 根据实际需要可增加其他作者 -->
+        </select>
+      </div>
+    </div>
+  
+    <!-- 论文列表容器 -->
+    <div id="publicationsList">
+      <!-- 用 data-* 属性保存信息方便后续JS操作 -->
+      <div 
+        class="card mb-3" 
+        data-year="2025" 
+        data-authors="Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji"
+      >
+        <div class="card-body">
+          <h5 class="card-title">
+            Beyond Any-Shot Adaptation...
+            <span class="badge bg-success">arXiv 2025</span>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Qi (Cheems) Wang*, Zehao Xiao*, ...
+          </p>
+          <a href="https://arxiv.org/pdf/2501.11039" class="btn btn-secondary btn-sm">Paper</a>
+          <a href="https://github.com/thu-rllab/MPTS" class="btn btn-secondary btn-sm">Code</a>
+          <a href="https://www.youtube.com/watch?v=example" class="btn btn-info btn-sm">Demo</a>
+        </div>
+      </div>
+  
+      <div 
+        class="card mb-3" 
+        data-year="2020"
+        data-authors="Qi (Cheems) Wang, Herke van Hoof"
+      >
+        <div class="card-body">
+          <h5 class="card-title">
+            Doubly Stochastic Variational Inference...
+            <span class="badge bg-success">ICML 2020</span>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Qi (Cheems) Wang, Herke van Hoof
+          </p>
+          <a href="https://arxiv.org/pdf/example" class="btn btn-secondary btn-sm">Paper</a>
+          <a href="https://github.com/example/code" class="btn btn-secondary btn-sm">Code</a>
+          <a href="https://www.youtube.com/watch?v=example" class="btn btn-info btn-sm">Demo</a>
+        </div>
+      </div>
+  
+      <!-- 这里可以继续添加更多论文 ... -->
+    </div>
+  
+    <!-- “Show More” 按钮 -->
+    <div class="mt-3">
+      <button id="showMoreBtn" class="btn btn-primary">Show More</button>
+    </div>
+  </section>
+  
+
+
+
+#### javascript ### 
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const yearFilterDropdown = document.getElementById('yearFilterDropdown');
+      const authorFilterDropdown = document.getElementById('authorFilterDropdown');
+      const cardsContainer = document.getElementById('publicationsList');
+      const showMoreBtn = document.getElementById('showMoreBtn');
+      const thatsAllBtn = document.getElementById('thatsAllBtn');
+  
+      // 将所有 card 存入数组，方便后续操作
+      const cards = Array.from(cardsContainer.querySelectorAll('.card'));
+  
+      // 初始只显示前多少条
+      const itemsToShow = 10;
+  
+      // 筛选并排序的函数
+      function filterAndSort() {
+        // 获取下拉框的当前值
+        const selectedYear = yearFilterDropdown.value.trim(); 
+        const selectedAuthor = authorFilterDropdown.value.trim().toLowerCase();
+  
+        // 1. 根据下拉框的值进行过滤
+        //    年份需要精确匹配，作者采用包含匹配
+        let filteredCards = cards.filter(card => {
+          const cardYear = card.dataset.year;                  // data-year
+          const cardAuthors = card.dataset.authors.toLowerCase(); // data-authors
+  
+          const matchYear = !selectedYear || cardYear === selectedYear;
+          const matchAuthor = !selectedAuthor || cardAuthors.includes(selectedAuthor);
+  
+          return matchYear && matchAuthor;
+        });
+  
+        // 2. 按年份 (data-year) 从大到小降序排序
+        filteredCards.sort((a, b) => {
+          return parseInt(b.dataset.year) - parseInt(a.dataset.year);
+        });
+  
+        // 3. 先隐藏所有 card
+        cards.forEach(card => {
+          card.style.display = 'none';
+        });
+  
+        // 4. 只显示过滤后前 10 条
+        filteredCards.forEach((card, index) => {
+          if (index < itemsToShow) {
+            card.style.display = 'block';
+          }
+        });
+  
+        // 5. 如果过滤后结果超过 10 条，则显示“Show More”按钮，否则隐藏
+        if (filteredCards.length > itemsToShow) {
+          showMoreBtn.style.display = 'inline-block';
+          thatsAllBtn.style.display = 'none';
+        } else {
+          showMoreBtn.style.display = 'none';
+          thatsAllBtn.style.display = 'inline-block';
+        }
+      }
+  
+      // 当下拉框发生变化时，重新执行过滤+排序
+      yearFilterDropdown.addEventListener('change', filterAndSort);
+      authorFilterDropdown.addEventListener('change', filterAndSort);
+  
+      // 点击“Show More”时，显示当前筛选条件下的全部卡片
+      showMoreBtn.addEventListener('click', function () {
+        // 重新获取当前筛选条件
+        const selectedYear = yearFilterDropdown.value.trim();
+        const selectedAuthor = authorFilterDropdown.value.trim().toLowerCase();
+  
+        // 再次过滤
+        let filteredCards = cards.filter(card => {
+          const cardYear = card.dataset.year;
+          const cardAuthors = card.dataset.authors.toLowerCase();
+          const matchYear = !selectedYear || cardYear === selectedYear;
+          const matchAuthor = !selectedAuthor || cardAuthors.includes(selectedAuthor);
+          return matchYear && matchAuthor;
+        });
+  
+        // 全部显示
+        filteredCards.forEach(card => {
+          card.style.display = 'block';
+        });
+  
+        // 隐藏“Show More”按钮
+        showMoreBtn.style.display = 'none';
+        thatsAllBtn.style.display = 'inline-block';
+      });
+  
+      // 页面加载后，默认先执行一次，保证初始状态下就有结果
+      filterAndSort();
+    });
+  </script>
+  
+  
