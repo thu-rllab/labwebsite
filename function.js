@@ -62,7 +62,7 @@
         thatsAllBtn.style.display = 'none';
       } else {
         showMoreBtn.style.display = 'none';
-        thatsAllBtn.style.display = 'inline-block';
+        thatsAllBtn.style.display = 'block';
       }
     }
 
@@ -92,7 +92,7 @@
 
       // 隐藏“Show More”按钮
       showMoreBtn.style.display = 'none';
-      thatsAllBtn.style.display = 'inline-block';
+      thatsAllBtn.style.display = 'block';
     });
 
     // 页面加载后，默认先执行一次，保证初始状态下就有结果
