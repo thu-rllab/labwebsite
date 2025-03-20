@@ -11,5 +11,29 @@
 - 论文的card的card.style.display = 'none'时就隐藏，为'block'时显示
 - inline block会将元素显示在更内层，block是直接显示，而对于'Show All'按钮，必须将其设置为inline-block才能居中显示
 
-2. Questions
+### 关于筛选过滤Publications功能模块的说明
+
+1. 网页初始化后，会先执行function.js的最后一行filterAndSort()函数
+
+2. 下拉框id="xxxFilterDropdown"
+```
+    (1) 在下拉框中的<option value="xxx">中的value中填写用于程序筛选的值；
+    (2) 下拉框中的文本值无关紧要；
+    (3) 初始时下拉框的value设置为空值""，方便function.js中进行判断。
+```
+
+3. 论文展示条目class="card mb-3"
+```
+    (1) 在未经筛选时，首先将所有的论文均不显示，即设置style="display: none"；
+    (2) 根据下拉框设置对应的data-xxx值，例如设置data-year="2025"代表当前论文的发表是2025年。
+```
+
+4. filterAndSort()函数运行机制
+```
+    (1) 首先获得每个下拉框的具体选择的value(这里与第2点中的value对应上)；
+    (2) 对所有card进行筛选(与第3点的论文card对应上)；
+    (3) 设置showMoreBtn、thatAllBtn、noPaperBtn的显示方式。
+```
+
+### Questions
 - btn btn-secondary btn-sm这玩意儿在哪定义的？
