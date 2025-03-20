@@ -35,6 +35,8 @@
     (3) 设置showMoreBtn、thatAllBtn、noPaperBtn的显示方式。
 ```
 
+5. **特别注意：注意function.js筛选时对王老师多重名称的处理，并且均应转为小写**
+
 ### 关于publication_tool程序性进行论文转为html以及新增论文的说明
 1. publication_tool文件夹模式
 ```
@@ -56,7 +58,7 @@
 ```
     总体运行：python publications_to_html.py
 
-    
+
     (1) publication_tool/publications_to_html.py中的json_to_html()函数首先解析所有筛选条件；
     (2) 之后将所有筛选条件组合成filter html；
     (3) 之后组合论文的html；

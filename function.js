@@ -42,7 +42,13 @@
         // 当为空值时，筛选bool值自动设置为了true，也就是一开始不进行任何筛选
         //筛选条件是要么空、要么不为空时筛选值要匹配(cardYear === selectedYear)或包含(cardAuthors.includes(selectedAuthor))
         const matchYear = !selectedYear || cardYear === selectedYear;
-        const matchAuthor = !selectedAuthor || cardAuthors.includes(selectedAuthor);
+        let matchAuthor = false;
+        if (selectedAuthor.includes('Qi (Cheems) Wang'.toLowerCase())) {
+          matchAuthor = !selectedAuthor || cardAuthors.includes(selectedAuthor) || cardAuthors.includes('Qi Wang'.toLowerCase()) || cardAuthors.includes('Cheems Wang'.toLowerCase());
+        }
+        else { 
+          matchAuthor = !selectedAuthor || cardAuthors.includes(selectedAuthor); 
+        }
         const matchConference = !selectedConference || cardConference.includes(selectedConference);
 
         return matchYear && matchAuthor && matchConference;
