@@ -118,6 +118,22 @@
     line-height: 1.6;
   }
 
+  /* wby: 字体美化 */
+  #thatsAllBtn {
+    color: #228B22; /* 自定义绿色，可以换成你喜欢的颜色 */
+    font-family: "Georgia", "Times New Roman", serif; /* 选择优雅的字体 */
+    font-size: 18px; /* 适当调整字体大小 */
+    font-weight: bold; /* 加粗提升视觉效果 */
+    letter-spacing: 0.5px; /* 增加字间距，使排版更精致 */ 
+  }
+  #noPapers {
+    color: #D72638; /* 自定义红色，可以换成你喜欢的颜色 */
+    font-family: "Georgia", "Times New Roman", serif; /* 选择优雅的字体 */
+    font-size: 18px; /* 适当调整字体大小 */
+    font-weight: bold; /* 加粗提升视觉效果 */
+    letter-spacing: 0.5px; /* 增加字间距，使排版更精致 */ 
+  }
+
   </style>
 </head>
 <body>
@@ -177,9 +193,9 @@
     <!-- wby: 增设筛选下拉框 -->
     <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
       <!-- 年份筛选 -->
-      <div>
-        <label for="yearFilterDropdown" class="form-label me-2">Year</label>
-        <select id="yearFilterDropdown" class="form-select d-inline-block w-auto">
+      <div style="margin-right: 1em">
+        <label for="yearFilterDropdown" class="form-label me-2" style="margin-right: 1em">Year:</label>
+        <select id="yearFilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
           <option value="">All Years</option>
           <option value="2025">2025</option>
           <option value="2020">2020</option>
@@ -187,14 +203,25 @@
         </select>
       </div>
       <!-- 作者筛选 -->
-      <div>
-        <label for="authorFilterDropdown" class="form-label me-2">Author</label>
-        <select id="authorFilterDropdown" class="form-select d-inline-block w-auto">
+      <div style="margin-right: 1em">
+        <label for="authorFilterDropdown" class="form-label me-2" style="margin-right: 1em">Author:</label>
+        <select id="authorFilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
           <option value="">All Authors</option>
           <option value="Qi (Cheems) Wang">Qi (Cheems) Wang</option>
           <option value="Zehao Xiao">Zehao Xiao</option>
           <option value="Yixiu Mao">Yixiu Mao</option>
           <!-- 根据实际需要可增加其他作者 -->
+        </select>
+      </div>
+      <!-- 会议筛选 -->
+      <div style="margin-right: 1em">
+        <label for="conferenceFilterDropdown" class="form-label me-2" style="margin-right: 1em">Conference:</label>
+        <select id="conferenceFilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
+          <option value="">All Conferences</option>
+          <option value="ICML">ICML</option>
+          <option value="ICLR">ICLR</option>
+          <option value="Arxiv">Arxiv Preprint</option>
+          <!-- 根据实际需要可增加其他会议类型 -->
         </select>
       </div>
     </div>
@@ -207,6 +234,7 @@
         class="card mb-3" style="display: none"
         data-year="2025" 
         data-authors="Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji"
+        data-conference="arXiv 2025"
       > 
         <div class="card-body">
           <h5 class="card-title">
@@ -226,6 +254,7 @@
         class="card mb-3" style="display: none"
         data-year="2020"
         data-authors="Qi (Cheems) Wang, Herke van Hoof"
+        data-conference="ICML 2020"
       > 
         <div class="card-body">
           <h5 class="card-title">
@@ -250,7 +279,11 @@
     </div>
 
     <!-- “That's all” --> 
-    <div id="thatsAllBtn" class="section-small-title" style="text-align: center; display: none">That's all papers under current filter conditions.</div>
+    <div id="thatsAllBtn" class="section-small-title" style="text-align: center; display: none">That's all publications under current filter conditions.</div>
+
+    <div id="noPapers" class="section-small-title" style="text-align: center; display: none">No Publications under current filter conditions.</div>
+
+
   
   <!-- <div class="card">
         <div class="card-body">
