@@ -16,7 +16,7 @@
     const cards = Array.from(cardsContainer.querySelectorAll('.card'));
 
     // 初始只显示前多少条
-    const itemsToShow = 1;
+    const itemsToShow = 10;
     
     // wby: 新增一个变量来控制是否显示全部论文
     let showAll = false; 
@@ -49,8 +49,8 @@
       });
 
       // 2. 按年份 (data-year) 从大到小降序排序
-      filteredCards.sort((a, b) => {
-        return parseInt(b.dataset.year) - parseInt(a.dataset.year);
+      filteredCards = filteredCards.sort((a, b) => {
+        return Number(b.dataset.year) - Number(a.dataset.year);
       });
 
       // 3. 先隐藏所有 card

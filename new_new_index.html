@@ -173,50 +173,75 @@
   <section id="publications" class="container">
     <h2 class="section-title">Publications</h2>
 
+    
+    
     <!-- wby: 增设筛选下拉框 -->
     <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
-      <!-- 年份筛选 -->
+
+
       <div style="margin-right: 1em">
         <label for="yearFilterDropdown" class="form-label me-2" style="margin-right: 1em">Year:</label>
         <select id="yearFilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
           <option value="">All Years</option>
           <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
           <option value="2020">2020</option>
-          <!-- 根据实际需要可增加其他年份 -->
+
         </select>
       </div>
-      <!-- 作者筛选 -->
+
+
+
       <div style="margin-right: 1em">
         <label for="authorFilterDropdown" class="form-label me-2" style="margin-right: 1em">Author:</label>
         <select id="authorFilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
           <option value="">All Authors</option>
+          <option value="Boyuan Wang">Boyuan Wang</option>
+          <option value="Chang Liu">Chang Liu</option>
+          <option value="Chen Chen">Chen Chen</option>
+          <option value="Hongchang Zhang">Hongchang Zhang</option>
+          <option value="Jianzhun Shao">Jianzhun Shao</option>
           <option value="Qi (Cheems) Wang">Qi (Cheems) Wang</option>
-          <option value="Zehao Xiao">Zehao Xiao</option>
+          <option value="Shuncheng He">Shuncheng He</option>
+          <option value="Xiangyang Ji">Xiangyang Ji</option>
           <option value="Yixiu Mao">Yixiu Mao</option>
-          <!-- 根据实际需要可增加其他作者 -->
+          <option value="Yuhang Jiang">Yuhang Jiang</option>
+          <option value="Yun Qu">Yun Qu</option>
+
         </select>
       </div>
-      <!-- 会议筛选 -->
+
+
+
       <div style="margin-right: 1em">
         <label for="conferenceFilterDropdown" class="form-label me-2" style="margin-right: 1em">Conference:</label>
         <select id="conferenceFilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
           <option value="">All Conferences</option>
-          <option value="ICML">ICML</option>
+          <option value="AAAI">AAAI</option>
           <option value="ICLR">ICLR</option>
-          <option value="Arxiv">Arxiv Preprint</option>
-          <!-- 根据实际需要可增加其他会议类型 -->
+          <option value="ICML">ICML</option>
+          <option value="KDD">KDD</option>
+          <option value="NeurIPS">NeurIPS</option>
+          <option value="The Innovation">The Innovation</option>
+          <option value="arXiv">arXiv</option>
+
         </select>
       </div>
-    </div>
 
-    
+</div>
+
+
+
     <!-- 论文列表容器 -->
     <div id="publicationsList">
-      <!-- 用 data-* 属性保存信息方便后续JS操作 -->
+
+
       <div 
         class="card mb-3" style="display: none"
         data-year="2025" 
-        data-authors="Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji"
+        data-authors="Qi (Cheems) Wang*, Zehao Xiao*, Yixiu Mao*, Yun Qu*, Jiayi Shen, Yiqin Lv, Xiangyang Ji"
         data-conference="arXiv 2025"
       > 
         <div class="card-body">
@@ -232,31 +257,627 @@
           <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
         </div>
       </div>
-  
+
+
+
       <div 
         class="card mb-3" style="display: none"
-        data-year="2020"
-        data-authors="Qi (Cheems) Wang, Herke van Hoof"
+        data-year="2025" 
+        data-authors="Cheems Wang, Yiqin Lv, Yixiu Mao, Yun Qu, Yi Xu, Xiangyang Ji"
+        data-conference="KDD 2025"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">KDD 2025</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Cheems Wang, Yiqin Lv, Yixiu Mao, Yun Qu, Yi Xu, Xiangyang Ji
+          </p>
+          <a href=" https://arxiv.org/pdf/2407.19523 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2025" 
+        data-authors="Zehao Xiao, Shilin Yan, Jack Hong, Jiayin Cai, Xiaolong Jiang, Yao Hu, Jiayi Shen, Qi Wang, Cees G. M. Snoek"
+        data-conference="ICLR 2025"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2025</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>DynaPrompt: Dynamic Test-Time Prompt Tuning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Zehao Xiao, Shilin Yan, Jack Hong, Jiayin Cai, Xiaolong Jiang, Yao Hu, Jiayi Shen, Qi Wang, Cees G. M. Snoek
+          </p>
+          <a href=" https://arxiv.org/pdf/2501.16404 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2025" 
+        data-authors="Yun Qu, Yuhang Jiang, Boyuan Wang, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji"
+        data-conference="AAAI 2025"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">AAAI 2025</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Yun Qu, Yuhang Jiang, Boyuan Wang, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji
+          </p>
+          <a href=" https://arxiv.org/pdf/2412.11120 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/LaRe " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2024" 
+        data-authors="Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji"
+        data-conference="NeurIPS 2024"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2024</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji
+          </p>
+          <a href=" https://proceedings.neurips.cc/paper_files/paper/2024/file/a9f3457fa97f106f1756885237787789-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2024" 
+        data-authors="Yiqin Lv, Qi Wang, Dong Liang, Zheng Xie"
+        data-conference="NeurIPS 2024"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2024</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Theoretical Investigations and Practical Enhancements on Tail Task Risk Minimization in Meta Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Yiqin Lv, Qi Wang, Dong Liang, Zheng Xie
+          </p>
+          <a href=" https://arxiv.org/pdf/2410.22788 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2024" 
+        data-authors="Jiayi Shen, Qi (Cheems) Wang, Zehao Xiao, Nanne Van Noord, Marcel Worring"
+        data-conference="NeurIPS 2024"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2024</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>GO4Align: Group Optimization for Multi-Task Alignment</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Jiayi Shen, Qi (Cheems) Wang, Zehao Xiao, Nanne Van Noord, Marcel Worring
+          </p>
+          <a href=" https://arxiv.org/pdf/2404.06486 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/autumn9999/GO4Align " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2024" 
+        data-authors="Ziqi Wang, Chang Che, Qi Wang, Yangyang Li, Zenglin Shi, Meng Wang"
+        data-conference="arXiv 2024"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">arXiv 2024</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Separable Mixture of Low-Rank Adaptation for Continual Visual Instruction Tuning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Ziqi Wang, Chang Che, Qi Wang, Yangyang Li, Zenglin Shi, Meng Wang
+          </p>
+          <a href=" https://arxiv.org/pdf/2411.13949 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2024" 
+        data-authors="Yuchen Yang, Yingdong Shi, Cheems Wang, Xiantong Zhen, Yuxuan Shi, Jun Xu"
+        data-conference="ICML 2024"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICML 2024</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Reducing Fine-Tuning Memory Overhead by Approximate and Memory-Sharing Backpropagation</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Yuchen Yang, Yingdong Shi, Cheems Wang, Xiantong Zhen, Yuxuan Shi, Jun Xu
+          </p>
+          <a href=" https://arxiv.org/pdf/2406.16282 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/yyyyychen/LowMemoryBP " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2024" 
+        data-authors="Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji"
+        data-conference="arXiv 2024"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">arXiv 2024</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Choices are More Important than Efforts: LLM Enables Efficient Multi-Agent Exploration</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji
+          </p>
+          <a href=" https://arxiv.org/pdf/2410.02511 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2024" 
+        data-authors="Yixiu Mao, Qi Wang, Yun Qu, Yuhang Jiang, Xiangyang Ji"
+        data-conference="NeurIPS 2024"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2024</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Doubly Mild Generalization for Offline Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Yixiu Mao, Qi Wang, Yun Qu, Yuhang Jiang, Xiangyang Ji
+          </p>
+          <a href=" https://arxiv.org/pdf/2411.07934 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/DMG " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2024" 
+        data-authors="Chen Chen, Zhaoyi Xu, Yixiu Mao, Hongchang Zhang, Xiangyang Ji"
+        data-conference="ICLR 2024"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2024</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Enhancing Offline Reinforcement Learning with an Optimal Supported Dataset</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Chen Chen, Zhaoyi Xu, Yixiu Mao, Hongchang Zhang, Xiangyang Ji
+          </p>
+          <a href=" https://openreview.net/pdf?id=1Akd36hG9z " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/OSD-DICE " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2024" 
+        data-authors="Boyuan Wang, Yun Qu, Yuhang Jiang, Jianzhun Shao, Chang Liu, Wenming Yang, Xiangyang Ji"
+        data-conference="ICML 2024"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICML 2024</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>LLM-Empowered State Representation for Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Boyuan Wang, Yun Qu, Yuhang Jiang, Jianzhun Shao, Chang Liu, Wenming Yang, Xiangyang Ji
+          </p>
+          <a href=" https://arxiv.org/pdf/2407.13237 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/LESR " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Qi Wang, Marco Federici, Herke van Hoof"
+        data-conference="ICLR 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Bridge the Inference Gaps of Neural Processes via Expectation Maximization</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Qi Wang, Marco Federici, Herke van Hoof
+          </p>
+          <a href=" https://arxiv.org/pdf/2501.03264 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/hhq123gogogo/SI_NPs " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Jiayi Shen, Xiantong Zhen, Qi Wang, Marcel Worring"
+        data-conference="NeurIPS 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Episodic Multi-Task Learning with Heterogeneous Neural Processes</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Jiayi Shen, Xiantong Zhen, Qi Wang, Marcel Worring
+          </p>
+          <a href=" https://proceedings.neurips.cc/paper_files/paper/2023/file/ee1e549d6fb7c58ed06557bfc264335c-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Qi Wang, Yanghe Feng, Jincai Huang, Yiqin Lv, Zheng Xie, Xiaoshan Gao"
+        data-conference="The Innovation 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">The Innovation 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Large-scale generative simulation artificial intelligence: The next hotspot</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Qi Wang, Yanghe Feng, Jincai Huang, Yiqin Lv, Zheng Xie, Xiaoshan Gao
+          </p>
+          <a href=" https://www.cell.com/the-innovation/fulltext/S2666-6758(23)00144-3 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Qi Wang, Yiqin Lv, Yanghe Feng, Zheng Xie, Jincai Huang"
+        data-conference="NeurIPS 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>A Simple Yet Effective Strategy to Robustify the Meta Learning Paradigm</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Qi Wang, Yiqin Lv, Yanghe Feng, Zheng Xie, Jincai Huang
+          </p>
+          <a href=" https://proceedings.neurips.cc/paper_files/paper/2023/file/2a28bea6298d106eed091ac403d8c22b-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji"
+        data-conference="ICML 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICML 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Supported Trust Region Optimization for Offline Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji
+          </p>
+          <a href=" https://proceedings.mlr.press/v202/mao23c/mao23c.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/STR " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji"
+        data-conference="NeurIPS 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Supported Value Regularization for Offline Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji
+          </p>
+          <a href=" https://proceedings.neurips.cc/paper_files/paper/2023/file/7fa46657df480226112d5be3faf096c4-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/SVR " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Hongchang Zhang, Yixiu Mao, Boyuan Wang, Shuncheng He, Yi Xu, Xiangyang Ji"
+        data-conference="ICLR 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>In-sample Actor Critic for Offline Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Hongchang Zhang, Yixiu Mao, Boyuan Wang, Shuncheng He, Yi Xu, Xiangyang Ji
+          </p>
+          <a href=" https://openreview.net/pdf?id=dfDv0WU853R " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Hongchang Zhang, Boyuan Wang, Yixiu Mao, Jianzhun Shao, Yuhang Jiang, Yi Xu, Xiangyang Ji"
+        data-conference="ICLR 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Pessimistic Policy Iteration for Offline Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Hongchang Zhang, Boyuan Wang, Yixiu Mao, Jianzhun Shao, Yuhang Jiang, Yi Xu, Xiangyang Ji
+          </p>
+          <a href=" https://openreview.net/pdf?id=TmJtBnIWkB " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Jianzhun Shao, Yun Qu, Chen Chen, Hongchang Zhang, Xiangyang Ji"
+        data-conference="NeurIPS 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Counterfactual Conservative Q Learning for Offline Multi-agent Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Jianzhun Shao, Yun Qu, Chen Chen, Hongchang Zhang, Xiangyang Ji
+          </p>
+          <a href=" https://proceedings.neurips.cc/paper_files/paper/2023/file/f3f2ff9579ba6deeb89caa2fe1f0b99c-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/CFCQL " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji"
+        data-conference="ICML 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICML 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Complementary Attention for Multi-Agent Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji
+          </p>
+          <a href=" https://proceedings.mlr.press/v202/shao23b/shao23b.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/CAMA " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Yun Qu, Boyuan Wang, Jianzhun Shao, Yuhang Jiang, Chen Chen, Zhenbin Ye, Lin Liu, Junfeng Yang, Lin Lai, Hongyang Qin, Minwen Deng, Juchao Zhuo, Deheng Ye, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Xiangyang Ji"
+        data-conference="NeurIPS 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Hokoff: Real Game Dataset from Honor of Kings and its Offline Reinforcement Learning Benchmarks</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Yun Qu, Boyuan Wang, Jianzhun Shao, Yuhang Jiang, Chen Chen, Zhenbin Ye, Lin Liu, Junfeng Yang, Lin Lai, Hongyang Qin, Minwen Deng, Juchao Zhuo, Deheng Ye, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Xiangyang Ji
+          </p>
+          <a href=" https://proceedings.neurips.cc/paper_files/paper/2023/file/464fefa022aaefc85d901317bbf13f85-Paper-Datasets_and_Benchmarks.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/Hokoff " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji"
+        data-conference="ICLR 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Consciousness-Aware Multi-Agent Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji
+          </p>
+          <a href=" https://openreview.net/pdf?id=u0aNcjqhEJ " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/CAMA " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Lin Liu, Jianzhun Shao, Xinkai Chen, Yun Qu, Boyuan Wang, Zhenbin Ye, Yuexuan Tu, Hongyang Qin, Lvfang Tao, Junfeng Yang, Lin Lai, Yuanqin Wang, Meng Meng, Wenjun Wang, Lin Yuan, Xiyang Ji, Minwen Deng, Juchao Zhuo, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Wengang Zhou, Houqing Li, Ning Xie, Xiangyang Ji, Deheng Ye"
+        data-conference="NeurIPS 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>HoK3v3: an Environment for Generalization in Heterogeneous Multi-agent Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Lin Liu, Jianzhun Shao, Xinkai Chen, Yun Qu, Boyuan Wang, Zhenbin Ye, Yuexuan Tu, Hongyang Qin, Lvfang Tao, Junfeng Yang, Lin Lai, Yuanqin Wang, Meng Meng, Wenjun Wang, Lin Yuan, Xiyang Ji, Minwen Deng, Juchao Zhuo, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Wengang Zhou, Houqing Li, Ning Xie, Xiangyang Ji, Deheng Ye
+          </p>
+          <a href=" https://openreview.net/pdf?id=calKOSmBxj " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/tencent-ailab/hok_env " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2022" 
+        data-authors="Qi Wang, Herke van Hoof"
+        data-conference="ICML 2022"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICML 2022</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Model-based Meta Reinforcement Learning using Graph Structured Surrogate Models and Amortized Policy Search</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Qi Wang, Herke van Hoof
+          </p>
+          <a href=" https://proceedings.mlr.press/v162/wang22z/wang22z.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2022" 
+        data-authors="Qi Wang, Herke van Hoof"
+        data-conference="NeurIPS 2022"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2022</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Learning Expressive Meta-Representations with Mixture of Expert Neural Processes</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Qi Wang, Herke van Hoof
+          </p>
+          <a href=" https://proceedings.neurips.cc/paper_files/paper/2022/file/a815fe7cad6af20a6c118f2072a881d2-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2020" 
+        data-authors="Qi Wang, Herke van Hoof"
         data-conference="ICML 2020"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICML 2020</span>
           <h5 class="card-title" style="color:#576263">
-            <strong>Doubly Stochastic Variational Inference for Neural Processes with Hierarchical Latent Variables</strong>  
+            <strong>Doubly Stochastic Variational Inference for Neural Processes with Hierarchical Latent Variables</strong>
           </h5>
           <p class="card-text">
             <strong>Authors:</strong> Qi Wang, Herke van Hoof
           </p>
-          <a href="https://arxiv.org/pdf/2008.09469" class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://arxiv.org/pdf/2008.09469 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/hhq123gogogo/SI_NPs " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href="xxx" class="btn btn-info btn-sm" target="_blank">Demo</a>
+          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
         </div>
       </div>
 
+
     <!-- 这里可继续添加更多论文 ... -->
     </div>
-
-    <!-- “Show All” 按钮 -->
+<!-- “Show All” 按钮 -->
     <div class="mt-3" style="text-align: center">
       <button id="showMoreBtn" class="btn btn-secondary" style="display: none">Show All</button>
     </div>
@@ -265,189 +886,6 @@
     <div id="thatsAllBtn" class="section-small-title" style="text-align: center; display: none">That's all publications under current filter conditions.</div>
 
     <div id="noPapers" class="section-small-title" style="text-align: center; display: none">No Publications under current filter conditions.</div>
-
-
-  
-  <!-- <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            Model-based Meta Reinforcement Learning using Graph Structured Surrogate Models and Amortized Policy Search 
-            <span class="badge badge-success"> ICML 2022</span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Qi Wang, Herke van Hoof</p >
-        <a href="https://proceedings.mlr.press/v162/wang22z/wang22z.pdf"btn btn-secondary btn-sm">Paper</a >
-        <a href="xxx" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            Learning Expressive Meta-Representations with Mixture of Expert Neural Processes 
-            <span class="badge badge-success"> NeurIPS 2022</span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Qi Wang, Herke van Hoof</p >
-        <a href=" https://proceedings.neurips.cc/paper_files/paper/2022/file/a815fe7cad6af20a6c118f2072a881d2-Paper-Conference.pdf " class="btn btn-secondary btn-sm">Paper</a >
-        <a href="xxx" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            Bridge the Inference Gaps of Neural Processes via Expectation Maximization 
-            <span class="badge badge-success">ICLR 2023</span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Qi Wang, Marco Federici, Herke van Hoof </p >
-        <a href="https://arxiv.org/pdf/2501.03264" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="https://github.com/hhq123gogogo/SI_NPs" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            Episodic Multi-Task Learning with Heterogeneous Neural Processes 
-            <span class="badge badge-success">NeurIPS 2023</span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Jiayi Shen, Xiantong Zhen, Qi Wang, Marcel Worring </p >
-        <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/ee1e549d6fb7c58ed06557bfc264335c-Paper-Conference.pdf" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="xxx" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            Large-scale generative simulation artificial intelligence: The next hotspot 
-            <span class="badge badge-success">The Innovation 2023</span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Qi Wang, Yanghe Feng, Jincai Huang, Yiqin Lv, Zheng Xie, Xiaoshan Gao </p >
-        <a href="https://www.cell.com/the-innovation/fulltext/S2666-6758(23)00144-3" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="xxx" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            A Simple Yet Effective Strategy to Robustify the Meta Learning Paradigm 
-            <span class="badge badge-success">NeurIPS 2023</span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Qi Wang, Yiqin Lv, Yanghe Feng, Zheng Xie, Jincai Huang </p >
-        <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/2a28bea6298d106eed091ac403d8c22b-Paper-Conference.pdf" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="xxx" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression 
-            <span class="badge badge-success">NeurIPS 2024</span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji </p >
-        <a href="https://proceedings.neurips.cc/paper_files/paper/2024/file/a9f3457fa97f106f1756885237787789-Paper-Conference.pdf" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="xxx" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation 
-            <span class="badge badge-success">KDD 2025</span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Cheems Wang, Yiqin Lv, Yixiu Mao, Yun Qu, Yi Xu, Xiangyang Ji </p >
-        <a href="https://arxiv.org/pdf/2407.19523" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="xxx" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            Theoretical Investigations and Practical Enhancements on Tail Task Risk Minimization in Meta Learning 
-            <span class="badge badge-success">NeurIPS 2024</span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Yiqin Lv, Qi Wang, Dong Liang, Zheng Xie </p >
-        <a href="https://arxiv.org/pdf/2410.22788" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="xxx" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            GO4Align: Group Optimization for Multi-Task Alignment 
-            <span class="badge badge-success">NeurIPS 2024</span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Jiayi Shen, Qi (Cheems) Wang, Zehao Xiao, Nanne Van Noord, Marcel Worring </p >
-        <a href="https://arxiv.org/pdf/2404.06486" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="https://github.com/autumn9999/GO4Align" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div> 
-  
-     
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            DynaPrompt: Dynamic Test-Time Prompt Tuning 
-            <span class="badge badge-success"> ICLR 2025 </span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Zehao Xiao, Shilin Yan, Jack Hong, Jiayin Cai, Xiaolong Jiang, Yao Hu, Jiayi Shen, Qi Wang, Cees G. M. Snoek </p >
-        <a href="https://arxiv.org/pdf/2501.16404" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="xxx" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            Separable Mixture of Low-Rank Adaptation for Continual Visual Instruction Tuning 
-            <span class="badge badge-success"> arXiv 2024 </span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Ziqi Wang, Chang Che, Qi Wang, Yangyang Li, Zenglin Shi, Meng Wang </p >
-        <a href="https://arxiv.org/pdf/2411.13949" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="xxx" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div>
-  
-  
-  <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            Reducing Fine-Tuning Memory Overhead by Approximate and Memory-Sharing Backpropagation 
-            <span class="badge badge-success"> ICML 2024 </span>
-          </h5>
-          <p class="card-text"><strong>Authors:</strong> Yuchen Yang, Yingdong Shi, Cheems Wang, Xiantong Zhen, Yuxuan Shi, Jun Xu </p >
-        <a href="https://arxiv.org/pdf/2406.16282" class="btn btn-secondary btn-sm"> Paper</a >
-        <a href="https://github.com/yyyyychen/LowMemoryBP" class="btn btn-secondary btn-sm">Code</a >
-        <a href="xxx" class="btn btn-info btn-sm">Demo</a >
-  </div>
-     </div> -->
 
   </section>
 
@@ -487,6 +925,7 @@
       Email: cheemswang@mail.tsinghua.edu.cn<br>
       WeChat Official Account: SIG-IDM
     </p>
+    <h6 style="color:#75abc0; margin-top: -1em"><strong>Web Contributors: Qi (Cheems) Wang, Boyuan Wang, Yun Qu</strong></h6>
   </footer>
 
   <!-- 将JavaScript文件放在底部 -->

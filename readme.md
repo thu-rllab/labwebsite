@@ -52,5 +52,17 @@
     (1) publication_tool/publications_to_html.py中的wang_to_json()函数解析金山文档中所有html并将其转为json存储。
 ``` 
 
+3. 关于所有论文json格式转为html
+```
+    总体运行：python publications_to_html.py
+
+    
+    (1) publication_tool/publications_to_html.py中的json_to_html()函数首先解析所有筛选条件；
+    (2) 之后将所有筛选条件组合成filter html；
+    (3) 之后组合论文的html；
+    (最后尤其重要) 进行牛牛index.html的更新。
+```
+**非常重要！！！ 注意当进行"牛牛_index.html"的更新时，会定向更新以'<!-- wby: 增设筛选下拉框 -->'开始并以'<!-- “Show All” 按钮 -->'结束的部分，因此不要随意删减牛牛_index.html中的注释**
+
 ### Questions
 - btn btn-secondary btn-sm这玩意儿在哪定义的？
