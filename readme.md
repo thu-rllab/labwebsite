@@ -35,5 +35,22 @@
     (3) 设置showMoreBtn、thatAllBtn、noPaperBtn的显示方式。
 ```
 
+### 关于publication_tool程序性进行论文转为html以及新增论文的说明
+1. publication_tool文件夹模式
+```
+    ---publication_tool
+        // 存储了所有论文的json格式，新增论文请在此新增
+        ---final_all_papers.json 
+        // 附带将上述json转为html-card的功能函数
+        ---publications_to_html.py 
+        // 是王老师之前收集的金山文档中的html，之后统一使用final_all_papers.json
+        ---wang_html_publications.txt 
+```
+
+2. 关于王老师的金山文档wang_html_publications.txt的解析
+```
+    (1) publication_tool/publications_to_html.py中的wang_to_json()函数解析金山文档中所有html并将其转为json存储。
+``` 
+
 ### Questions
 - btn btn-secondary btn-sm这玩意儿在哪定义的？
