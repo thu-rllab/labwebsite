@@ -73,12 +73,15 @@
       }
       else if (!showAll && filteredCards.length > itemsToShow) {
         showMoreBtn.style.display = 'inline-block';
+        // wby: add how many papers in total 
+        showMoreBtn.textContent = String(itemsToShow) + " of " + String(filteredCards.length) + " Publications Displayed, Click to Show All";
         thatsAllBtn.style.display = 'none';
         noPapersBtn.style.display = 'none';
       } 
       else {
         showMoreBtn.style.display = 'none';
         thatsAllBtn.style.display = 'block';
+        thatsAllBtn.textContent = "That's all " + String(filteredCards.length) + " publications under current filter conditions."
         noPapersBtn.style.display = 'none';
       }
     }
