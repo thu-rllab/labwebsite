@@ -3,8 +3,10 @@
     const yearFilterDropdown = document.getElementById('yearFilterDropdown');
     const authorFilterDropdown = document.getElementById('authorFilterDropdown');
     const conferenceFilterDropdown = document.getElementById('conferenceFilterDropdown');
+    const degreeFilterDropdown = document.getElementById('degreeFilterDropdown');
     // wby: 获得论文列表的元素
     const cardsContainer = document.getElementById('publicationsList');
+    const teamcardsContainer = document.getElementById('teamList');
     // wby: 获得展示更多的按钮
     const showMoreBtn = document.getElementById('showMoreBtn');
     // wby: 增加thats-all-button
@@ -14,6 +16,7 @@
 
     // 将所有 card 存入数组，方便后续操作
     const cards = Array.from(cardsContainer.querySelectorAll('.card'));
+    const teamcards = Array.from(teamcardsContainer.querySelectorAll('.card'));
 
     // 初始只显示前多少条
     const itemsToShow = 10;
@@ -91,6 +94,43 @@
         noPapersBtn.style.display = 'none';
       }
     }
+    
+    // 筛选并排序的函数
+    function teamfilterAndSort() { 
+      const selectedDegree = degreeFilterDropdown.value.trim().toLowerCase();   
+
+      let filteredCards = teamcards.filter(card => { 
+        const cardDegree = card.dataset.position.toLowerCase();   
+
+        let matchDegree = false;
+        if (selectedDegree.includes('associate professor')) {
+          matchDegree = !selectedDegree || cardDegree.includes(selectedDegree);
+        }
+        else if (selectedDegree.includes('professor')) {
+          matchDegree = !selectedDegree || (cardDegree.includes(selectedDegree) && !cardDegree.includes('associate professor'));
+        }
+        else if (selectedDegree.includes('postdoctoral fellow')) {
+          matchDegree = !selectedDegree || cardDegree.includes(selectedDegree);
+        }
+        else if (selectedDegree.includes('doctor')) {
+          matchDegree = !selectedDegree || (cardDegree.includes(selectedDegree) && !cardDegree.includes('postdoctoral'));
+        }
+        else { 
+          matchDegree = !selectedDegree || cardDegree.includes(selectedDegree);
+        } 
+
+        return matchDegree;
+      }); 
+
+      // 3. 先隐藏所有 card
+      teamcards.forEach(card => {
+        card.style.display = 'none';
+      }); 
+
+      filteredCards.forEach((card, index) => {
+        card.style.display = 'block';
+      }); 
+    }
 
     // 当下拉框发生变化时，重新执行过滤+排序
     yearFilterDropdown.addEventListener('change', function() {
@@ -108,6 +148,9 @@
       showAll = false; 
       filterAndSort();
     });
+    degreeFilterDropdown.addEventListener('change', function() { 
+      teamfilterAndSort();
+    });
 
     // 点击“Show More”时，显示当前筛选条件下的全部卡片
     showMoreBtn.addEventListener('click', function () {
@@ -118,4 +161,5 @@
 
     // 页面加载后，默认先执行一次，保证初始状态下就有结果
     filterAndSort();
+    teamfilterAndSort();
   }); 
