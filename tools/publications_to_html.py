@@ -4,8 +4,12 @@ class Pub2HTML:
     
     def __init__(self):
         self.pub_path = 'final_all_papers.json'
-        with open('final_all_papers.json', 'r') as fp: 
+        self.member_path = 'final_all_members.json'
+        with open(self.pub_path, 'r') as fp: 
             self.all_pubs = json.load(fp)
+            fp.close()
+        with open(self.member_path, 'r') as fp: 
+            self.all_members = json.load(fp)
             fp.close()
 
     def wang_to_json(self):
@@ -93,15 +97,14 @@ class Pub2HTML:
         filter_author = [
             'Yixiu Mao',
             'Yun Qu',
-            'Qi (Cheems) Wang',
-            'Chen Chen',
+            'Qi (Cheems) Wang', 
             'Hongchang Zhang',
             'Boyuan Wang',
             'Shuncheng He',
             'Yuhang Jiang',
             'Jianzhun Shao',
             'Chang Liu', 
-            'Xiangyang Ji'
+            'Mengge Liu' 
         ] 
         return sorted(list(filter_year.keys()), reverse=True), sorted(filter_author), sorted(list(filter_conference.keys()))
     
@@ -111,7 +114,7 @@ class Pub2HTML:
             option_value += f'          <option value="{value}">{value}</option>\n'
         filter_html = f"""
       <div style="margin-right: 1em">
-        <label for="{id_name}FilterDropdown" class="form-label me-2" style="margin-right: 1em">{show_name}:</label>
+        <label for="{id_name}FilterDropdown" class="form-label me-2" style="margin-right: 1em; color:#576263"><strong>{show_name}:</strong></label>
         <select id="{id_name}FilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
           <option value="">All {show_name}s</option>
 {option_value}
@@ -119,6 +122,24 @@ class Pub2HTML:
       </div>
 """
         return filter_html
+
+    def update_copy_new_new(self, src_path, backup_path, start_label, end_label, update_html):
+        ###    final step: 进行牛牛备案 以及 更新源网页   ###
+        with open(src_path, 'r') as fp:
+            all_source_html = fp.read()
+            fp.close()
+        with open(backup_path, 'w') as fp:
+            fp.write(all_source_html)
+            fp.close()
+        start_index = all_source_html.index(start_label)
+        end_index = all_source_html.index(end_label)
+        to_be_replace = all_source_html[start_index:end_index]  
+        all_source_html = all_source_html.replace(to_be_replace, update_html)
+
+        ### write to source html ###
+        with open(src_path, 'w') as fp:
+            fp.write(all_source_html)
+            fp.close()
 
     def json_to_html(self):  
         ###    step 1: get all filter conditions    ###
@@ -131,6 +152,8 @@ class Pub2HTML:
         author_filter_html = self.get_filter_html('author', 'Author', filter_author)
         conference_filter_html = self.get_filter_html('conference', 'Conference', filter_conference)
         all_filter_html = f"""
+<!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
+    
     <!-- wby: 增设筛选下拉框 -->
     <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
 
@@ -178,25 +201,109 @@ class Pub2HTML:
     <!-- 这里可继续添加更多论文 ... -->
     </div>
 """
-        ###    final step: 进行牛牛备案 以及 更新源网页   ###
-        with open('../new_new_index.html', 'r') as fp:
-            all_source_html = fp.read()
-            fp.close()
-        with open('../new_new_backup.html', 'w') as fp:
-            fp.write(all_source_html)
-            fp.close()
-        start_index = all_source_html.index('<!-- wby: 增设筛选下拉框 -->')
-        end_index = all_source_html.index('<!-- “Show All” 按钮 -->')
-        to_be_replace = all_source_html[start_index:end_index]  
-        all_source_html = all_source_html.replace(to_be_replace, all_filter_html + '\n\n' + all_paper_html)
+        self.update_copy_new_new(src_path='../new_new_index.html', backup_path='../new_new_backup.html', 
+                                 start_label='<!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->',
+                                 end_label='<!-- wby: 注意，切勿删除，程序代码识别publications结束部分 -->',
+                                 update_html=all_filter_html + '\n\n' + all_paper_html) 
+    
+    def member_json_to_html(self):
+        ### first step: get all member filter conditions ### 
+        all_degree_filter_conditions = ['Professor', 'Associate Professor', 'Postdoctoral Fellow', 'Doctor Student', 'Master Student']
+        ### second step: get all filter html ### 
+        degree_filter_html = self.get_filter_html('degree', 'Position', all_degree_filter_conditions)
+        all_filter_html = f"""
+<!-- wby: 注意，切勿删除，程序代码识别team开始部分 -->
+    
+    <!-- wby: 增设筛选下拉框 -->
+    <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
 
-        ### write to source html ###
-        with open('../new_new_index.html', 'w') as fp:
-            fp.write(all_source_html)
-            fp.close()
+{degree_filter_html} 
+    </div>
+"""     
+        ### 程序性生成整个成员 ### 
+        all_member_html = """
+    <!-- 团队成员列表容器 -->
+    <div id="teamList">
+"""
+        for member_name in self.all_members.keys():
+            degree, website, email, scholar, wechat = self.all_members[member_name]['degree'],\
+                                                        self.all_members[member_name]['website'],\
+                                                        self.all_members[member_name]['email'],\
+                                                        self.all_members[member_name]['scholar'],\
+                                                        self.all_members[member_name]['wechat']
+            
+            
+            ### for different people's img ###
+            if 'cheems' in member_name.lower(): img_path = f'resources/{wechat}.jfif'
+            elif 'xiangyang' in member_name.lower(): img_path = f'resources/ji.jpg'
+            else:  img_path = f'resources/{wechat}.jpg'
+
+            ### for different people's wechat ###
+            if 'xiangyang' in member_name.lower(): wechat_html = ""
+            else: wechat_html = f'<p style="margin-top: 5%"><strong>WeChat: </strong>{wechat}<p>'
+
+            ### for different people's degree ###
+            background_color = ''
+            if 'associate professor' in degree.lower(): degree_style = 'badge badge-warning'
+            elif 'professor' in degree.lower(): degree_style = 'badge badge-info'
+            elif 'doctor' in degree.lower(): 
+                degree_style = 'badge badge-primary'
+                background_color = 'background-color: #007bff'
+            else: degree_style = 'badge badge-success'
+
+            ### for different people's website, email, google scholar ###
+            if 'nan' in website: website_html = ''
+            else: website_html = f"""
+            <strong>Website:</strong> 
+            <a href="{website}" target="_blank">Profile</a><br>
+"""
+            if 'nan' in email: email_html = ''
+            else: email_html = f"""
+            <strong>Email:</strong> {email}<br>
+"""
+            if 'nan' in scholar: scholar_html = ''
+            else: scholar_html = f"""
+            <strong>Google Scholar:</strong> 
+            <a href="{scholar}" target="_blank">View</a>
+"""
+
+            member_template = f"""
+
+      <div 
+        class="card mb-3" style="display: block"
+        data-position="{degree}"  
+      > 
+        <div class="card-body" style="overflow: auto;">
+            <!-- 让图片的父容器浮动到右侧 -->
+            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
+            <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <br>
+            {wechat_html}
+            </div>
+            <span class="{degree_style}" style="margin-bottom: 1em;{background_color}">{degree}</span>
+            <h5 class="card-title" style="color:#576263"><strong>{member_name}</strong></h5>
+            <p class="card-text">
+{website_html}
+{email_html}
+{scholar_html}
+            </p>
+        </div>
+      </div>
+
+""" 
+            all_member_html += member_template
+        all_member_html += """
+    <!-- 这里可继续添加更多成员 ... -->
+    </div>
+""" 
+        self.update_copy_new_new(src_path='../new_new_index.html', backup_path='../new_new_backup.html', 
+                            start_label='<!-- wby: 注意，切勿删除，程序代码识别team开始部分 -->',
+                            end_label='<!-- wby: 注意，切勿删除，程序代码识别team结束部分 -->',
+                            update_html=all_filter_html + '\n\n' + all_member_html) 
 
 if __name__ == "__main__":
 
     pub2html = Pub2HTML()
     # pub2html.wang_to_json()
-    pub2html.json_to_html()
+    # pub2html.json_to_html()
+    pub2html.member_json_to_html()

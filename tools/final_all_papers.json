@@ -1,4 +1,12 @@
 {
+    "LLM-Empowered State Representation for Reinforcement Learning": [
+        "2024",
+        "ICML 2024",
+        "Boyuan Wang, Yun Qu, Yuhang Jiang, Jianzhun Shao, Chang Liu, Wenming Yang, Xiangyang Ji",
+        "https://proceedings.mlr.press/v235/wang24bh.html",
+        "https://github.com/thu-rllab/LESR",
+        "https://www.youtube.com/watch?v=example"
+    ],
     "Beyond Any-Shot Adaptation: Predicting Optimization Outcome for Robustness Gains without Extra Pay": [
         "2025",
         "arXiv 2025",
@@ -197,14 +205,6 @@
         "Yun Qu, Boyuan Wang, Jianzhun Shao, Yuhang Jiang, Chen Chen, Zhenbin Ye, Lin Liu, Junfeng Yang, Lin Lai, Hongyang Qin, Minwen Deng, Juchao Zhuo, Deheng Ye, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Xiangyang Ji",
         "https://proceedings.neurips.cc/paper_files/paper/2023/file/464fefa022aaefc85d901317bbf13f85-Paper-Datasets_and_Benchmarks.pdf",
         "https://github.com/thu-rllab/Hokoff",
-        "https://www.youtube.com/watch?v=example"
-    ],
-    "LLM-Empowered State Representation for Reinforcement Learning": [
-        "2024",
-        "ICML 2024",
-        "Boyuan Wang, Yun Qu, Yuhang Jiang, Jianzhun Shao, Chang Liu, Wenming Yang, Xiangyang Ji",
-        "https://arxiv.org/pdf/2407.13237",
-        "https://github.com/thu-rllab/LESR",
         "https://www.youtube.com/watch?v=example"
     ],
     "Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning": [

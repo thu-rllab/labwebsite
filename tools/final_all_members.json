@@ -1,0 +1,79 @@
+{ 
+    "Xiangyang Ji": {
+        "degree": "Professor", 
+        "website": "nan",
+        "email": "xyji@tsinghua.edu.cn",
+        "scholar": "nan",
+        "wechat": "nan" 
+    },
+    "Qi (Cheems) Wang": {
+        "degree": "Associate Professor / Postdoctoral Fellow", 
+        "website": "https://sites.google.com/view/albert-q-wang-at-ai-community/home",
+        "email": "cheemswang@mail.tsinghua.edu.cn",
+        "scholar": "https://scholar.google.com/citations?user=Mvbvv3IAAAAJ",
+        "wechat": "Cheems_QW"
+    }, 
+    "Boyuan Wang": {
+        "degree": "Master Student", 
+        "website": "https://github.com/BoyuanWang-hub",
+        "email": "wangby22@mail.tsinghua.edu.cn",
+        "scholar": "https://scholar.google.com/citations?user=BQyuCvwAAAAJ&hl=zh-CN&oi=sra",
+        "wechat": "wbyxhz"
+    },
+    "Yun Qu": {
+        "degree": "Doctor Student", 
+        "website": "https://github.com/cloud-qu",
+        "email": "qy22@mail.tsinghua.edu.cn",
+        "scholar": "https://scholar.google.com/citations?user=l9Ky9goAAAAJ&hl=zh-CN&oi=sra",
+        "wechat": "thu-quyun"
+    },
+    "Yixiu Mao": {
+        "degree": "Doctor Student", 
+        "website": "https://github.com/maoyixiu",
+        "email": "myx21@mails.tsinghua.edu",
+        "scholar": "https://scholar.google.com/citations?user=gNcb5LUAAAAJ&hl=zh-CN&oi=sra",
+        "wechat": "maoyx921"
+    },
+    "Yuhang Jiang": {
+        "degree": "Doctor Student", 
+        "website": "https://github.com/Joy1112u",
+        "email": "jiangyh19@mails.tsinghua.edu",
+        "scholar": "https://scholar.google.com/citations?user=hBuJU48AAAAJ&hl=zh-CN&oi=sra",
+        "wechat": "yuhang_joy"
+    },
+    "Mengge Liu": {
+        "degree": "Doctor Student", 
+        "website": "nan",
+        "email": "nan",
+        "scholar": "nan",
+        "wechat": "LinXiG0409"
+    },
+    "Jinghao Chen": {
+        "degree": "Master Student", 
+        "website": "nan",
+        "email": "nan",
+        "scholar": "nan",
+        "wechat": "joseph16683362531"
+    },
+    "Wendong Huang": {
+        "degree": "Master Student", 
+        "website": "https://github.com/xbahqps",
+        "email": "h18156731272@163.com",
+        "scholar": "nan",
+        "wechat": "lxylowxq"
+    }, 
+    "Jianzhun Shao": {
+        "degree": "Doctor Student (Graduated)", 
+        "website": "https://github.com/qyz55",
+        "email": "sjz18@mails.tsinghua.edu",
+        "scholar": "https://scholar.google.com/citations?user=uCLTRH8AAAAJ&hl=zh-CN&oi=sra",
+        "wechat": "sjz_kod"
+    },
+    "Shuncheng He": {
+        "degree": "Doctor Student (Graduated)", 
+        "website": "https://github.com/Steven-Ho",
+        "email": "hesc16@mails.tsinghua.edu.cn",
+        "scholar": "nan",
+        "wechat": "thudahsc"
+    }
+}
