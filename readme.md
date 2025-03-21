@@ -37,7 +37,7 @@
 
 5. **特别注意：注意function.js筛选时对王老师多重名称的处理，并且均应转为小写**
 
-### 关于tools程序性进行论文转为html以及新增论文的说明
+### 关于tools程序性进行论文转为html以及新增论文、新增成员的说明
 1. tools文件夹模式
 ```
     ---tools
@@ -56,7 +56,7 @@
 
 3. 关于所有论文json格式转为html
 ```
-    总体运行：python publications_to_html.py
+    总体运行：python publications_to_html.py 函数为json_to_html()
 
 
     (1) tools/publications_to_html.py中的json_to_html()函数首先解析所有筛选条件；
@@ -64,7 +64,19 @@
     (3) 之后组合论文的html；
     (最后尤其重要) 进行牛牛index.html的更新。
 ```
-**非常重要！！！ 注意当进行"牛牛_index.html"的更新时，会定向更新以'<!-- wby: 增设筛选下拉框 -->'开始并以'<!-- “Show All” 按钮 -->'结束的部分，因此不要随意删减牛牛_index.html中的注释**
+
+4. 关于所有团队成员json格式转为html
+```
+    总体运行：python publications_to_html.py 函数为member_json_to_html()
+
+
+    (1) tools/publications_to_html.py中的member_json_to_html()函数首先解析所有筛选条件；
+    (2) 之后将所有筛选条件组合成filter html；
+    (3) 之后组合成员卡片card的html；
+    (最后尤其重要) 进行牛牛index.html的更新。
+```
+
+**非常重要！！！ 注意当进行"牛牛_index.html"的更新时，会定向更新以'<!-- wby: 注意，切勿删除，程序代码识别xxx开始部分 -->'开始并以'<!-- wby: 注意，切勿删除，程序代码识别xxx开始部分 -->'结束的部分，因此不要随意删减牛牛_index.html中的注释**
 
 ### Questions
 - btn btn-secondary btn-sm这玩意儿在哪定义的？

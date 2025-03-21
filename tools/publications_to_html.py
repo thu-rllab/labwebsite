@@ -305,5 +305,5 @@ if __name__ == "__main__":
 
     pub2html = Pub2HTML()
     # pub2html.wang_to_json()
-    # pub2html.json_to_html()
+    pub2html.json_to_html()
     pub2html.member_json_to_html()
