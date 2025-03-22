@@ -1,6 +1,7 @@
 {  
     "Qi (Cheems) Wang": {
         "degree": "Associate Professor / Postdoctoral Fellow", 
+        "github": "https://github.com/hhq123gogogo",
         "website": "https://sites.google.com/view/albert-q-wang-at-ai-community/home",
         "email": "cheemswang@mail.tsinghua.edu.cn",
         "scholar": "https://scholar.google.com/citations?user=Mvbvv3IAAAAJ",
@@ -8,41 +9,47 @@
     }, 
     "Boyuan Wang": {
         "degree": "Master Student", 
-        "website": "https://github.com/BoyuanWang-hub",
+        "website": "nan",
+        "github": "https://github.com/BoyuanWang-hub",
         "email": "wangby22@mail.tsinghua.edu.cn",
         "scholar": "https://scholar.google.com/citations?user=BQyuCvwAAAAJ&hl=zh-CN&oi=sra",
         "wechat": "wbyxhz"
     },
     "Yun Qu": {
         "degree": "Doctor Student", 
-        "website": "https://github.com/cloud-qu",
+        "github": "https://github.com/cloud-qu",
+        "website": "nan",
         "email": "qy22@mail.tsinghua.edu.cn",
         "scholar": "https://scholar.google.com/citations?user=l9Ky9goAAAAJ&hl=zh-CN&oi=sra",
         "wechat": "thu-quyun"
     },
     "Yixiu Mao": {
         "degree": "Doctor Student", 
-        "website": "https://github.com/maoyixiu",
+        "github": "https://github.com/maoyixiu",
+        "website": "nan",
         "email": "myx21@mails.tsinghua.edu",
         "scholar": "https://scholar.google.com/citations?user=gNcb5LUAAAAJ&hl=zh-CN&oi=sra",
         "wechat": "maoyx921"
     },
     "Yuhang Jiang": {
         "degree": "Doctor Student", 
-        "website": "https://github.com/Joy1112u",
+        "github": "https://github.com/Joy1112u",
+        "website": "nan",
         "email": "jiangyh19@mails.tsinghua.edu",
         "scholar": "https://scholar.google.com/citations?user=hBuJU48AAAAJ&hl=zh-CN&oi=sra",
         "wechat": "yuhang_joy"
     },
     "Mengge Liu": {
         "degree": "Doctor Student", 
-        "website": "https://github.com/pigeonmg",
+        "github": "https://github.com/pigeonmg",
+        "website": "nan",
         "email": "lmg22@mails.tsinghua.edu.cn",
         "scholar": "nan",
         "wechat": "LinXiG0409"
     },
     "Jinghao Chen": {
         "degree": "Master Student", 
+        "github": "nan",
         "website": "nan",
         "email": "nan",
         "scholar": "nan",
@@ -50,22 +57,41 @@
     },
     "Wendong Huang": {
         "degree": "Master Student", 
-        "website": "https://github.com/xbahqps",
+        "github": "https://github.com/xbahqps",
+        "website": "nan",
         "email": "h18156731272@163.com",
         "scholar": "nan",
         "wechat": "lxylowxq"
     }, 
     "Jianzhun Shao": {
         "degree": "Doctor Student (Graduated)", 
-        "website": "https://github.com/qyz55",
-        "email": "sjz18@mails.tsinghua.edu",
+        "github": "https://github.com/qyz55",
+        "website": "nan",
+        "email": "nan",
         "scholar": "https://scholar.google.com/citations?user=uCLTRH8AAAAJ&hl=zh-CN&oi=sra",
         "wechat": "sjz_kod"
     },
+    "Hongchang Zhang": {
+        "degree": "Doctor Student (Graduated)", 
+        "github": "nan",
+        "website": "nan",
+        "email": "nan",
+        "scholar": "nan",
+        "wechat": "nikjay12"
+    },
+    "Zihan Zhang": {
+        "degree": "Doctor Student (Graduated)", 
+        "github": "https://github.com/Zsubfunc",
+        "website": "nan",
+        "email": "nan",
+        "scholar": "https://scholar.google.com/citations?user=un0eGzEAAAAJ&hl=zh-CN&oi=sra",
+        "wechat": "Dinumner"
+    },
     "Shuncheng He": {
         "degree": "Doctor Student (Graduated)", 
-        "website": "https://github.com/Steven-Ho",
-        "email": "hesc16@mails.tsinghua.edu.cn",
+        "github": "https://github.com/Steven-Ho",
+        "website": "nan",
+        "email": "nan",
         "scholar": "nan",
         "wechat": "thudahsc"
     }

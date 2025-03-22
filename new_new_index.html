@@ -57,6 +57,10 @@
       box-shadow: 0 3px 12px rgba(0,0,0,0.1);
       margin-bottom: 40px;
     }
+    .container {
+  max-width: 90%; /* 调整为屏幕宽度的90% */
+  width: 85%;
+}
     .section-title {
       margin-bottom: 25px;
       border-bottom: 2px solid #3498db;
@@ -274,35 +278,38 @@
         <ul class="navbar-nav ml-auto">
           <li class="nav-item"><a class="nav-link" href="#about">Introduction</a></li>
           <li class="nav-item"><a class="nav-link" href="#publications">Publications</a></li>
+          <li class="nav-item"><a class="nav-link" href="#news">News</a></li>
           <li class="nav-item"><a class="nav-link" href="#team">Team Members</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <header class="hero">
+  <!-- <header class="hero">
     <div class="container">
       <h1>Welcome to THU-IDM</h1>
       <p>Exploring cutting-edge technology, creating a bright future together</p>
     </div>
-  </header>
+  </header> -->
 
   <section id="about" class="container">
     <h2 class="section-title">Introduction</h2>
       <div class="ji_card mb-3" style="display: block" data-position="Professor" > 
-        <div class="card-body" style="overflow: auto; display: flex; align-items: center"> 
-            <div style="float: left; width: 30%; height: 100%; text-align: center"> 
+        <div class="card-body" style="overflow: auto; display: flex; align-items: center;margin-left: 5% "> 
+            <div style="float: left; width: 28%; height: 100%; text-align: center"> 
               <img src="resources/people_img/ji.jpg" alt="Profile Photo" style="width: 80%; height: 80%; object-fit: cover; border-radius: 18px; margin-bottom: 3%;"> 
               <br>
               <span class="badge badge-info" style="margin-bottom: 3%;">Xiangyang Ji（Professor）</span> <br>
               <p class="card-text" style=" font-size: 1em;">  
                 <strong>Email:</strong> xyji@tsinghua.edu.cn <br>
+                <strong>Website:</strong> <a href="https://www.au.tsinghua.edu.cn/info/1111/1524.htm"> View</a>
               </p>
             </div>
             <div style="float: right; width: 70%; height: 100%; text-align: center"> 
               <img src="resources/people_img/family.jpg" alt="Profile Photo" style="width: 50%; height: 50%; object-fit: cover; border-radius: 18px; margin-bottom: 3%;">  
-              <p class="card-text" style=" font-size: 1em;">  
-                We are a cohesive and harmonious family! Under Professor Ji’s insightful leadership and with a strong passion for academic exploration, we achieves significant research outcomes.
+              <p class="card-text" style=" font-size: 1em; width: 80%; margin-left: auto; margin-right: auto; text-align: center">  
+                We are a cohesive and harmonious family! Under Professor Ji’s insightful leadership and with a strong passion for academic exploration, we achieve significant research outcomes.
               </p>
             </div>
 
@@ -311,11 +318,26 @@
             </div>
         </div>
       </div>
-    <p> The Intelligent Decision-Making Laboratory (THU-IDM) at Tsinghua University is directed by Professor Xiangyang Ji. Our research is centered on advancing decision-making intelligence, with a particular emphasis on generative modeling, reinforcement learning, and foundation models. The lab comprises members with diverse interdisciplinary expertise in fields such as automation, mathematics, physics, and computer science. Additionally, we maintain strong collaborative ties with international scholars, fostering a global perspective in our research endeavors. </p>
+    <p> The <strong>Intelligent Decision-Making Laboratory (THU-IDM)</strong> at Tsinghua University is directed by Professor Xiangyang Ji. Our research is centered on advancing decision-making intelligence, with a particular emphasis on generative modeling, reinforcement learning, and foundation models. The lab comprises members with diverse interdisciplinary expertise in fields such as automation, mathematics, physics, and computer science. Additionally, we maintain strong collaborative ties with international scholars, fostering a global perspective in our research endeavors. </p>
   </section>
  
 
   <section id="publications" class="container">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1037,6 +1059,8 @@
 
 
 
+
+
 <!-- wby: 注意，切勿删除，程序代码识别team开始部分 -->
 
     <!-- 容器：让标题和下拉框在同一行 -->
@@ -1060,25 +1084,30 @@
 
 
     <!-- 团队成员列表容器 -->
-    <div id="teamList">
+    <div id="teamList" class="row">
 
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="Associate Professor / Postdoctoral Fellow"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/Cheems_QW.jfif" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/Cheems_QW.jfif" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
-            <p style="margin-top: 5%"><strong>WeChat: </strong>Cheems_QW<p>
+            
             </div>
             <span class="badge badge-warning" style="margin-bottom: 1em;">Associate Professor / Postdoctoral Fellow</span>
             <h5 class="card-title" style="color:#576263"><strong>Qi (Cheems) Wang</strong></h5>
             <p class="card-text">
 
             <strong>Website:</strong> 
-            <a href="https://sites.google.com/view/albert-q-wang-at-ai-community/home" target="_blank">Profile</a><br>
+            <a href="https://sites.google.com/view/albert-q-wang-at-ai-community/home" target="_blank">view</a><br>
+
+
+            <strong>Github:</strong> 
+            <a href="https://github.com/hhq123gogogo" target="_blank">view</a><br>
 
 
             <strong>Email:</strong> cheemswang@mail.tsinghua.edu.cn<br>
@@ -1090,25 +1119,28 @@
             </p>
         </div>
       </div>
+    </div>
 
 
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="Master Student"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/wbyxhz.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/wbyxhz.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
-            <p style="margin-top: 5%"><strong>WeChat: </strong>wbyxhz<p>
+            
             </div>
             <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
             <h5 class="card-title" style="color:#576263"><strong>Boyuan Wang</strong></h5>
             <p class="card-text">
 
-            <strong>Website:</strong> 
-            <a href="https://github.com/BoyuanWang-hub" target="_blank">Profile</a><br>
+
+            <strong>Github:</strong> 
+            <a href="https://github.com/BoyuanWang-hub" target="_blank">view</a><br>
 
 
             <strong>Email:</strong> wangby22@mail.tsinghua.edu.cn<br>
@@ -1120,25 +1152,28 @@
             </p>
         </div>
       </div>
+    </div>
 
 
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="Doctor Student"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/thu-quyun.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/thu-quyun.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
-            <p style="margin-top: 5%"><strong>WeChat: </strong>thu-quyun<p>
+            
             </div>
             <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
             <h5 class="card-title" style="color:#576263"><strong>Yun Qu</strong></h5>
             <p class="card-text">
 
-            <strong>Website:</strong> 
-            <a href="https://github.com/cloud-qu" target="_blank">Profile</a><br>
+
+            <strong>Github:</strong> 
+            <a href="https://github.com/cloud-qu" target="_blank">view</a><br>
 
 
             <strong>Email:</strong> qy22@mail.tsinghua.edu.cn<br>
@@ -1150,25 +1185,28 @@
             </p>
         </div>
       </div>
+    </div>
 
 
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="Doctor Student"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/maoyx921.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/maoyx921.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
-            <p style="margin-top: 5%"><strong>WeChat: </strong>maoyx921<p>
+            
             </div>
             <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
             <h5 class="card-title" style="color:#576263"><strong>Yixiu Mao</strong></h5>
             <p class="card-text">
 
-            <strong>Website:</strong> 
-            <a href="https://github.com/maoyixiu" target="_blank">Profile</a><br>
+
+            <strong>Github:</strong> 
+            <a href="https://github.com/maoyixiu" target="_blank">view</a><br>
 
 
             <strong>Email:</strong> myx21@mails.tsinghua.edu<br>
@@ -1180,25 +1218,28 @@
             </p>
         </div>
       </div>
+    </div>
 
 
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="Doctor Student"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/yuhang_joy.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/yuhang_joy.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
-            <p style="margin-top: 5%"><strong>WeChat: </strong>yuhang_joy<p>
+            
             </div>
             <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
             <h5 class="card-title" style="color:#576263"><strong>Yuhang Jiang</strong></h5>
             <p class="card-text">
 
-            <strong>Website:</strong> 
-            <a href="https://github.com/Joy1112u" target="_blank">Profile</a><br>
+
+            <strong>Github:</strong> 
+            <a href="https://github.com/Joy1112u" target="_blank">view</a><br>
 
 
             <strong>Email:</strong> jiangyh19@mails.tsinghua.edu<br>
@@ -1210,25 +1251,28 @@
             </p>
         </div>
       </div>
+    </div>
 
 
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="Doctor Student"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/LinXiG0409.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/LinXiG0409.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
-            <p style="margin-top: 5%"><strong>WeChat: </strong>LinXiG0409<p>
+            
             </div>
             <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
             <h5 class="card-title" style="color:#576263"><strong>Mengge Liu</strong></h5>
             <p class="card-text">
 
-            <strong>Website:</strong> 
-            <a href="https://github.com/pigeonmg" target="_blank">Profile</a><br>
+
+            <strong>Github:</strong> 
+            <a href="https://github.com/pigeonmg" target="_blank">view</a><br>
 
 
             <strong>Email:</strong> lmg22@mails.tsinghua.edu.cn<br>
@@ -1237,18 +1281,20 @@
             </p>
         </div>
       </div>
+    </div>
 
 
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="Master Student"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/joseph16683362531.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/joseph16683362531.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
-            <p style="margin-top: 5%"><strong>WeChat: </strong>joseph16683362531<p>
+            
             </div>
             <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
             <h5 class="card-title" style="color:#576263"><strong>Jinghao Chen</strong></h5>
@@ -1256,28 +1302,32 @@
 
 
 
+
             </p>
         </div>
       </div>
+    </div>
 
 
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="Master Student"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/lxylowxq.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/lxylowxq.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
-            <p style="margin-top: 5%"><strong>WeChat: </strong>lxylowxq<p>
+            
             </div>
             <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
             <h5 class="card-title" style="color:#576263"><strong>Wendong Huang</strong></h5>
             <p class="card-text">
 
-            <strong>Website:</strong> 
-            <a href="https://github.com/xbahqps" target="_blank">Profile</a><br>
+
+            <strong>Github:</strong> 
+            <a href="https://github.com/xbahqps" target="_blank">view</a><br>
 
 
             <strong>Email:</strong> h18156731272@163.com<br>
@@ -1286,28 +1336,29 @@
             </p>
         </div>
       </div>
+    </div>
 
 
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="Doctor Student (Graduated)"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/sjz_kod.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/sjz_kod.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
-            <p style="margin-top: 5%"><strong>WeChat: </strong>sjz_kod<p>
+            
             </div>
             <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
             <h5 class="card-title" style="color:#576263"><strong>Jianzhun Shao</strong></h5>
             <p class="card-text">
 
-            <strong>Website:</strong> 
-            <a href="https://github.com/qyz55" target="_blank">Profile</a><br>
 
+            <strong>Github:</strong> 
+            <a href="https://github.com/qyz55" target="_blank">view</a><br>
 
-            <strong>Email:</strong> sjz18@mails.tsinghua.edu<br>
 
 
             <strong>Google Scholar:</strong> 
@@ -1316,33 +1367,91 @@
             </p>
         </div>
       </div>
+    </div>
 
 
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="Doctor Student (Graduated)"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/thudahsc.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/nikjay12.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
-            <p style="margin-top: 5%"><strong>WeChat: </strong>thudahsc<p>
+            
             </div>
             <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
-            <h5 class="card-title" style="color:#576263"><strong>Shuncheng He</strong></h5>
+            <h5 class="card-title" style="color:#576263"><strong>Hongchang Zhang</strong></h5>
             <p class="card-text">
 
-            <strong>Website:</strong> 
-            <a href="https://github.com/Steven-Ho" target="_blank">Profile</a><br>
 
-
-            <strong>Email:</strong> hesc16@mails.tsinghua.edu.cn<br>
 
 
             </p>
         </div>
       </div>
+    </div>
+
+
+      <div 
+        class="col-md-6 mb-3" style="display: none"
+        data-position="Doctor Student (Graduated)"  
+      > 
+      <div class="card h-100">
+        <div class="card-body" style="overflow: auto;">
+            <!-- 让图片的父容器浮动到右侧 -->
+            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
+            <img src="resources/people_img/Dinumner.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+            <br>
+            
+            </div>
+            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
+            <h5 class="card-title" style="color:#576263"><strong>Zihan Zhang</strong></h5>
+            <p class="card-text">
+
+
+            <strong>Github:</strong> 
+            <a href="https://github.com/Zsubfunc" target="_blank">view</a><br>
+
+
+
+            <strong>Google Scholar:</strong> 
+            <a href="https://scholar.google.com/citations?user=un0eGzEAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+            </p>
+        </div>
+      </div>
+    </div>
+
+
+      <div 
+        class="col-md-6 mb-3" style="display: none"
+        data-position="Doctor Student (Graduated)"  
+      > 
+      <div class="card h-100">
+        <div class="card-body" style="overflow: auto;">
+            <!-- 让图片的父容器浮动到右侧 -->
+            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
+            <img src="resources/people_img/thudahsc.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+            <br>
+            
+            </div>
+            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
+            <h5 class="card-title" style="color:#576263"><strong>Shuncheng He</strong></h5>
+            <p class="card-text">
+
+
+            <strong>Github:</strong> 
+            <a href="https://github.com/Steven-Ho" target="_blank">view</a><br>
+
+
+
+            </p>
+        </div>
+      </div>
+    </div>
 
 
     <!-- 这里可继续添加更多成员 ... -->
@@ -1351,14 +1460,15 @@
 
   </section>
 
-  <footer class="container">
+  <footer class="container" id="contact">
     <h4>Contact Us</h4>
     <p>
-      Address: 825, The Main Building, Tsinghua University, Beijing, China<br>
-      Email: cheemswang@mail.tsinghua.edu.cn<br>
-      WeChat Official Account: SIG-IDM
+      <strong>Address:</strong> 825, The Main Building, Tsinghua University, Beijing, China<br>
+      <strong>Email:</strong> cheemswang@mail.tsinghua.edu.cn<br>
+      <strong>Github:</strong> <a href="https://github.com/thu-rllab"> https://github.com/thu-rllab</a><br>
+      <strong>WeChat Official Account:</strong> SIG-IDM
     </p>
-    <h6 style="margin-top: -1em"><strong>Web Contributors: Boyuan Wang, Yun Qu, Qi (Cheems) Wang</strong></h6>
+    <h6 style="margin-top: 1em; margin-bottom: -1em;">Web Contributors: Boyuan Wang, Yun Qu, Qi (Cheems) Wang</h6>
   </footer>
 
   <!-- 将JavaScript文件放在底部 -->

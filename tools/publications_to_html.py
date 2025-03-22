@@ -224,11 +224,12 @@ class Pub2HTML:
         ### 程序性生成整个成员 ### 
         all_member_html = """
     <!-- 团队成员列表容器 -->
-    <div id="teamList">
+    <div id="teamList" class="row">
 """
         for member_name in self.all_members.keys():
-            degree, website, email, scholar, wechat = self.all_members[member_name]['degree'],\
+            degree, website, github, email, scholar, wechat = self.all_members[member_name]['degree'],\
                                                         self.all_members[member_name]['website'],\
+                                                        self.all_members[member_name]['github'],\
                                                         self.all_members[member_name]['email'],\
                                                         self.all_members[member_name]['scholar'],\
                                                         self.all_members[member_name]['wechat']
@@ -241,7 +242,7 @@ class Pub2HTML:
 
             ### for different people's wechat ###
             if 'xiangyang' in member_name.lower(): wechat_html = ""
-            else: wechat_html = f'<p style="margin-top: 5%"><strong>WeChat: </strong>{wechat}<p>'
+            else: wechat_html = "" #f'<p style="margin-top: 5%"><strong>WeChat: </strong>{wechat}<p>'
 
             ### for different people's degree ###
             background_color = ''
@@ -256,7 +257,12 @@ class Pub2HTML:
             if 'nan' in website: website_html = ''
             else: website_html = f"""
             <strong>Website:</strong> 
-            <a href="{website}" target="_blank">Profile</a><br>
+            <a href="{website}" target="_blank">view</a><br>
+"""
+            if 'nan' in github: github_html = ''
+            else: github_html = f"""
+            <strong>Github:</strong> 
+            <a href="{github}" target="_blank">view</a><br>
 """
             if 'nan' in email: email_html = ''
             else: email_html = f"""
@@ -268,18 +274,19 @@ class Pub2HTML:
             <a href="{scholar}" target="_blank">View</a>
 """
             ### set img margin top ### 
-            if '' in [website, email, scholar]: img_margin_top = 0
-            else: img_margin_top = 5
+            # if '' in [website, email, scholar]: img_margin_top = 0
+            # else: img_margin_top = 5
 
             member_template = f"""
       <div 
-        class="card mb-3" style="display: none"
+        class="col-md-6 mb-3" style="display: none"
         data-position="{degree}"  
       > 
+      <div class="card h-100">
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: {img_margin_top}%">
+            <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
             <br>
             {wechat_html}
             </div>
@@ -287,11 +294,13 @@ class Pub2HTML:
             <h5 class="card-title" style="color:#576263"><strong>{member_name}</strong></h5>
             <p class="card-text">
 {website_html}
+{github_html}
 {email_html}
 {scholar_html}
             </p>
         </div>
       </div>
+    </div>
 
 """ 
             all_member_html += member_template

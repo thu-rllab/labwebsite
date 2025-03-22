@@ -16,7 +16,7 @@
 
     // 将所有 card 存入数组，方便后续操作
     const cards = Array.from(cardsContainer.querySelectorAll('.card'));
-    const teamcards = Array.from(teamcardsContainer.querySelectorAll('.card'));
+    const teamcards = Array.from(teamcardsContainer.querySelectorAll('[data-position]'));
 
     // 初始只显示前多少条
     const itemsToShow = 5;
