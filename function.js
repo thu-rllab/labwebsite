@@ -19,7 +19,7 @@
     const teamcards = Array.from(teamcardsContainer.querySelectorAll('.card'));
 
     // 初始只显示前多少条
-    const itemsToShow = 10;
+    const itemsToShow = 5;
     
     // wby: 新增一个变量来控制是否显示全部论文
     let showAll = false; 

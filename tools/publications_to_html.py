@@ -113,9 +113,8 @@ class Pub2HTML:
         for value in filter_values:
             option_value += f'          <option value="{value}">{value}</option>\n'
         filter_html = f"""
-      <div style="margin-right: 1em">
-        <label for="{id_name}FilterDropdown" class="form-label me-2" style="margin-right: 1em; color:#576263"><strong>{show_name}:</strong></label>
-        <select id="{id_name}FilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
+      <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
+        <select id="{id_name}FilterDropdown" class="tech-dropdown-select">
           <option value="">All {show_name}s</option>
 {option_value}
         </select>
@@ -153,10 +152,11 @@ class Pub2HTML:
         conference_filter_html = self.get_filter_html('conference', 'Conference', filter_conference)
         all_filter_html = f"""
 <!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
-    
-    <!-- wby: 增设筛选下拉框 -->
-    <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
 
+    <!-- 容器：让标题和下拉框在同一行 -->
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">Publications</h2> 
+      <!-- 右侧的下拉框部分 -->
 {year_filter_html}
 
 {author_filter_html}
@@ -208,15 +208,16 @@ class Pub2HTML:
     
     def member_json_to_html(self):
         ### first step: get all member filter conditions ### 
-        all_degree_filter_conditions = ['Professor', 'Associate Professor', 'Postdoctoral Fellow', 'Doctor Student', 'Master Student']
+        all_degree_filter_conditions = ['Associate Professor', 'Postdoctoral Fellow', 'Doctor Student', 'Master Student']
         ### second step: get all filter html ### 
         degree_filter_html = self.get_filter_html('degree', 'Position', all_degree_filter_conditions)
         all_filter_html = f"""
 <!-- wby: 注意，切勿删除，程序代码识别team开始部分 -->
-    
-    <!-- wby: 增设筛选下拉框 -->
-    <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
 
+    <!-- 容器：让标题和下拉框在同一行 -->
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">Team Members</h2>
+      <!-- 右侧的下拉框部分 -->
 {degree_filter_html} 
     </div>
 """     
@@ -234,9 +235,9 @@ class Pub2HTML:
             
             
             ### for different people's img ###
-            if 'cheems' in member_name.lower(): img_path = f'resources/{wechat}.jfif'
-            elif 'xiangyang' in member_name.lower(): img_path = f'resources/ji.jpg'
-            else:  img_path = f'resources/{wechat}.jpg'
+            if 'cheems' in member_name.lower(): img_path = f'resources/people_img/{wechat}.jfif'
+            elif 'xiangyang' in member_name.lower(): img_path = f'resources/people_img/ji.jpg'
+            else:  img_path = f'resources/people_img/{wechat}.jpg'
 
             ### for different people's wechat ###
             if 'xiangyang' in member_name.lower(): wechat_html = ""
@@ -266,17 +267,19 @@ class Pub2HTML:
             <strong>Google Scholar:</strong> 
             <a href="{scholar}" target="_blank">View</a>
 """
+            ### set img margin top ### 
+            if '' in [website, email, scholar]: img_margin_top = 0
+            else: img_margin_top = 5
 
             member_template = f"""
-
       <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="{degree}"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: {img_margin_top}%">
             <br>
             {wechat_html}
             </div>

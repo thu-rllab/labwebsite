@@ -24,11 +24,18 @@
     }
     
     /* Hero 区域 */
+    /* #729ee6 0%, #b29ae9, #aef3f0 */
+    @keyframes gradient-flow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
     .hero {
-      background: linear-gradient(135deg, #3498db, #b6bdc2, #a48bdd, #b6bdc2, #e2df1a); /* 渐变背景 */ 
+      background: linear-gradient(120deg, #729ee6 0%, #b29ae9 25%, #68cac5 50%, #729ee6 75%, #b29ae9 100%, #68cac5 125%); /* 渐变背景 */ 
       color: #fff;
       padding: 60px 0;  /* 增加内边距，使内容更突出 */
       text-align: center;
+      background-position: 0% 50%;
+      background-size: 400% 100%;
       margin-bottom: 40px; /* 加大与下方区块的间距 */
       border-radius: 0 0 30px 30px; /* 底部圆角更圆润 */
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -37,6 +44,9 @@
       font-size: 3.5rem; /* 略大字号 */
       font-weight: 700;
       margin-bottom: 20px;
+    }
+    .hero:hover {
+      animation: gradient-flow 1.5s linear infinite;
     }
     
     /* 通用 container 区块 */
@@ -53,6 +63,11 @@
       padding-bottom: 10px;
       font-size: 1.8rem;
     }
+    .wby-section-title {
+      margin-bottom: 25px; 
+      padding-bottom: 10px;
+      font-size: 1.8rem;
+    }
     .section-small-title {
       margin-bottom: 25px;
       border-bottom: 2px solid #3498db;
@@ -61,7 +76,30 @@
     }
     
     /* 卡片样式优化 */
-    .card {
+    @keyframes reverse-gradient-flow {
+      0% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .card { 
+      background: linear-gradient(120deg, #ffffff 0%, #ffffff 20%, #ffffff 40%, #a0dbe5 60%, #ffffff 80%, #ffffff 100%); /* 渐变背景 */ 
+      background-position: 0% 50%;
+      background-size: 400% 100%;
+      border: none;
+      border-radius: 12px;  /* 更圆润的卡片 */
+      box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;  /* 内边距增大 */ 
+      margin-bottom: 20px;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      animation: reverse-gradient-flow 0.3s linear;
+    }
+
+    .ji_card { 
       border: none;
       border-radius: 12px;  /* 更圆润的卡片 */
       box-shadow: 0 3px 12px rgba(0,0,0,0.1);
@@ -72,7 +110,7 @@
       background-color: #fff;
       margin-bottom: 20px;
     }
-    .card:hover {
+    .ji_card:hover {
       transform: translateY(-5px);
       box-shadow: 0 6px 20px rgba(0,0,0,0.15);
     }
@@ -83,6 +121,15 @@
       font-weight: bold;
       border-radius: 8px; /* 加入圆角 */
       padding: 5px 10px;
+    } 
+
+    /* 按钮 */
+    .showMoreBtn {   
+      border: 0px solid #ffffff; 
+      border-radius: 18px;
+      font-size: 1em;
+      background: #6fcebb; 
+      font-family: 'sans-serif'; 
     }
     
     /* 页脚 */
@@ -135,6 +182,86 @@
   }
 
   </style>
+
+  <style>
+    /* 整个容器 */
+    .tech-dropdown-container {
+      margin-right: 1em;
+      display: inline-block; /* 或根据需要使用其他布局 */
+      font-family: 'Roboto', sans-serif; /* 科技感字体 */
+    }
+
+    .tech-dropdown-label {
+      margin-right: 0.5em;
+      color: #576263;
+      font-weight: bold;
+    }
+
+    /* 下拉框主体 */
+    .tech-dropdown-select {
+      /* 隐藏默认箭头 */
+      appearance: none;
+      -moz-appearance: none;
+      -webkit-appearance: none; 
+
+      /* 对 IE / Edge 处理默认箭头 */
+      background-image: none;
+    }
+
+    /* 让下拉的选项字体变黑色，并设置渐变背景 */
+    .tech-dropdown-select option {
+      color: black; /* 下拉时的文字变黑 */ 
+    } 
+
+    /* 基础样式 */
+    .tech-dropdown-select {
+      position: relative;
+      display: inline-block;
+      width: 200px;               /* 你可根据需要调整宽度 */
+      height: 35px;
+      text-align: center;
+      text-align-last: center; /* 让选中的选项也居中 */
+      text-indent: -7%; /* 让文本向左偏移 5% */
+      color: #ffffff;
+      border: 0px solid #ffffff;  /* 边框颜色 */
+      border-radius: 18px;
+      background: linear-gradient(120deg, #729ee6, #b29ae9, #aef3f0);
+      background-size: 200% 200%;
+      background-position: 0% 50%;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      outline: none; /* 去除点击时可能出现的外部描边 */
+    }
+
+    /* 鼠标悬停时，让背景渐变流动，并加亮边框 */
+    .tech-dropdown-select:hover {
+      /* background-position: 100% 50%;  */
+      animation: gradient-flow 0.5s infinite linear alternate;
+    } 
+
+    /* 隐藏 IE 的默认箭头 */
+    .tech-dropdown-select::-ms-expand {
+      display: none;
+    }
+
+    /* 自定义箭头: 使用伪元素 ::after */
+    .tech-dropdown-container {
+      position: relative; /* 使伪元素定位在容器内 */
+    }
+
+    .tech-dropdown-container::after {
+      content: "▼"; /* 或者使用 Unicode: "\25BC" */
+      position: absolute;
+      top: 50%;
+      right: 1em;      /* 与 select 的 padding-right 相呼应 */
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #fff;
+      font-size: 0.8em;
+    }
+  </style>
+
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
@@ -162,24 +289,50 @@
 
   <section id="about" class="container">
     <h2 class="section-title">Introduction</h2>
-    <p>We are THU-IDM, a special interest group focused on intelligent decision-making within the Department of Automation at Tsinghua University.</p>
+      <div class="ji_card mb-3" style="display: block" data-position="Professor" > 
+        <div class="card-body" style="overflow: auto; display: flex; align-items: center"> 
+            <div style="float: left; width: 30%; height: 100%; text-align: center"> 
+              <img src="resources/people_img/ji.jpg" alt="Profile Photo" style="width: 80%; height: 80%; object-fit: cover; border-radius: 18px; margin-bottom: 3%;"> 
+              <br>
+              <span class="badge badge-info" style="margin-bottom: 3%;">Xiangyang Ji（Professor）</span> <br>
+              <p class="card-text" style=" font-size: 1em;">  
+                <strong>Email:</strong> xyji@tsinghua.edu.cn <br>
+              </p>
+            </div>
+            <div style="float: right; width: 70%; height: 100%; text-align: center"> 
+              <img src="resources/people_img/family.jpg" alt="Profile Photo" style="width: 50%; height: 50%; object-fit: cover; border-radius: 18px; margin-bottom: 3%;">  
+              <p class="card-text" style=" font-size: 1em;">  
+                We are a cohesive and harmonious family! Under Professor Ji’s insightful leadership and with a strong passion for academic exploration, we achieves significant research outcomes.
+              </p>
+            </div>
+
+            <div>  
+              
+            </div>
+        </div>
+      </div>
+    <p> The Intelligent Decision-Making Laboratory (THU-IDM) at Tsinghua University is directed by Professor Xiangyang Ji. Our research is centered on advancing decision-making intelligence, with a particular emphasis on generative modeling, reinforcement learning, and foundation models. The lab comprises members with diverse interdisciplinary expertise in fields such as automation, mathematics, physics, and computer science. Additionally, we maintain strong collaborative ties with international scholars, fostering a global perspective in our research endeavors. </p>
   </section>
  
 
   <section id="publications" class="container">
-    <h2 class="section-title">Publications</h2>
 
-    
-    
+
+
+
+
+
+
+
 <!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
-    
-    <!-- wby: 增设筛选下拉框 -->
-    <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
 
+    <!-- 容器：让标题和下拉框在同一行 -->
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">Publications</h2> 
+      <!-- 右侧的下拉框部分 -->
 
-      <div style="margin-right: 1em">
-        <label for="yearFilterDropdown" class="form-label me-2" style="margin-right: 1em; color:#576263"><strong>Year:</strong></label>
-        <select id="yearFilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
+      <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
+        <select id="yearFilterDropdown" class="tech-dropdown-select">
           <option value="">All Years</option>
           <option value="2025">2025</option>
           <option value="2024">2024</option>
@@ -192,18 +345,16 @@
 
 
 
-      <div style="margin-right: 1em">
-        <label for="authorFilterDropdown" class="form-label me-2" style="margin-right: 1em; color:#576263"><strong>Author:</strong></label>
-        <select id="authorFilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
+      <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
+        <select id="authorFilterDropdown" class="tech-dropdown-select">
           <option value="">All Authors</option>
           <option value="Boyuan Wang">Boyuan Wang</option>
           <option value="Chang Liu">Chang Liu</option>
-          <option value="Chen Chen">Chen Chen</option>
           <option value="Hongchang Zhang">Hongchang Zhang</option>
           <option value="Jianzhun Shao">Jianzhun Shao</option>
+          <option value="Mengge Liu">Mengge Liu</option>
           <option value="Qi (Cheems) Wang">Qi (Cheems) Wang</option>
           <option value="Shuncheng He">Shuncheng He</option>
-          <option value="Xiangyang Ji">Xiangyang Ji</option>
           <option value="Yixiu Mao">Yixiu Mao</option>
           <option value="Yuhang Jiang">Yuhang Jiang</option>
           <option value="Yun Qu">Yun Qu</option>
@@ -213,9 +364,8 @@
 
 
 
-      <div style="margin-right: 1em">
-        <label for="conferenceFilterDropdown" class="form-label me-2" style="margin-right: 1em; color:#576263"><strong>Conference:</strong></label>
-        <select id="conferenceFilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
+      <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
+        <select id="conferenceFilterDropdown" class="tech-dropdown-select">
           <option value="">All Conferences</option>
           <option value="AAAI">AAAI</option>
           <option value="ICLR">ICLR</option>
@@ -340,7 +490,7 @@
           </p>
           <a href=" https://proceedings.mlr.press/v235/wang24bh.html " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/LESR " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
+          <a href=" ./resources/poster_demo/poster-lesr.pdf " class="btn btn-info btn-sm" target="_blank">Demo</a>
         </div>
       </div>
 
@@ -788,28 +938,6 @@
 
       <div 
         class="card mb-3" style="display: none"
-        data-year="2023" 
-        data-authors="Lin Liu, Jianzhun Shao, Xinkai Chen, Yun Qu, Boyuan Wang, Zhenbin Ye, Yuexuan Tu, Hongyang Qin, Lvfang Tao, Junfeng Yang, Lin Lai, Yuanqin Wang, Meng Meng, Wenjun Wang, Lin Yuan, Xiyang Ji, Minwen Deng, Juchao Zhuo, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Wengang Zhou, Houqing Li, Ning Xie, Xiangyang Ji, Deheng Ye"
-        data-conference="NeurIPS 2023"
-      > 
-        <div class="card-body">
-          <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
-          <h5 class="card-title" style="color:#576263">
-            <strong>HoK3v3: an Environment for Generalization in Heterogeneous Multi-agent Reinforcement Learning</strong>
-          </h5>
-          <p class="card-text">
-            <strong>Authors:</strong> Lin Liu, Jianzhun Shao, Xinkai Chen, Yun Qu, Boyuan Wang, Zhenbin Ye, Yuexuan Tu, Hongyang Qin, Lvfang Tao, Junfeng Yang, Lin Lai, Yuanqin Wang, Meng Meng, Wenjun Wang, Lin Yuan, Xiyang Ji, Minwen Deng, Juchao Zhuo, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Wengang Zhou, Houqing Li, Ning Xie, Xiangyang Ji, Deheng Ye
-          </p>
-          <a href=" https://openreview.net/pdf?id=calKOSmBxj " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" https://github.com/tencent-ailab/hok_env " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" https://www.youtube.com/watch?v=example " class="btn btn-info btn-sm" target="_blank">Demo</a>
-        </div>
-      </div>
-
-
-
-      <div 
-        class="card mb-3" style="display: none"
         data-year="2022" 
         data-authors="Qi Wang, Herke van Hoof"
         data-conference="ICML 2022"
@@ -875,12 +1003,11 @@
 
     <!-- 这里可继续添加更多论文 ... -->
     </div>
-
 <!-- wby: 注意，切勿删除，程序代码识别publications结束部分 -->
 
 <!-- “Show All” 按钮 -->
     <div class="mt-3" style="text-align: center">
-      <button id="showMoreBtn" class="btn btn-secondary" style="display: none">Show All</button>
+      <button id="showMoreBtn" class="showMoreBtn btn-secondary" style="display: none">Show All</button>
     </div>
 
     <!-- “That's all” --> 
@@ -902,7 +1029,7 @@
   </section>
 
   <section id="team" class="container">
-    <h2 class="section-title">Team Members</h2> 
+
 
 
 
@@ -911,16 +1038,15 @@
 
 
 <!-- wby: 注意，切勿删除，程序代码识别team开始部分 -->
-    
-    <!-- wby: 增设筛选下拉框 -->
-    <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
 
+    <!-- 容器：让标题和下拉框在同一行 -->
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">Team Members</h2>
+      <!-- 右侧的下拉框部分 -->
 
-      <div style="margin-right: 1em">
-        <label for="degreeFilterDropdown" class="form-label me-2" style="margin-right: 1em; color:#576263"><strong>Position:</strong></label>
-        <select id="degreeFilterDropdown" class="form-select d-inline-block w-auto" style="margin-right: 1em">
+      <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
+        <select id="degreeFilterDropdown" class="tech-dropdown-select">
           <option value="">All Positions</option>
-          <option value="Professor">Professor</option>
           <option value="Associate Professor">Associate Professor</option>
           <option value="Postdoctoral Fellow">Postdoctoral Fellow</option>
           <option value="Doctor Student">Doctor Student</option>
@@ -936,40 +1062,14 @@
     <!-- 团队成员列表容器 -->
     <div id="teamList">
 
-
       <div 
-        class="card mb-3" style="display: block"
-        data-position="Professor"  
-      > 
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/ji.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
-            <br>
-            
-            </div>
-            <span class="badge badge-info" style="margin-bottom: 1em;">Professor</span>
-            <h5 class="card-title" style="color:#576263"><strong>Xiangyang Ji</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Email:</strong> xyji@tsinghua.edu.cn<br>
-
-
-            </p>
-        </div>
-      </div>
-
-
-
-      <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="Associate Professor / Postdoctoral Fellow"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/Cheems_QW.jfif" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/Cheems_QW.jfif" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
             <br>
             <p style="margin-top: 5%"><strong>WeChat: </strong>Cheems_QW<p>
             </div>
@@ -992,15 +1092,14 @@
       </div>
 
 
-
       <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="Master Student"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/wbyxhz.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/wbyxhz.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
             <br>
             <p style="margin-top: 5%"><strong>WeChat: </strong>wbyxhz<p>
             </div>
@@ -1023,15 +1122,14 @@
       </div>
 
 
-
       <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="Doctor Student"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/thu-quyun.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/thu-quyun.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
             <br>
             <p style="margin-top: 5%"><strong>WeChat: </strong>thu-quyun<p>
             </div>
@@ -1054,15 +1152,14 @@
       </div>
 
 
-
       <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="Doctor Student"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/maoyx921.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/maoyx921.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
             <br>
             <p style="margin-top: 5%"><strong>WeChat: </strong>maoyx921<p>
             </div>
@@ -1085,15 +1182,14 @@
       </div>
 
 
-
       <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="Doctor Student"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/yuhang_joy.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/yuhang_joy.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
             <br>
             <p style="margin-top: 5%"><strong>WeChat: </strong>yuhang_joy<p>
             </div>
@@ -1116,15 +1212,14 @@
       </div>
 
 
-
       <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="Doctor Student"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/LinXiG0409.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/LinXiG0409.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
             <br>
             <p style="margin-top: 5%"><strong>WeChat: </strong>LinXiG0409<p>
             </div>
@@ -1132,6 +1227,11 @@
             <h5 class="card-title" style="color:#576263"><strong>Mengge Liu</strong></h5>
             <p class="card-text">
 
+            <strong>Website:</strong> 
+            <a href="https://github.com/pigeonmg" target="_blank">Profile</a><br>
+
+
+            <strong>Email:</strong> lmg22@mails.tsinghua.edu.cn<br>
 
 
             </p>
@@ -1139,15 +1239,14 @@
       </div>
 
 
-
       <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="Master Student"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/joseph16683362531.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/joseph16683362531.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
             <br>
             <p style="margin-top: 5%"><strong>WeChat: </strong>joseph16683362531<p>
             </div>
@@ -1162,15 +1261,14 @@
       </div>
 
 
-
       <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="Master Student"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/lxylowxq.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/lxylowxq.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
             <br>
             <p style="margin-top: 5%"><strong>WeChat: </strong>lxylowxq<p>
             </div>
@@ -1190,15 +1288,14 @@
       </div>
 
 
-
       <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="Doctor Student (Graduated)"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/sjz_kod.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/sjz_kod.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
             <br>
             <p style="margin-top: 5%"><strong>WeChat: </strong>sjz_kod<p>
             </div>
@@ -1221,15 +1318,14 @@
       </div>
 
 
-
       <div 
-        class="card mb-3" style="display: block"
+        class="card mb-3" style="display: none"
         data-position="Doctor Student (Graduated)"  
       > 
         <div class="card-body" style="overflow: auto;">
             <!-- 让图片的父容器浮动到右侧 -->
             <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/thudahsc.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
+            <img src="resources/people_img/thudahsc.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px; margin-top: 5%">
             <br>
             <p style="margin-top: 5%"><strong>WeChat: </strong>thudahsc<p>
             </div>
@@ -1262,7 +1358,7 @@
       Email: cheemswang@mail.tsinghua.edu.cn<br>
       WeChat Official Account: SIG-IDM
     </p>
-    <h6 style="color:#75abc0; margin-top: -1em"><strong>Web Contributors: Qi (Cheems) Wang, Boyuan Wang, Yun Qu</strong></h6>
+    <h6 style="margin-top: -1em"><strong>Web Contributors: Boyuan Wang, Yun Qu, Qi (Cheems) Wang</strong></h6>
   </footer>
 
   <!-- 将JavaScript文件放在底部 -->
@@ -1273,4 +1369,4 @@
 </html>
 
 
-<!-- 1. 论文页加一个标签 按照年份、课题组成员筛选；且实现按年份排序 2. 只展示前10条，之后就show more -->
+ <!-- 1. 调整季老师美观 -->

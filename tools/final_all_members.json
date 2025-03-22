@@ -1,11 +1,4 @@
-{ 
-    "Xiangyang Ji": {
-        "degree": "Professor", 
-        "website": "nan",
-        "email": "xyji@tsinghua.edu.cn",
-        "scholar": "nan",
-        "wechat": "nan" 
-    },
+{  
     "Qi (Cheems) Wang": {
         "degree": "Associate Professor / Postdoctoral Fellow", 
         "website": "https://sites.google.com/view/albert-q-wang-at-ai-community/home",
@@ -43,8 +36,8 @@
     },
     "Mengge Liu": {
         "degree": "Doctor Student", 
-        "website": "nan",
-        "email": "nan",
+        "website": "https://github.com/pigeonmg",
+        "email": "lmg22@mails.tsinghua.edu.cn",
         "scholar": "nan",
         "wechat": "LinXiG0409"
     },

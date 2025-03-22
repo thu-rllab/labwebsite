@@ -1,9 +1,9 @@
 # About This Website 
 
-### 关于html中的论文格式
+### 关于html中的publications格式
 - 所有论文统一保存在div id = publicationsList中
 - 每篇论文均要使用data属性增设dic class = card mb-3，方便javascript筛选
-- 论文前端主题展示为<div class="card-body">
+- 论文前端主题卡片类为"div class="card-body""
 - 所有论文元素最初应当均设置为display=none，统一由function.js调度显示
 
 ### 关于增设的function.js功能函数
@@ -78,5 +78,42 @@
 
 **非常重要！！！ 注意当进行"牛牛_index.html"的更新时，会定向更新以'<!-- wby: 注意，切勿删除，程序代码识别xxx开始部分 -->'开始并以'<!-- wby: 注意，切勿删除，程序代码识别xxx开始部分 -->'结束的部分，因此不要随意删减牛牛_index.html中的注释**
 
-### Questions
-- btn btn-secondary btn-sm这玩意儿在哪定义的？
+### 关于增设美观流动项
+
+1. 本节术语
+```
+    (1) 屏幕百分比：指我们人在前端可视化网页时看到的百分比，屏幕100%指的就是整个屏幕，取值区间为[0, 100%]；
+    (2) 画布百分比：指我们设定流动时定义的画布，可以为任何值，取值区间为[0, +∞)
+```
+
+2. 首先在style中引入动画的定义：
+```
+    @keyframes gradient-flow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+```
+**注意！！！这里的百分数不是前端的屏幕尺寸，而是你定义的画布尺寸，比如你定义了background-size: 300% 100%;，那么这里的100%就是300%！！！**
+
+3. 在主组件中设置三项
+```
+    (1) 设置背景渐变 background: linear-gradient(xxxdeg[角度], 颜色 xx%, 颜色 xx%)；
+    (2) 设置background-position: 0% 50%; 表示起始在x轴0% y轴50%的位置；
+    (3) 设置background-size: 300% 100%; 表示画布尺寸x轴为300%，y轴为100%。
+    注意！上述三个必须按顺序设置！
+```
+**注意！！linear-gradient中的百分数不是前端的屏幕尺寸，而是你定义的画布尺寸，比如你定义了background-size: 300% 100%;，那么这里的100%就是300%！！！**
+
+4. 设定循环流动
+```
+    .组件名称:hover {
+      animation: gradient-flow 1.5s linear infinite;
+    }
+```
+
+5. 可视化无限循环不跳变的技巧(一句话总结为开始与结束一致，且将结束的所有颜色定为屏幕的100%)
+```
+    (1) 设置linear-gradient：确保视野开始与结束画面的重合，即设定linear-gradient确保开始帧与结束帧颜色渐变一致；
+    (2) 计算background-size：确保结束时显示为屏幕的100%，即假如设定为[颜色1，颜色2]作为结束，那么[颜色1，颜色2]之间的间隔将为屏幕的100%，整体画布x轴尺寸计算为 100% / (最终颜色之间的间隔数) * 总间隔数；
+    (3) 补加：可做可不做，由于比如你设定 颜色a 25%, 颜色b 50%, 颜色a 75%, 颜色b 100%。由于一开始的画面其实50%后面还会被75%的影响，因此昨晚上述(1)(2)后建议在尾部超出100%的位置补加一个颜色（比如此example补加一个颜色a）。这样操作起来更复杂，要先补加，然后重新计算background-size，然后还要设定gradient-flow结束时并不是100%。
+``` 

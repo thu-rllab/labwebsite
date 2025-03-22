@@ -5,7 +5,7 @@
         "Boyuan Wang, Yun Qu, Yuhang Jiang, Jianzhun Shao, Chang Liu, Wenming Yang, Xiangyang Ji",
         "https://proceedings.mlr.press/v235/wang24bh.html",
         "https://github.com/thu-rllab/LESR",
-        "https://www.youtube.com/watch?v=example"
+        "./resources/poster_demo/poster-lesr.pdf"
     ],
     "Beyond Any-Shot Adaptation: Predicting Optimization Outcome for Robustness Gains without Extra Pay": [
         "2025",
@@ -221,14 +221,6 @@
         "Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji",
         "https://openreview.net/pdf?id=u0aNcjqhEJ",
         "https://github.com/thu-rllab/CAMA",
-        "https://www.youtube.com/watch?v=example"
-    ],
-    "HoK3v3: an Environment for Generalization in Heterogeneous Multi-agent Reinforcement Learning": [
-        "2023",
-        "NeurIPS 2023",
-        "Lin Liu, Jianzhun Shao, Xinkai Chen, Yun Qu, Boyuan Wang, Zhenbin Ye, Yuexuan Tu, Hongyang Qin, Lvfang Tao, Junfeng Yang, Lin Lai, Yuanqin Wang, Meng Meng, Wenjun Wang, Lin Yuan, Xiyang Ji, Minwen Deng, Juchao Zhuo, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Wengang Zhou, Houqing Li, Ning Xie, Xiangyang Ji, Deheng Ye",
-        "https://openreview.net/pdf?id=calKOSmBxj",
-        "https://github.com/tencent-ailab/hok_env",
         "https://www.youtube.com/watch?v=example"
     ]
 }
