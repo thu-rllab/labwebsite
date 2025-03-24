@@ -94,18 +94,19 @@ class Pub2HTML:
             for cur_every_author in cur_authors:
                 filter_author[cur_every_author.replace('*', '').strip()] = 0
             filter_conference[cur_conference.replace(cur_year, '').strip()] = 0
-        filter_author = [
-            'Yixiu Mao',
-            'Yun Qu',
-            'Qi (Cheems) Wang', 
-            'Hongchang Zhang',
-            'Boyuan Wang',
-            'Shuncheng He',
-            'Yuhang Jiang',
-            'Jianzhun Shao',
-            'Chang Liu', 
-            'Mengge Liu' 
-        ] 
+        # filter_author = [
+        #     'Yixiu Mao',
+        #     'Yun Qu',
+        #     'Qi (Cheems) Wang', 
+        #     'Hongchang Zhang',
+        #     'Boyuan Wang',
+        #     'Shuncheng He',
+        #     'Yuhang Jiang',
+        #     'Jianzhun Shao',
+        #     'Chang Liu', 
+        #     'Mengge Liu' 
+        # ] 
+        filter_author = list(self.all_members.keys()) 
         return sorted(list(filter_year.keys()), reverse=True), sorted(filter_author), sorted(list(filter_conference.keys()))
     
     def get_filter_html(self, id_name, show_name, filter_values):
@@ -173,6 +174,11 @@ class Pub2HTML:
         for cur_title, cur_title_values in time_sorted_papers:
             cur_year, cur_conference, cur_authors, cur_paper_link, cur_code_link, cur_demo_link = cur_title_values
 
+            ### if no paper/code/demo, then do not show ###
+            cur_paper_link_html = '' if cur_paper_link == 'nan' else f'          <a href=" {cur_paper_link} " class="btn btn-secondary btn-sm" target="_blank">Paper</a>'
+            cur_code_link_html = '' if cur_code_link == 'nan' else f'          <a href=" {cur_code_link} " class="btn btn-secondary btn-sm" target="_blank">Code</a>'
+            cur_demo_link_html = '' if cur_demo_link == 'nan' else f'          <a href=" {cur_demo_link} " class="btn btn-secondary btn-sm" target="_blank">Demo</a>'
+
             html_template = f"""
 
       <div 
@@ -189,9 +195,9 @@ class Pub2HTML:
           <p class="card-text">
             <strong>Authors:</strong> {cur_authors}
           </p>
-          <a href=" {cur_paper_link} " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" {cur_code_link} " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" {cur_demo_link} " class="btn btn-info btn-sm" target="_blank">Demo</a>
+{cur_paper_link_html}
+{cur_code_link_html}
+{cur_demo_link_html}
         </div>
       </div>
 
