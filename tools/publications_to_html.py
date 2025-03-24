@@ -271,22 +271,22 @@ class Pub2HTML:
             ### for different people's website, email, google scholar ###
             if 'nan' in website: website_html = ''
             else: website_html = f"""
-            <strong>Website:</strong> 
-            <a href="{website}" target="_blank">view</a><br>
+                            <strong>Website:</strong> 
+                            <a href="{website}" target="_blank">view</a><br>
 """
             if 'nan' in github: github_html = ''
             else: github_html = f"""
-            <strong>Github:</strong> 
-            <a href="{github}" target="_blank">view</a><br>
+                            <strong>Github:</strong> 
+                            <a href="{github}" target="_blank">view</a><br>
 """
             if 'nan' in email: email_html = ''
             else: email_html = f"""
-            <strong>Email:</strong> {email}<br>
+                            <strong>Email:</strong> {email}<br>
 """
             if 'nan' in scholar: scholar_html = ''
             else: scholar_html = f"""
-            <strong>Google Scholar:</strong> 
-            <a href="{scholar}" target="_blank">View</a>
+                            <strong>Google Scholar:</strong> 
+                            <a href="{scholar}" target="_blank">View</a>
 """
             ### set img margin top ### 
             # if '' in [website, email, scholar]: img_margin_top = 0
@@ -298,21 +298,27 @@ class Pub2HTML:
         data-position="{degree}"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            {wechat_html}
-            </div>
-            <span class="{degree_style}" style="margin-bottom: 1em;{background_color}">{degree}</span>
-            <h5 class="card-title" style="color:#576263"><strong>{member_name}</strong></h5>
-            <p class="card-text">
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="{degree_style}" style="margin-bottom: 1em;{background_color}">{degree}</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>{member_name}</strong></h5>
+                        <p class="card-text">
 {website_html}
 {github_html}
 {email_html}
 {scholar_html}
-            </p>
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
+            </div>
         </div>
       </div>
     </div>

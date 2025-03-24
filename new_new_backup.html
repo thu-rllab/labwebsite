@@ -94,13 +94,16 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       display: flex;
       justify-content: space-between;
-      padding: 20px;  /* 内边距增大 */ 
+      padding: 0px; 
       margin-bottom: 20px;
     }
     .card:hover {
       transform: translateY(-5px);
       box-shadow: 0 6px 20px rgba(0,0,0,0.15);
       animation: reverse-gradient-flow 0.3s linear;
+    } 
+    .card-title {
+      font-size: 1.3rem;
     }
     
     .btn {
@@ -120,7 +123,7 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       display: flex;
       justify-content: space-between;
-      padding: 20px;  /* 内边距增大 */
+      padding: 0px;  /* 内边距增大 */
       background-color: #fff;
       margin-bottom: 20px;
     }
@@ -239,9 +242,9 @@
       color: #ffffff;
       border: 0px solid #ffffff;  /* 边框颜色 */
       border-radius: 18px;
-      background: linear-gradient(120deg, #729ee6, #b29ae9, #aef3f0);
-      background-size: 200% 200%;
+      background: linear-gradient(135deg, #729ee6 0%, #b29ae9 25%, #91d8d5 50%, #729ee6 75%, #b29ae9 100%);
       background-position: 0% 50%;
+      background-size: 400% 100%;
       cursor: pointer;
       font-size: 0.9rem;
       transition: all 0.2s ease;
@@ -251,7 +254,7 @@
     /* 鼠标悬停时，让背景渐变流动，并加亮边框 */
     .tech-dropdown-select:hover {
       /* background-position: 100% 50%;  */
-      animation: gradient-flow 0.5s infinite linear alternate;
+      animation: gradient-flow 1.5s linear infinite;
     } 
 
     /* 隐藏 IE 的默认箭头 */
@@ -306,7 +309,7 @@
   <section id="about" class="container">
     <h2 class="section-title">Introduction</h2>
       <div class="ji_card mb-3" style="display: block" data-position="Professor" > 
-        <div class="card-body" style="overflow: auto; display: flex; align-items: center;margin-left: 5% "> 
+        <div class="card-body" style="overflow: auto; display: flex; align-items: center;margin-left: 10% "> 
             <div style="float: left; width: 28%; height: 100%; text-align: center"> 
               <img src="resources/people_img/ji.jpg" alt="Profile Photo" style="width: 80%; height: 80%; object-fit: cover; border-radius: 18px; margin-bottom: 3%;"> 
               <br>
@@ -333,6 +336,11 @@
  
 
   <section id="publications" class="container">
+
+
+
+
+
 
 
 
@@ -1061,6 +1069,11 @@
 
 
 
+
+
+
+
+
 <!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
 
     <!-- 容器：让标题和下拉框在同一行 -->
@@ -1085,7 +1098,7 @@
     <div id="newsList">
 
       <div 
-        class="news-item mb-3" style="display: block"
+        class="news-item mb-3" style="display: none"
         data-year="2025"  
       > 
         <div class="news-item-body">
@@ -1098,7 +1111,7 @@
 
 
       <div 
-        class="news-item mb-3" style="display: block"
+        class="news-item mb-3" style="display: none"
         data-year="2024"  
       > 
         <div class="news-item-body">
@@ -1116,6 +1129,11 @@
   </section>
 
   <section id="team" class="container">
+
+
+
+
+
 
 
 
@@ -1161,32 +1179,38 @@
         data-position="Associate Professor / Postdoctoral Fellow"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/Cheems_QW.jfif" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-warning" style="margin-bottom: 1em;">Associate Professor / Postdoctoral Fellow</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Qi (Cheems) Wang</strong></h5>
+                        <p class="card-text">
+
+                            <strong>Website:</strong> 
+                            <a href="https://sites.google.com/view/albert-q-wang-at-ai-community/home" target="_blank">view</a><br>
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/hhq123gogogo" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> cheemswang@mail.tsinghua.edu.cn<br>
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=Mvbvv3IAAAAJ" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/Cheems_QW.jfif" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-warning" style="margin-bottom: 1em;">Associate Professor / Postdoctoral Fellow</span>
-            <h5 class="card-title" style="color:#576263"><strong>Qi (Cheems) Wang</strong></h5>
-            <p class="card-text">
-
-            <strong>Website:</strong> 
-            <a href="https://sites.google.com/view/albert-q-wang-at-ai-community/home" target="_blank">view</a><br>
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/hhq123gogogo" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> cheemswang@mail.tsinghua.edu.cn<br>
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=Mvbvv3IAAAAJ" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1197,29 +1221,35 @@
         data-position="Master Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/wbyxhz.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Boyuan Wang</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/BoyuanWang-hub" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> wangby22@mail.tsinghua.edu.cn<br>
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=BQyuCvwAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/wbyxhz.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Boyuan Wang</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/BoyuanWang-hub" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> wangby22@mail.tsinghua.edu.cn<br>
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=BQyuCvwAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1230,29 +1260,35 @@
         data-position="Doctor Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/thu-quyun.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Yun Qu</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/cloud-qu" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> qy22@mail.tsinghua.edu.cn<br>
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=l9Ky9goAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/thu-quyun.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Yun Qu</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/cloud-qu" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> qy22@mail.tsinghua.edu.cn<br>
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=l9Ky9goAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1263,29 +1299,35 @@
         data-position="Doctor Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/maoyx921.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Yixiu Mao</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/maoyixiu" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> myx21@mails.tsinghua.edu<br>
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=gNcb5LUAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/maoyx921.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Yixiu Mao</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/maoyixiu" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> myx21@mails.tsinghua.edu<br>
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=gNcb5LUAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1296,29 +1338,35 @@
         data-position="Doctor Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/yuhang_joy.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Yuhang Jiang</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/Joy1112u" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> jiangyh19@mails.tsinghua.edu<br>
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=hBuJU48AAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/yuhang_joy.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Yuhang Jiang</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/Joy1112u" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> jiangyh19@mails.tsinghua.edu<br>
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=hBuJU48AAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1329,26 +1377,32 @@
         data-position="Doctor Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/LinXiG0409.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Mengge Liu</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/pigeonmg" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> lmg22@mails.tsinghua.edu.cn<br>
+
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/LinXiG0409.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Mengge Liu</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/pigeonmg" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> lmg22@mails.tsinghua.edu.cn<br>
-
-
-            </p>
         </div>
       </div>
     </div>
@@ -1359,21 +1413,27 @@
         data-position="Master Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/joseph16683362531.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Jinghao Chen</strong></h5>
+                        <p class="card-text">
+
+
+
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/joseph16683362531.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Jinghao Chen</strong></h5>
-            <p class="card-text">
-
-
-
-
-            </p>
         </div>
       </div>
     </div>
@@ -1384,26 +1444,32 @@
         data-position="Master Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/lxylowxq.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Wendong Huang</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/xbahqps" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> h18156731272@163.com<br>
+
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/lxylowxq.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Wendong Huang</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/xbahqps" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> h18156731272@163.com<br>
-
-
-            </p>
         </div>
       </div>
     </div>
@@ -1414,27 +1480,33 @@
         data-position="Doctor Student (Graduated)"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/sjz_kod.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Jianzhun Shao</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/qyz55" target="_blank">view</a><br>
+
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=uCLTRH8AAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/sjz_kod.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
-            <h5 class="card-title" style="color:#576263"><strong>Jianzhun Shao</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/qyz55" target="_blank">view</a><br>
-
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=uCLTRH8AAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1445,21 +1517,27 @@
         data-position="Doctor Student (Graduated)"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/nikjay12.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Hongchang Zhang</strong></h5>
+                        <p class="card-text">
+
+
+
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/nikjay12.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
-            <h5 class="card-title" style="color:#576263"><strong>Hongchang Zhang</strong></h5>
-            <p class="card-text">
-
-
-
-
-            </p>
         </div>
       </div>
     </div>
@@ -1470,27 +1548,33 @@
         data-position="Doctor Student (Graduated)"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/Dinumner.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Zihan Zhang</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/Zsubfunc" target="_blank">view</a><br>
+
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=un0eGzEAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/Dinumner.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
-            <h5 class="card-title" style="color:#576263"><strong>Zihan Zhang</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/Zsubfunc" target="_blank">view</a><br>
-
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=un0eGzEAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1501,24 +1585,30 @@
         data-position="Doctor Student (Graduated)"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/thudahsc.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Shuncheng He</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/Steven-Ho" target="_blank">view</a><br>
+
+
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/thudahsc.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
-            <h5 class="card-title" style="color:#576263"><strong>Shuncheng He</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/Steven-Ho" target="_blank">view</a><br>
-
-
-
-            </p>
         </div>
       </div>
     </div>
