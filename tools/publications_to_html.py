@@ -1,15 +1,24 @@
 import json 
+from datetime import datetime
 
 class Pub2HTML:
     
     def __init__(self):
+
         self.pub_path = 'final_all_papers.json'
         self.member_path = 'final_all_members.json'
+        self.news_path = 'final_all_news.json'
+
         with open(self.pub_path, 'r') as fp: 
             self.all_pubs = json.load(fp)
             fp.close()
         with open(self.member_path, 'r') as fp: 
             self.all_members = json.load(fp)
+            fp.close()
+        with open(self.news_path, 'r') as fp: 
+            self.all_news = json.load(fp)
+            ### sort by date ### 
+            self.all_news = sorted(self.all_news, key = lambda x: x['date'], reverse = True)  
             fp.close()
 
     def wang_to_json(self):
@@ -141,7 +150,7 @@ class Pub2HTML:
             fp.write(all_source_html)
             fp.close()
 
-    def json_to_html(self):  
+    def paper_json_to_html(self):  
         ###    step 1: get all filter conditions    ###
         filter_year, filter_author, filter_conference = self.get_all_filter_conditions()
         print('year: ', filter_year)
@@ -319,9 +328,66 @@ class Pub2HTML:
                             end_label='<!-- wby: 注意，切勿删除，程序代码识别team结束部分 -->',
                             update_html=all_filter_html + '\n\n' + all_member_html) 
 
+    def news_json_to_html(self):
+        ### first step: get all news date filter conditions ### 
+        all_news_date_filter_conditions = {}
+        for every_news in self.all_news:
+            all_news_date_filter_conditions[every_news['date'][:4]] = 1 
+        all_news_date_filter_conditions = sorted(list(all_news_date_filter_conditions.keys()), reverse=True)
+        ### second step: get all filter html ### 
+        news_date_filter_html = self.get_filter_html('newsYear', 'Year', all_news_date_filter_conditions)
+        all_filter_html = f"""
+<!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
+
+    <!-- 容器：让标题和下拉框在同一行 -->
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">News</h2>
+      <!-- 右侧的下拉框部分 -->
+{news_date_filter_html} 
+    </div>
+"""
+        ### third step: get all news html   ####
+        all_news_html = """
+    <!-- 新闻列表容器 -->
+    <div id="newsList">
+"""
+        for every_news in self.all_news:
+            cur_date, cur_content = every_news['date'], every_news['content']
+            # 解析输入的日期字符串
+            cur_date = datetime.strptime(cur_date, "%Y%m%d")
+            # 格式化为需要的输出格式
+            cur_month = cur_date.strftime("%b") 
+            cur_day = str(cur_date.day) 
+            cur_year = str(cur_date.year)  
+
+            every_news_html_template = f"""
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="{cur_year}"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">{cur_month} {cur_day}, {cur_year}</div>
+            <div class="news-text">
+                {cur_content}
+            </div>
+        </div>
+      </div>
+
+"""
+            all_news_html += every_news_html_template
+        all_news_html += """
+    <!-- 这里可继续添加更多新闻 ... -->
+    </div>
+"""
+        self.update_copy_new_new(src_path='../new_new_index.html', backup_path='../new_new_backup.html', 
+                            start_label='<!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->',
+                            end_label='<!-- wby: 注意，切勿删除，程序代码识别news结束部分 -->',
+                            update_html=all_filter_html + '\n\n' + all_news_html) 
+
 if __name__ == "__main__":
 
     pub2html = Pub2HTML()
     # pub2html.wang_to_json()
-    pub2html.json_to_html()
+    pub2html.paper_json_to_html()
     pub2html.member_json_to_html()
+    pub2html.news_json_to_html()

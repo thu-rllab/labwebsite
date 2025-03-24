@@ -3,10 +3,14 @@
     const yearFilterDropdown = document.getElementById('yearFilterDropdown');
     const authorFilterDropdown = document.getElementById('authorFilterDropdown');
     const conferenceFilterDropdown = document.getElementById('conferenceFilterDropdown');
+    // for team members
     const degreeFilterDropdown = document.getElementById('degreeFilterDropdown');
+    // for news-year
+    const newsYearFilterDropdown = document.getElementById('newsYearFilterDropdown');
     // wby: 获得论文列表的元素
     const cardsContainer = document.getElementById('publicationsList');
     const teamcardsContainer = document.getElementById('teamList');
+    const newsContainer = document.getElementById('newsList');
     // wby: 获得展示更多的按钮
     const showMoreBtn = document.getElementById('showMoreBtn');
     // wby: 增加thats-all-button
@@ -17,6 +21,7 @@
     // 将所有 card 存入数组，方便后续操作
     const cards = Array.from(cardsContainer.querySelectorAll('.card'));
     const teamcards = Array.from(teamcardsContainer.querySelectorAll('[data-position]'));
+    const newscards = Array.from(newsContainer.querySelectorAll('[data-year]'));
 
     // 初始只显示前多少条
     const itemsToShow = 5;
@@ -132,6 +137,28 @@
       }); 
     }
 
+    // 筛选新闻的函数
+    function newsfilterAndSort() { 
+      const selectedNewsYear = newsYearFilterDropdown.value.trim();   
+
+      let filteredCards = newscards.filter(card => { 
+        const cardYear = card.dataset.year;   
+
+        let matchYear = !selectedNewsYear || (cardYear == selectedNewsYear); 
+
+        return matchYear;
+      }); 
+
+      // 3. 先隐藏所有 card
+      newscards.forEach(card => {
+        card.style.display = 'none';
+      }); 
+
+      filteredCards.forEach((card, index) => {
+        card.style.display = 'block';
+      }); 
+    }
+
     // 当下拉框发生变化时，重新执行过滤+排序
     yearFilterDropdown.addEventListener('change', function() {
       // wby: 选择筛选条件后，回到默认的 10 条显示模式
@@ -148,8 +175,13 @@
       showAll = false; 
       filterAndSort();
     });
+    // for team-members
     degreeFilterDropdown.addEventListener('change', function() { 
       teamfilterAndSort();
+    });
+    // for news
+    newsYearFilterDropdown.addEventListener('change', function() { 
+      newsfilterAndSort();
     });
 
     // 点击“Show More”时，显示当前筛选条件下的全部卡片
@@ -162,4 +194,5 @@
     // 页面加载后，默认先执行一次，保证初始状态下就有结果
     filterAndSort();
     teamfilterAndSort();
+    newsfilterAndSort();
   }); 
