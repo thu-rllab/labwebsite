@@ -94,12 +94,25 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       display: flex;
       justify-content: space-between;
-      padding: 20px;  /* 内边距增大 */ 
+      padding: 0px; 
       margin-bottom: 20px;
     }
     .card:hover {
       transform: translateY(-5px);
       box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      animation: reverse-gradient-flow 0.3s linear;
+    } 
+    .card-title {
+      font-size: 1.3rem;
+    }
+    
+    .btn {
+      background: linear-gradient(120deg, #73b2dc 0%, #73b2dc 20%, #73b2dc 40%, #a0dbe5 60%, #73b2dc 80%, #73b2dc 100%); /* 渐变背景 */ 
+      background-position: 0% 50%;
+      background-size: 400% 100%;
+      border: none;
+    }
+    .btn:hover {  
       animation: reverse-gradient-flow 0.3s linear;
     }
 
@@ -110,7 +123,7 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       display: flex;
       justify-content: space-between;
-      padding: 20px;  /* 内边距增大 */
+      padding: 0px;  /* 内边距增大 */
       background-color: #fff;
       margin-bottom: 20px;
     }
@@ -229,9 +242,9 @@
       color: #ffffff;
       border: 0px solid #ffffff;  /* 边框颜色 */
       border-radius: 18px;
-      background: linear-gradient(120deg, #729ee6, #b29ae9, #aef3f0);
-      background-size: 200% 200%;
+      background: linear-gradient(135deg, #729ee6 0%, #b29ae9 25%, #91d8d5 50%, #729ee6 75%, #b29ae9 100%);
       background-position: 0% 50%;
+      background-size: 400% 100%;
       cursor: pointer;
       font-size: 0.9rem;
       transition: all 0.2s ease;
@@ -241,7 +254,7 @@
     /* 鼠标悬停时，让背景渐变流动，并加亮边框 */
     .tech-dropdown-select:hover {
       /* background-position: 100% 50%;  */
-      animation: gradient-flow 0.5s infinite linear alternate;
+      animation: gradient-flow 1.5s linear infinite;
     } 
 
     /* 隐藏 IE 的默认箭头 */
@@ -296,7 +309,7 @@
   <section id="about" class="container">
     <h2 class="section-title">Introduction</h2>
       <div class="ji_card mb-3" style="display: block" data-position="Professor" > 
-        <div class="card-body" style="overflow: auto; display: flex; align-items: center;margin-left: 5% "> 
+        <div class="card-body" style="overflow: auto; display: flex; align-items: center;margin-left: 10% "> 
             <div style="float: left; width: 28%; height: 100%; text-align: center"> 
               <img src="resources/people_img/ji.jpg" alt="Profile Photo" style="width: 80%; height: 80%; object-fit: cover; border-radius: 18px; margin-bottom: 3%;"> 
               <br>
@@ -323,6 +336,14 @@
  
 
   <section id="publications" class="container">
+
+
+
+
+
+
+
+
 
 
 
@@ -376,15 +397,17 @@
         <select id="authorFilterDropdown" class="tech-dropdown-select">
           <option value="">All Authors</option>
           <option value="Boyuan Wang">Boyuan Wang</option>
-          <option value="Chang Liu">Chang Liu</option>
           <option value="Hongchang Zhang">Hongchang Zhang</option>
           <option value="Jianzhun Shao">Jianzhun Shao</option>
+          <option value="Jinghao Chen">Jinghao Chen</option>
           <option value="Mengge Liu">Mengge Liu</option>
           <option value="Qi (Cheems) Wang">Qi (Cheems) Wang</option>
           <option value="Shuncheng He">Shuncheng He</option>
+          <option value="Wendong Huang">Wendong Huang</option>
           <option value="Yixiu Mao">Yixiu Mao</option>
           <option value="Yuhang Jiang">Yuhang Jiang</option>
           <option value="Yun Qu">Yun Qu</option>
+          <option value="Zihan Zhang">Zihan Zhang</option>
 
         </select>
       </div>
@@ -431,7 +454,7 @@
           </p>
           <a href=" https://arxiv.org/pdf/2501.11039 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/MPTS " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -452,8 +475,8 @@
             <strong>Authors:</strong> Cheems Wang, Yiqin Lv, Yixiu Mao, Yun Qu, Yi Xu, Xiangyang Ji
           </p>
           <a href=" https://arxiv.org/pdf/2407.19523 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -474,8 +497,8 @@
             <strong>Authors:</strong> Zehao Xiao, Shilin Yan, Jack Hong, Jiayin Cai, Xiaolong Jiang, Yao Hu, Jiayi Shen, Qi Wang, Cees G. M. Snoek
           </p>
           <a href=" https://arxiv.org/pdf/2501.16404 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -497,7 +520,7 @@
           </p>
           <a href=" https://arxiv.org/pdf/2412.11120 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/LaRe " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -519,7 +542,7 @@
           </p>
           <a href=" https://proceedings.mlr.press/v235/wang24bh.html " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/LESR " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" ./resources/poster_demo/poster-lesr.pdf " class="btn btn-info btn-sm" target="_blank">Demo</a>
+          <a href=" ./resources/poster_demo/poster-lesr.pdf " class="btn btn-secondary btn-sm" target="_blank">Demo</a>
         </div>
       </div>
 
@@ -540,8 +563,8 @@
             <strong>Authors:</strong> Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2024/file/a9f3457fa97f106f1756885237787789-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -562,8 +585,8 @@
             <strong>Authors:</strong> Yiqin Lv, Qi Wang, Dong Liang, Zheng Xie
           </p>
           <a href=" https://arxiv.org/pdf/2410.22788 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -585,7 +608,7 @@
           </p>
           <a href=" https://arxiv.org/pdf/2404.06486 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/autumn9999/GO4Align " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -606,8 +629,8 @@
             <strong>Authors:</strong> Ziqi Wang, Chang Che, Qi Wang, Yangyang Li, Zenglin Shi, Meng Wang
           </p>
           <a href=" https://arxiv.org/pdf/2411.13949 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -629,7 +652,7 @@
           </p>
           <a href=" https://arxiv.org/pdf/2406.16282 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/yyyyychen/LowMemoryBP " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -650,8 +673,8 @@
             <strong>Authors:</strong> Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji
           </p>
           <a href=" https://arxiv.org/pdf/2410.02511 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -673,7 +696,7 @@
           </p>
           <a href=" https://arxiv.org/pdf/2411.07934 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/DMG " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -695,7 +718,7 @@
           </p>
           <a href=" https://openreview.net/pdf?id=1Akd36hG9z " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/OSD-DICE " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -717,7 +740,7 @@
           </p>
           <a href=" https://arxiv.org/pdf/2501.03264 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/hhq123gogogo/SI_NPs " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -738,8 +761,8 @@
             <strong>Authors:</strong> Jiayi Shen, Xiantong Zhen, Qi Wang, Marcel Worring
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2023/file/ee1e549d6fb7c58ed06557bfc264335c-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -760,8 +783,8 @@
             <strong>Authors:</strong> Qi Wang, Yanghe Feng, Jincai Huang, Yiqin Lv, Zheng Xie, Xiaoshan Gao
           </p>
           <a href=" https://www.cell.com/the-innovation/fulltext/S2666-6758(23)00144-3 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -782,8 +805,8 @@
             <strong>Authors:</strong> Qi Wang, Yiqin Lv, Yanghe Feng, Zheng Xie, Jincai Huang
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2023/file/2a28bea6298d106eed091ac403d8c22b-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -805,7 +828,7 @@
           </p>
           <a href=" https://proceedings.mlr.press/v202/mao23c/mao23c.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/STR " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -827,7 +850,7 @@
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2023/file/7fa46657df480226112d5be3faf096c4-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/SVR " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -848,8 +871,8 @@
             <strong>Authors:</strong> Hongchang Zhang, Jianzhun Shao, Shuncheng He, Yuhang Jiang, Xiangyang Ji
           </p>
           <a href=" https://ojs.aaai.org/index.php/AAAI/article/view/26327 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -870,8 +893,30 @@
             <strong>Authors:</strong> Hongchang Zhang, Yixiu Mao, Boyuan Wang, Shuncheng He, Yi Xu, Xiangyang Ji
           </p>
           <a href=" https://openreview.net/pdf?id=dfDv0WU853R " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
+        </div>
+      </div>
+
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2023" 
+        data-authors="Hongchang Zhang, Boyuan Wang, Yixiu Mao, Jianzhun Shao, Yuhang Jiang, Yi Xu, Xiangyang Ji"
+        data-conference="ICLR 2023"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2023</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Pessimistic Policy Iteration for Offline Reinforcement Learning</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Hongchang Zhang, Boyuan Wang, Yixiu Mao, Jianzhun Shao, Yuhang Jiang, Yi Xu, Xiangyang Ji
+          </p>
+          <a href=" https://openreview.net/pdf?id=TmJtBnIWkB " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+
+
         </div>
       </div>
 
@@ -893,7 +938,7 @@
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2023/file/f3f2ff9579ba6deeb89caa2fe1f0b99c-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/CFCQL " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -915,7 +960,7 @@
           </p>
           <a href=" https://proceedings.mlr.press/v202/shao23b/shao23b.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/CAMA " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -937,7 +982,7 @@
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2023/file/464fefa022aaefc85d901317bbf13f85-Paper-Datasets_and_Benchmarks.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/Hokoff " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -959,7 +1004,7 @@
           </p>
           <a href=" https://openreview.net/pdf?id=u0aNcjqhEJ " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/CAMA " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -980,8 +1025,8 @@
             <strong>Authors:</strong> Qi Wang, Herke van Hoof
           </p>
           <a href=" https://proceedings.mlr.press/v162/wang22z/wang22z.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1002,8 +1047,8 @@
             <strong>Authors:</strong> Qi Wang, Herke van Hoof
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2022/file/a815fe7cad6af20a6c118f2072a881d2-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1024,8 +1069,8 @@
             <strong>Authors:</strong> Hongchang Zhang, Jianzhun Shao, Yuhang Jiang, Shuncheng He, Guanwen Zhang, Xiangyang Ji
           </p>
           <a href=" https://ojs.aaai.org/index.php/AAAI/article/view/20886 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1046,8 +1091,8 @@
             <strong>Authors:</strong> Shuncheng He, Yuhang Jiang, Hongchang Zhang, Jianzhun Shao, Xiangyang Ji
           </p>
           <a href=" https://ojs.aaai.org/index.php/AAAI/article/view/20645 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1069,7 +1114,7 @@
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2022/file/825341ab91db01bf063add41ac022702-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/thu-rllab/SPD " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -1090,8 +1135,8 @@
             <strong>Authors:</strong> Zihan Zhang, Xiangyang Ji, Simon Du
           </p>
           <a href=" https://proceedings.mlr.press/v178/zhang22a/zhang22a.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1112,8 +1157,8 @@
             <strong>Authors:</strong> Zihan Zhang, Yuhang Jiang, Yuan Zhou, Xiangyang Ji
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2022/file/9bcd1fa0c05e5f25ba7a1261f1852e82-Paper-Conference.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1134,8 +1179,8 @@
             <strong>Authors:</strong> Zihan Zhang, Xiangyang Ji, Simon Du
           </p>
           <a href=" http://proceedings.mlr.press/v134/zhang21b/zhang21b.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1156,8 +1201,8 @@
             <strong>Authors:</strong> Zihan Zhang, Jiaqi Yang, Xiangyang Ji, Simon S Du
           </p>
           <a href=" https://proceedings.neurips.cc/paper/2021/file/228bbc2f87caeb21bb7f6949fddcb91d-Paper.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1178,8 +1223,8 @@
             <strong>Authors:</strong> Zihan Zhang, Simon Du, Xiangyang Ji
           </p>
           <a href=" http://proceedings.mlr.press/v139/zhang21e/zhang21e.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1200,8 +1245,8 @@
             <strong>Authors:</strong> Zihan Zhang, Yuan Zhou, Xiangyang Ji
           </p>
           <a href=" http://proceedings.mlr.press/v139/zhang21ab/zhang21ab.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1223,7 +1268,7 @@
           </p>
           <a href=" https://arxiv.org/pdf/2008.09469 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/hhq123gogogo/SI_NPs " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
         </div>
       </div>
 
@@ -1244,8 +1289,8 @@
             <strong>Authors:</strong> Jianzhun Shao, Yuhang Jiang, Gu Wang, Zhigang Li, Xiangyang Ji
           </p>
           <a href=" https://openaccess.thecvf.com/content_CVPR_2020/papers/Shao_PFRL_Pose-Free_Reinforcement_Learning_for_6D_Pose_Estimation_CVPR_2020_paper.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1266,8 +1311,8 @@
             <strong>Authors:</strong> Zihan Zhang, Yuan Zhou, Xiangyang Ji
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2020/file/ad71c82b22f4f65b9398f76d8be4c615-Paper.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1288,8 +1333,8 @@
             <strong>Authors:</strong> Zihan Zhang, Xiangyang Ji
           </p>
           <a href=" https://proceedings.neurips.cc/paper_files/paper/2019/file/9e984c108157cea74c894b5cf34efc44-Paper.pdf " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" xxx " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" xxx " class="btn btn-info btn-sm" target="_blank">Demo</a>
+
+
         </div>
       </div>
 
@@ -1311,17 +1356,80 @@
   </section> 
 
   <section id="news" class="container">
-    <h2 class="section-title">News</h2>
-    
-    <div class="news-item">
-      <div class="news-date">Feb 9, 2025</div>
-      <div class="news-text">
-        Born of the Website of THU-IDM.
+
+
+
+
+
+
+
+
+
+
+
+<!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
+
+    <!-- 容器：让标题和下拉框在同一行 -->
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">News</h2>
+      <!-- 右侧的下拉框部分 -->
+
+      <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
+        <select id="newsYearFilterDropdown" class="tech-dropdown-select">
+          <option value="">All Years</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+
+        </select>
       </div>
+ 
     </div>
+
+
+
+    <!-- 新闻列表容器 -->
+    <div id="newsList">
+
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="2025"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">Feb 9, 2025</div>
+            <div class="news-text">
+                Born of the Website of THU-IDM.
+            </div>
+        </div>
+      </div>
+
+
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="2024"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">May 1, 2024</div>
+            <div class="news-text">
+                Our work <strong>LLM-Empowered State Representation for Reinforcement Learning</strong> is accepted to ICML2024 !
+            </div>
+        </div>
+      </div>
+
+
+    <!-- 这里可继续添加更多新闻 ... -->
+    </div>
+<!-- wby: 注意，切勿删除，程序代码识别news结束部分 -->
   </section>
 
   <section id="team" class="container">
+
+
+
+
+
+
+
+
 
 
 
@@ -1365,32 +1473,38 @@
         data-position="Associate Professor / Postdoctoral Fellow"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/Cheems_QW.jfif" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-warning" style="margin-bottom: 1em;">Associate Professor / Postdoctoral Fellow</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Qi (Cheems) Wang</strong></h5>
+                        <p class="card-text">
+
+                            <strong>Website:</strong> 
+                            <a href="https://sites.google.com/view/albert-q-wang-at-ai-community/home" target="_blank">view</a><br>
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/hhq123gogogo" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> cheemswang@mail.tsinghua.edu.cn<br>
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=Mvbvv3IAAAAJ" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/Cheems_QW.jfif" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-warning" style="margin-bottom: 1em;">Associate Professor / Postdoctoral Fellow</span>
-            <h5 class="card-title" style="color:#576263"><strong>Qi (Cheems) Wang</strong></h5>
-            <p class="card-text">
-
-            <strong>Website:</strong> 
-            <a href="https://sites.google.com/view/albert-q-wang-at-ai-community/home" target="_blank">view</a><br>
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/hhq123gogogo" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> cheemswang@mail.tsinghua.edu.cn<br>
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=Mvbvv3IAAAAJ" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1401,29 +1515,35 @@
         data-position="Master Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/wbyxhz.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Boyuan Wang</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/BoyuanWang-hub" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> wangby22@mail.tsinghua.edu.cn<br>
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=BQyuCvwAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/wbyxhz.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Boyuan Wang</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/BoyuanWang-hub" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> wangby22@mail.tsinghua.edu.cn<br>
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=BQyuCvwAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1434,29 +1554,35 @@
         data-position="Doctor Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/thu-quyun.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Yun Qu</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/cloud-qu" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> qy22@mail.tsinghua.edu.cn<br>
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=l9Ky9goAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/thu-quyun.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Yun Qu</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/cloud-qu" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> qy22@mail.tsinghua.edu.cn<br>
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=l9Ky9goAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1467,29 +1593,35 @@
         data-position="Doctor Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/maoyx921.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Yixiu Mao</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/maoyixiu" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> myx21@mails.tsinghua.edu<br>
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=gNcb5LUAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/maoyx921.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Yixiu Mao</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/maoyixiu" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> myx21@mails.tsinghua.edu<br>
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=gNcb5LUAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1500,29 +1632,35 @@
         data-position="Doctor Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/yuhang_joy.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Yuhang Jiang</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/Joy1112u" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> jiangyh19@mails.tsinghua.edu<br>
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=hBuJU48AAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/yuhang_joy.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Yuhang Jiang</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/Joy1112u" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> jiangyh19@mails.tsinghua.edu<br>
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=hBuJU48AAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1533,26 +1671,32 @@
         data-position="Doctor Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/LinXiG0409.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Mengge Liu</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/pigeonmg" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> lmg22@mails.tsinghua.edu.cn<br>
+
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/LinXiG0409.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Mengge Liu</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/pigeonmg" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> lmg22@mails.tsinghua.edu.cn<br>
-
-
-            </p>
         </div>
       </div>
     </div>
@@ -1563,21 +1707,27 @@
         data-position="Master Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/joseph16683362531.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Jinghao Chen</strong></h5>
+                        <p class="card-text">
+
+
+
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/joseph16683362531.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Jinghao Chen</strong></h5>
-            <p class="card-text">
-
-
-
-
-            </p>
         </div>
       </div>
     </div>
@@ -1588,26 +1738,32 @@
         data-position="Master Student"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/lxylowxq.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Wendong Huang</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/xbahqps" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> h18156731272@163.com<br>
+
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/lxylowxq.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-success" style="margin-bottom: 1em;">Master Student</span>
-            <h5 class="card-title" style="color:#576263"><strong>Wendong Huang</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/xbahqps" target="_blank">view</a><br>
-
-
-            <strong>Email:</strong> h18156731272@163.com<br>
-
-
-            </p>
         </div>
       </div>
     </div>
@@ -1618,27 +1774,33 @@
         data-position="Doctor Student (Graduated)"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/sjz_kod.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Jianzhun Shao</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/qyz55" target="_blank">view</a><br>
+
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=uCLTRH8AAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/sjz_kod.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
-            <h5 class="card-title" style="color:#576263"><strong>Jianzhun Shao</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/qyz55" target="_blank">view</a><br>
-
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=uCLTRH8AAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1649,21 +1811,27 @@
         data-position="Doctor Student (Graduated)"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/nikjay12.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Hongchang Zhang</strong></h5>
+                        <p class="card-text">
+
+
+
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/nikjay12.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
-            <h5 class="card-title" style="color:#576263"><strong>Hongchang Zhang</strong></h5>
-            <p class="card-text">
-
-
-
-
-            </p>
         </div>
       </div>
     </div>
@@ -1674,27 +1842,33 @@
         data-position="Doctor Student (Graduated)"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/Dinumner.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Zihan Zhang</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/Zsubfunc" target="_blank">view</a><br>
+
+
+
+                            <strong>Google Scholar:</strong> 
+                            <a href="https://scholar.google.com/citations?user=un0eGzEAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/Dinumner.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
-            <h5 class="card-title" style="color:#576263"><strong>Zihan Zhang</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/Zsubfunc" target="_blank">view</a><br>
-
-
-
-            <strong>Google Scholar:</strong> 
-            <a href="https://scholar.google.com/citations?user=un0eGzEAAAAJ&hl=zh-CN&oi=sra" target="_blank">View</a>
-
-            </p>
         </div>
       </div>
     </div>
@@ -1705,24 +1879,30 @@
         data-position="Doctor Student (Graduated)"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="resources/people_img/thudahsc.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>Shuncheng He</strong></h5>
+                        <p class="card-text">
+
+
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/Steven-Ho" target="_blank">view</a><br>
+
+
+
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="resources/people_img/thudahsc.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
             </div>
-            <span class="badge badge-primary" style="margin-bottom: 1em;background-color: #007bff">Doctor Student (Graduated)</span>
-            <h5 class="card-title" style="color:#576263"><strong>Shuncheng He</strong></h5>
-            <p class="card-text">
-
-
-            <strong>Github:</strong> 
-            <a href="https://github.com/Steven-Ho" target="_blank">view</a><br>
-
-
-
-            </p>
         </div>
       </div>
     </div>
@@ -1753,4 +1933,4 @@
 </html>
 
 
- <!-- 1. 调整季老师美观 -->
+ <!-- 持续性工作：调整季老师显示位置的美观度，季老师越来越年轻越来越帅 -->

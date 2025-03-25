@@ -1,11 +1,10 @@
-{
-    "1": {
-        "date": "20250209", 
-        "github": "https://github.com/hhq123gogogo",
-        "website": "https://sites.google.com/view/albert-q-wang-at-ai-community/home",
-        "email": "cheemswang@mail.tsinghua.edu.cn",
-        "scholar": "https://scholar.google.com/citations?user=Mvbvv3IAAAAJ",
-        "wechat": "Cheems_QW"
-    }, 
-
-}
+[
+    {
+        "date": "20240501",
+        "content": "Our work <strong>LLM-Empowered State Representation for Reinforcement Learning</strong> is accepted to ICML2024 !"
+    },
+    {
+        "date": "20250209",
+        "content": "Born of the Website of THU-IDM."
+    }
+]

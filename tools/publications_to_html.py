@@ -1,15 +1,24 @@
 import json 
+from datetime import datetime
 
 class Pub2HTML:
     
     def __init__(self):
+
         self.pub_path = 'final_all_papers.json'
         self.member_path = 'final_all_members.json'
+        self.news_path = 'final_all_news.json'
+
         with open(self.pub_path, 'r') as fp: 
             self.all_pubs = json.load(fp)
             fp.close()
         with open(self.member_path, 'r') as fp: 
             self.all_members = json.load(fp)
+            fp.close()
+        with open(self.news_path, 'r') as fp: 
+            self.all_news = json.load(fp)
+            ### sort by date ### 
+            self.all_news = sorted(self.all_news, key = lambda x: x['date'], reverse = True)  
             fp.close()
 
     def wang_to_json(self):
@@ -94,18 +103,19 @@ class Pub2HTML:
             for cur_every_author in cur_authors:
                 filter_author[cur_every_author.replace('*', '').strip()] = 0
             filter_conference[cur_conference.replace(cur_year, '').strip()] = 0
-        filter_author = [
-            'Yixiu Mao',
-            'Yun Qu',
-            'Qi (Cheems) Wang', 
-            'Hongchang Zhang',
-            'Boyuan Wang',
-            'Shuncheng He',
-            'Yuhang Jiang',
-            'Jianzhun Shao',
-            'Chang Liu', 
-            'Mengge Liu' 
-        ] 
+        # filter_author = [
+        #     'Yixiu Mao',
+        #     'Yun Qu',
+        #     'Qi (Cheems) Wang', 
+        #     'Hongchang Zhang',
+        #     'Boyuan Wang',
+        #     'Shuncheng He',
+        #     'Yuhang Jiang',
+        #     'Jianzhun Shao',
+        #     'Chang Liu', 
+        #     'Mengge Liu' 
+        # ] 
+        filter_author = list(self.all_members.keys()) 
         return sorted(list(filter_year.keys()), reverse=True), sorted(filter_author), sorted(list(filter_conference.keys()))
     
     def get_filter_html(self, id_name, show_name, filter_values):
@@ -140,7 +150,7 @@ class Pub2HTML:
             fp.write(all_source_html)
             fp.close()
 
-    def json_to_html(self):  
+    def paper_json_to_html(self):  
         ###    step 1: get all filter conditions    ###
         filter_year, filter_author, filter_conference = self.get_all_filter_conditions()
         print('year: ', filter_year)
@@ -173,6 +183,11 @@ class Pub2HTML:
         for cur_title, cur_title_values in time_sorted_papers:
             cur_year, cur_conference, cur_authors, cur_paper_link, cur_code_link, cur_demo_link = cur_title_values
 
+            ### if no paper/code/demo, then do not show ###
+            cur_paper_link_html = '' if cur_paper_link == 'nan' else f'          <a href=" {cur_paper_link} " class="btn btn-secondary btn-sm" target="_blank">Paper</a>'
+            cur_code_link_html = '' if cur_code_link == 'nan' else f'          <a href=" {cur_code_link} " class="btn btn-secondary btn-sm" target="_blank">Code</a>'
+            cur_demo_link_html = '' if cur_demo_link == 'nan' else f'          <a href=" {cur_demo_link} " class="btn btn-secondary btn-sm" target="_blank">Demo</a>'
+
             html_template = f"""
 
       <div 
@@ -189,9 +204,9 @@ class Pub2HTML:
           <p class="card-text">
             <strong>Authors:</strong> {cur_authors}
           </p>
-          <a href=" {cur_paper_link} " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-          <a href=" {cur_code_link} " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-          <a href=" {cur_demo_link} " class="btn btn-info btn-sm" target="_blank">Demo</a>
+{cur_paper_link_html}
+{cur_code_link_html}
+{cur_demo_link_html}
         </div>
       </div>
 
@@ -256,22 +271,22 @@ class Pub2HTML:
             ### for different people's website, email, google scholar ###
             if 'nan' in website: website_html = ''
             else: website_html = f"""
-            <strong>Website:</strong> 
-            <a href="{website}" target="_blank">view</a><br>
+                            <strong>Website:</strong> 
+                            <a href="{website}" target="_blank">view</a><br>
 """
             if 'nan' in github: github_html = ''
             else: github_html = f"""
-            <strong>Github:</strong> 
-            <a href="{github}" target="_blank">view</a><br>
+                            <strong>Github:</strong> 
+                            <a href="{github}" target="_blank">view</a><br>
 """
             if 'nan' in email: email_html = ''
             else: email_html = f"""
-            <strong>Email:</strong> {email}<br>
+                            <strong>Email:</strong> {email}<br>
 """
             if 'nan' in scholar: scholar_html = ''
             else: scholar_html = f"""
-            <strong>Google Scholar:</strong> 
-            <a href="{scholar}" target="_blank">View</a>
+                            <strong>Google Scholar:</strong> 
+                            <a href="{scholar}" target="_blank">View</a>
 """
             ### set img margin top ### 
             # if '' in [website, email, scholar]: img_margin_top = 0
@@ -283,21 +298,27 @@ class Pub2HTML:
         data-position="{degree}"  
       > 
       <div class="card h-100">
-        <div class="card-body" style="overflow: auto;">
-            <!-- 让图片的父容器浮动到右侧 -->
-            <div style="float: right; width: 200px; height: 100px; margin-left: 20px; text-align: center"> 
-            <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-            <br>
-            {wechat_html}
-            </div>
-            <span class="{degree_style}" style="margin-bottom: 1em;{background_color}">{degree}</span>
-            <h5 class="card-title" style="color:#576263"><strong>{member_name}</strong></h5>
-            <p class="card-text">
+        <div class="card-body" style="display: table; width: 100%;">
+            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
+            <div style="display: table-row;">
+                <!-- 左侧文字内容，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle;">
+                    <span class="{degree_style}" style="margin-bottom: 1em;{background_color}">{degree}</span>
+                    <div style="margin-left: 3%;">
+                        <h5 class="card-title" style="color:#576263"><strong>{member_name}</strong></h5>
+                        <p class="card-text">
 {website_html}
 {github_html}
 {email_html}
 {scholar_html}
-            </p>
+                        </p>
+                    </div>
+                </div>
+                <!-- 右侧图片，竖直居中 -->
+                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
+                    <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                </div>
+            </div>
         </div>
       </div>
     </div>
@@ -313,9 +334,66 @@ class Pub2HTML:
                             end_label='<!-- wby: 注意，切勿删除，程序代码识别team结束部分 -->',
                             update_html=all_filter_html + '\n\n' + all_member_html) 
 
+    def news_json_to_html(self):
+        ### first step: get all news date filter conditions ### 
+        all_news_date_filter_conditions = {}
+        for every_news in self.all_news:
+            all_news_date_filter_conditions[every_news['date'][:4]] = 1 
+        all_news_date_filter_conditions = sorted(list(all_news_date_filter_conditions.keys()), reverse=True)
+        ### second step: get all filter html ### 
+        news_date_filter_html = self.get_filter_html('newsYear', 'Year', all_news_date_filter_conditions)
+        all_filter_html = f"""
+<!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
+
+    <!-- 容器：让标题和下拉框在同一行 -->
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">News</h2>
+      <!-- 右侧的下拉框部分 -->
+{news_date_filter_html} 
+    </div>
+"""
+        ### third step: get all news html   ####
+        all_news_html = """
+    <!-- 新闻列表容器 -->
+    <div id="newsList">
+"""
+        for every_news in self.all_news:
+            cur_date, cur_content = every_news['date'], every_news['content']
+            # 解析输入的日期字符串
+            cur_date = datetime.strptime(cur_date, "%Y%m%d")
+            # 格式化为需要的输出格式
+            cur_month = cur_date.strftime("%b") 
+            cur_day = str(cur_date.day) 
+            cur_year = str(cur_date.year)  
+
+            every_news_html_template = f"""
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="{cur_year}"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">{cur_month} {cur_day}, {cur_year}</div>
+            <div class="news-text">
+                {cur_content}
+            </div>
+        </div>
+      </div>
+
+"""
+            all_news_html += every_news_html_template
+        all_news_html += """
+    <!-- 这里可继续添加更多新闻 ... -->
+    </div>
+"""
+        self.update_copy_new_new(src_path='../new_new_index.html', backup_path='../new_new_backup.html', 
+                            start_label='<!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->',
+                            end_label='<!-- wby: 注意，切勿删除，程序代码识别news结束部分 -->',
+                            update_html=all_filter_html + '\n\n' + all_news_html) 
+
 if __name__ == "__main__":
 
     pub2html = Pub2HTML()
     # pub2html.wang_to_json()
-    pub2html.json_to_html()
+    pub2html.paper_json_to_html()
     pub2html.member_json_to_html()
+    pub2html.news_json_to_html()

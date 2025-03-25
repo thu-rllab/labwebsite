@@ -13,7 +13,7 @@
         "Qi (Cheems) Wang*, Zehao Xiao*, Yixiu Mao*, Yun Qu*, Jiayi Shen, Yiqin Lv, Xiangyang Ji",
         "https://arxiv.org/pdf/2501.11039",
         "https://github.com/thu-rllab/MPTS",
-        "xxx"
+        "nan"
     ],
     "Doubly Stochastic Variational Inference for Neural Processes with Hierarchical Latent Variables": [
         "2020",
@@ -21,23 +21,23 @@
         "Qi Wang, Herke van Hoof",
         "https://arxiv.org/pdf/2008.09469",
         "https://github.com/hhq123gogogo/SI_NPs",
-        "xxx"
+        "nan"
     ],
     "Model-based Meta Reinforcement Learning using Graph Structured Surrogate Models and Amortized Policy Search": [
         "2022",
         "ICML 2022",
         "Qi Wang, Herke van Hoof",
         "https://proceedings.mlr.press/v162/wang22z/wang22z.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Learning Expressive Meta-Representations with Mixture of Expert Neural Processes": [
         "2022",
         "NeurIPS 2022",
         "Qi Wang, Herke van Hoof",
         "https://proceedings.neurips.cc/paper_files/paper/2022/file/a815fe7cad6af20a6c118f2072a881d2-Paper-Conference.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Bridge the Inference Gaps of Neural Processes via Expectation Maximization": [
         "2023",
@@ -45,55 +45,55 @@
         "Qi Wang, Marco Federici, Herke van Hoof",
         "https://arxiv.org/pdf/2501.03264",
         "https://github.com/hhq123gogogo/SI_NPs",
-        "xxx"
+        "nan"
     ],
     "Episodic Multi-Task Learning with Heterogeneous Neural Processes": [
         "2023",
         "NeurIPS 2023",
         "Jiayi Shen, Xiantong Zhen, Qi Wang, Marcel Worring",
         "https://proceedings.neurips.cc/paper_files/paper/2023/file/ee1e549d6fb7c58ed06557bfc264335c-Paper-Conference.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Large-scale generative simulation artificial intelligence: The next hotspot": [
         "2023",
         "The Innovation 2023",
         "Qi Wang, Yanghe Feng, Jincai Huang, Yiqin Lv, Zheng Xie, Xiaoshan Gao",
         "https://www.cell.com/the-innovation/fulltext/S2666-6758(23)00144-3",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "A Simple Yet Effective Strategy to Robustify the Meta Learning Paradigm": [
         "2023",
         "NeurIPS 2023",
         "Qi Wang, Yiqin Lv, Yanghe Feng, Zheng Xie, Jincai Huang",
         "https://proceedings.neurips.cc/paper_files/paper/2023/file/2a28bea6298d106eed091ac403d8c22b-Paper-Conference.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression": [
         "2024",
         "NeurIPS 2024",
         "Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji",
         "https://proceedings.neurips.cc/paper_files/paper/2024/file/a9f3457fa97f106f1756885237787789-Paper-Conference.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation": [
         "2025",
         "KDD 2025",
         "Cheems Wang, Yiqin Lv, Yixiu Mao, Yun Qu, Yi Xu, Xiangyang Ji",
         "https://arxiv.org/pdf/2407.19523",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Theoretical Investigations and Practical Enhancements on Tail Task Risk Minimization in Meta Learning": [
         "2024",
         "NeurIPS 2024",
         "Yiqin Lv, Qi Wang, Dong Liang, Zheng Xie",
         "https://arxiv.org/pdf/2410.22788",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "GO4Align: Group Optimization for Multi-Task Alignment": [
         "2024",
@@ -101,23 +101,23 @@
         "Jiayi Shen, Qi (Cheems) Wang, Zehao Xiao, Nanne Van Noord, Marcel Worring",
         "https://arxiv.org/pdf/2404.06486",
         "https://github.com/autumn9999/GO4Align",
-        "xxx"
+        "nan"
     ],
     "DynaPrompt: Dynamic Test-Time Prompt Tuning": [
         "2025",
         "ICLR 2025",
         "Zehao Xiao, Shilin Yan, Jack Hong, Jiayin Cai, Xiaolong Jiang, Yao Hu, Jiayi Shen, Qi Wang, Cees G. M. Snoek",
         "https://arxiv.org/pdf/2501.16404",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Separable Mixture of Low-Rank Adaptation for Continual Visual Instruction Tuning": [
         "2024",
         "arXiv 2024",
         "Ziqi Wang, Chang Che, Qi Wang, Yangyang Li, Zenglin Shi, Meng Wang",
         "https://arxiv.org/pdf/2411.13949",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Reducing Fine-Tuning Memory Overhead by Approximate and Memory-Sharing Backpropagation": [
         "2024",
@@ -125,7 +125,7 @@
         "Yuchen Yang, Yingdong Shi, Cheems Wang, Xiantong Zhen, Yuxuan Shi, Jun Xu",
         "https://arxiv.org/pdf/2406.16282",
         "https://github.com/yyyyychen/LowMemoryBP",
-        "xxx"
+        "nan"
     ],
     "Supported Trust Region Optimization for Offline Reinforcement Learning": [
         "2023",
@@ -133,7 +133,7 @@
         "Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji",
         "https://proceedings.mlr.press/v202/mao23c/mao23c.pdf",
         "https://github.com/thu-rllab/STR",
-        "xxx"
+        "nan"
     ],
     "Supported Value Regularization for Offline Reinforcement Learning": [
         "2023",
@@ -141,39 +141,39 @@
         "Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji",
         "https://proceedings.neurips.cc/paper_files/paper/2023/file/7fa46657df480226112d5be3faf096c4-Paper-Conference.pdf",
         "https://github.com/thu-rllab/SVR",
-        "xxx"
+        "nan"
     ],
     "State deviation correction for offline reinforcement learning":[
         "2022",
         "AAAI 2022",
         "Hongchang Zhang, Jianzhun Shao, Yuhang Jiang, Shuncheng He, Guanwen Zhang, Xiangyang Ji",
         "https://ojs.aaai.org/index.php/AAAI/article/view/20886",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "DARL: distance-aware uncertainty estimation for offline reinforcement learning":[
         "2023",
         "AAAI 2023",
         "Hongchang Zhang, Jianzhun Shao, Shuncheng He, Yuhang Jiang, Xiangyang Ji",
         "https://ojs.aaai.org/index.php/AAAI/article/view/26327",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Wasserstein unsupervised reinforcement learning":[
         "2022",
         "AAAI 2022",
         "Shuncheng He, Yuhang Jiang, Hongchang Zhang, Jianzhun Shao, Xiangyang Ji",
         "https://ojs.aaai.org/index.php/AAAI/article/view/20645",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "In-sample Actor Critic for Offline Reinforcement Learning": [
         "2023",
         "ICLR 2023",
         "Hongchang Zhang, Yixiu Mao, Boyuan Wang, Shuncheng He, Yi Xu, Xiangyang Ji",
         "https://openreview.net/pdf?id=dfDv0WU853R",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Spd: Synergy pattern diversifying oriented unsupervised multi-agent reinforcement learning": [
         "2022",
@@ -181,15 +181,15 @@
         "Yuhang Jiang, Jianzhun Shao, Shuncheng He, Hongchang Zhang, Xiangyang Ji",
         "https://proceedings.neurips.cc/paper_files/paper/2022/file/825341ab91db01bf063add41ac022702-Paper-Conference.pdf",
         "https://github.com/thu-rllab/SPD",
-        "xxx"
+        "nan"
     ],
     "Choices are More Important than Efforts: LLM Enables Efficient Multi-Agent Exploration": [
         "2024",
         "arXiv 2024",
         "Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji",
         "https://arxiv.org/pdf/2410.02511",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Doubly Mild Generalization for Offline Reinforcement Learning": [
         "2024",
@@ -197,7 +197,7 @@
         "Yixiu Mao, Qi Wang, Yun Qu, Yuhang Jiang, Xiangyang Ji",
         "https://arxiv.org/pdf/2411.07934",
         "https://github.com/thu-rllab/DMG",
-        "xxx"
+        "nan"
     ],
     "Enhancing Offline Reinforcement Learning with an Optimal Supported Dataset": [
         "2024",
@@ -205,7 +205,15 @@
         "Chen Chen, Zhaoyi Xu, Yixiu Mao, Hongchang Zhang, Xiangyang Ji",
         "https://openreview.net/pdf?id=1Akd36hG9z",
         "https://github.com/thu-rllab/OSD-DICE",
-        "xxx"
+        "nan"
+    ],
+    "Pessimistic Policy Iteration for Offline Reinforcement Learning": [
+        "2023",
+        "ICLR 2023",
+        "Hongchang Zhang, Boyuan Wang, Yixiu Mao, Jianzhun Shao, Yuhang Jiang, Yi Xu, Xiangyang Ji",
+        "https://openreview.net/pdf?id=TmJtBnIWkB",
+        "nan",
+        "nan"
     ],
     "Counterfactual Conservative Q Learning for Offline Multi-agent Reinforcement Learning": [
         "2023",
@@ -213,7 +221,7 @@
         "Jianzhun Shao, Yun Qu, Chen Chen, Hongchang Zhang, Xiangyang Ji",
         "https://proceedings.neurips.cc/paper_files/paper/2023/file/f3f2ff9579ba6deeb89caa2fe1f0b99c-Paper-Conference.pdf",
         "https://github.com/thu-rllab/CFCQL",
-        "xxx"
+        "nan"
     ],
     "Complementary Attention for Multi-Agent Reinforcement Learning": [
         "2023",
@@ -221,7 +229,7 @@
         "Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji",
         "https://proceedings.mlr.press/v202/shao23b/shao23b.pdf",
         "https://github.com/thu-rllab/CAMA",
-        "xxx"
+        "nan"
     ],
     "Hokoff: Real Game Dataset from Honor of Kings and its Offline Reinforcement Learning Benchmarks": [
         "2023",
@@ -229,7 +237,7 @@
         "Yun Qu, Boyuan Wang, Jianzhun Shao, Yuhang Jiang, Chen Chen, Zhenbin Ye, Lin Liu, Junfeng Yang, Lin Lai, Hongyang Qin, Minwen Deng, Juchao Zhuo, Deheng Ye, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Xiangyang Ji",
         "https://proceedings.neurips.cc/paper_files/paper/2023/file/464fefa022aaefc85d901317bbf13f85-Paper-Datasets_and_Benchmarks.pdf",
         "https://github.com/thu-rllab/Hokoff",
-        "xxx"
+        "nan"
     ],
     "Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning": [
         "2025",
@@ -237,7 +245,7 @@
         "Yun Qu, Yuhang Jiang, Boyuan Wang, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji",
         "https://arxiv.org/pdf/2412.11120",
         "https://github.com/thu-rllab/LaRe",
-        "xxx"
+        "nan"
     ],
     "Consciousness-Aware Multi-Agent Reinforcement Learning": [
         "2023",
@@ -245,78 +253,78 @@
         "Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji",
         "https://openreview.net/pdf?id=u0aNcjqhEJ",
         "https://github.com/thu-rllab/CAMA",
-        "xxx"
+        "nan"
     ],
     "Pfrl: Pose-free reinforcement learning for 6d pose estimation": [
         "2020",
         "CVPR 2020",
         "Jianzhun Shao, Yuhang Jiang, Gu Wang, Zhigang Li, Xiangyang Ji",
         "https://openaccess.thecvf.com/content_CVPR_2020/papers/Shao_PFRL_Pose-Free_Reinforcement_Learning_for_6D_Pose_Estimation_CVPR_2020_paper.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Almost optimal model-free reinforcement learningvia reference-advantage decomposition":[
         "2020",
         "NeurIPS 2020",
         "Zihan Zhang, Yuan Zhou, Xiangyang Ji",
         "https://proceedings.neurips.cc/paper_files/paper/2020/file/ad71c82b22f4f65b9398f76d8be4c615-Paper.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Is reinforcement learning more difficult than bandits? a near-optimal algorithm escaping the curse of horizon":[
         "2021",
         "COLT 2021",
         "Zihan Zhang, Xiangyang Ji, Simon Du",
         "http://proceedings.mlr.press/v134/zhang21b/zhang21b.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Regret minimization for reinforcement learning by evaluating the optimal bias function":[
         "2019",
         "NeurIPS 2019",
         "Zihan Zhang, Xiangyang Ji",
         "https://proceedings.neurips.cc/paper_files/paper/2019/file/9e984c108157cea74c894b5cf34efc44-Paper.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Improved variance-aware confidence sets for linear bandits and linear mixture mdp":[
         "2021",
         "NeurIPS 2021",
         "Zihan Zhang, Jiaqi Yang, Xiangyang Ji, Simon S Du",
         "https://proceedings.neurips.cc/paper/2021/file/228bbc2f87caeb21bb7f6949fddcb91d-Paper.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Near optimal reward-free reinforcement learning":[
         "2021",
         "ICML 2021",
         "Zihan Zhang, Simon Du, Xiangyang Ji",
         "http://proceedings.mlr.press/v139/zhang21e/zhang21e.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Model-free reinforcement learning: from clipped pseudo-regret to sample complexity":[
         "2021",
         "ICML 2021",
         "Zihan Zhang, Yuan Zhou, Xiangyang Ji",
         "http://proceedings.mlr.press/v139/zhang21ab/zhang21ab.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Horizon-free reinforcement learning in polynomial time: the power of stationary policies":[
         "2022",
         "COLT 2022",
         "Zihan Zhang, Xiangyang Ji, Simon Du",
         "https://proceedings.mlr.press/v178/zhang22a/zhang22a.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ],
     "Near-optimal regret bounds for multi-batch reinforcement learning":[
         "2022",
         "NeurIPS 2022",
         "Zihan Zhang, Yuhang Jiang, Yuan Zhou, Xiangyang Ji",
         "https://proceedings.neurips.cc/paper_files/paper/2022/file/9bcd1fa0c05e5f25ba7a1261f1852e82-Paper-Conference.pdf",
-        "xxx",
-        "xxx"
+        "nan",
+        "nan"
     ]
 }
