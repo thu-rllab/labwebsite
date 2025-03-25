@@ -149,7 +149,7 @@ class Pub2HTML:
         ###    step 2: get all paper filter html    ###
         year_filter_html = self.get_filter_html('year', 'Year', filter_year)
         author_filter_html = self.get_filter_html('author', 'Author', filter_author)
-        conference_filter_html = self.get_filter_html('conference', 'Conference', filter_conference)
+        conference_filter_html = self.get_filter_html('conference', 'Conferences/Journal', filter_conference)
         all_filter_html = f"""
 <!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
 
