@@ -8,6 +8,7 @@ class Pub2HTML:
         self.pub_path = 'final_all_papers.json'
         self.member_path = 'final_all_members.json'
         self.news_path = 'final_all_news.json'
+        self.blog_path = 'final_all_blogs.json'
 
         with open(self.pub_path, 'r') as fp: 
             self.all_pubs = json.load(fp)
@@ -19,6 +20,12 @@ class Pub2HTML:
             self.all_news = json.load(fp)
             ### sort by date ### 
             self.all_news = sorted(self.all_news, key = lambda x: x['date'], reverse = True)  
+            fp.close()
+
+        with open(self.blog_path, 'r') as fp: 
+            self.all_blogs = json.load(fp)
+            ### 按日期排序 ### 
+            self.all_blogs = sorted(self.all_blogs, key = lambda x: x['date'], reverse = True)  
             fp.close()
 
     def wang_to_json(self):
@@ -247,12 +254,14 @@ class Pub2HTML:
                                                         self.all_members[member_name]['github'],\
                                                         self.all_members[member_name]['email'],\
                                                         self.all_members[member_name]['scholar'],\
-                                                        self.all_members[member_name]['wechat']
+                                                        member_name
+                                                        # self.all_members[member_name]['wechat']
             
             
             ### for different people's img ###
-            if 'cheems' in member_name.lower(): img_path = f'resources/people_img/{wechat}.jfif'
-            elif 'xiangyang' in member_name.lower(): img_path = f'resources/people_img/ji.jpg'
+            # if 'cheems' in member_name.lower(): img_path = f'resources/people_img/{wechat}.jfif'
+            # el
+            if 'xiangyang' in member_name.lower(): img_path = f'resources/people_img/ji.jpg'
             else:  img_path = f'resources/people_img/{wechat}.jpg'
 
             ### for different people's wechat ###
@@ -385,15 +394,111 @@ class Pub2HTML:
     <!-- 这里可继续添加更多新闻 ... -->
     </div>
 """
+        all_news_html += """
+    <!-- 分页或"加载更多"按钮 -->
+    <div class="text-center mt-4">
+      <button id="showMoreNewsBtn" class="btn btn-primary showMoreBtn">Show More</button>
+      <div id="thatsAllNewsBtn" class="section-small-title" style="text-align: center; display: none">That's all news!</div>
+      <div id="noNews" class="section-small-title" style="text-align: center; display: none">No news matching current filter.</div>
+    </div>
+    </div>
+"""
         self.update_copy_new_new(src_path='../new_new_index.html', backup_path='../new_new_backup.html', 
                             start_label='<!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->',
                             end_label='<!-- wby: 注意，切勿删除，程序代码识别news结束部分 -->',
                             update_html=all_filter_html + '\n\n' + all_news_html) 
+    
+    def blog_json_to_html(self):
+        ### 首先，加载博客数据文件
+        self.blog_path = 'final_all_blogs.json'
+        try:
+            with open(self.blog_path, 'r') as fp: 
+                self.all_blogs = json.load(fp)
+                ### 按日期对博客排序 ### 
+                self.all_blogs = sorted(self.all_blogs, key = lambda x: x['date'], reverse = True)  
+                fp.close()
+        except FileNotFoundError:
+            self.all_blogs = []  # 如果文件不存在，初始化为空列表
+            
+        ### first step: 获取所有博客日期筛选条件 ### 
+        all_blog_date_filter_conditions = {}
+        for every_blog in self.all_blogs:
+            # 按年份筛选
+            all_blog_date_filter_conditions[every_blog['date'][:4]] = 1
+        
+        all_blog_date_filter_conditions = sorted(list(all_blog_date_filter_conditions.keys()), reverse=True)
+        
+        ### second step: 生成筛选条件的HTML ### 
+        blog_date_filter_html = self.get_filter_html('blogYear', 'Year', all_blog_date_filter_conditions)
+        
+        all_filter_html = f"""
+    <!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->
+
+        <!-- 容器：让标题和下拉框在同一行 -->
+        <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
+        <h2 class="wby-section-title" style="margin-bottom: 1.5%;">Blogs</h2>
+        <!-- 右侧的下拉框部分 -->
+    {blog_date_filter_html} 
+        </div>
+    """
+        
+        ### third step: 生成所有博客的HTML ####
+        all_blog_html = """
+        <!-- 博客列表容器 -->
+        <div id="blogList">
+    """
+        
+        for every_blog in self.all_blogs:
+            cur_date = every_blog['date']
+            cur_content = every_blog['content']
+            
+            # 解析输入的日期字符串
+            parsed_date = datetime.strptime(cur_date, "%Y%m%d")
+            # 格式化为需要的输出格式
+            cur_month = parsed_date.strftime("%b") 
+            cur_day = str(parsed_date.day) 
+            cur_year = str(parsed_date.year)
+            
+            # 简化的博客HTML模板，类似新闻项目的样式
+            every_blog_html_template = f"""
+        <div 
+            class="blog-item mb-3" style="display: none"
+            data-year="{cur_year}"  
+        > 
+            <div class="blog-item-body">
+                <div class="blog-date">{cur_month} {cur_day}, {cur_year}</div>
+                <div class="blog-text">
+                    {cur_content}
+                </div>
+            </div>
+        </div>
+    """
+            all_blog_html += every_blog_html_template
+        
+        all_blog_html += """
+        </div>
+    """
+        all_blog_html += """
+    <!-- 分页或"加载更多"按钮 -->
+    <div class="text-center mt-4">
+      <button id="showMoreBlogsBtn" class="btn btn-primary showMoreBtn">Show More</button>
+      <div id="thatsAllBlogsBtn" class="section-small-title" style="text-align: center; display: none">That's all blogs!</div>
+      <div id="noBlogs" class="section-small-title" style="text-align: center; display: none">No blogs matching current filter.</div>
+    </div>
+    </div>
+"""
+        
+        # 更新HTML文件
+        self.update_copy_new_new(src_path='../new_new_index.html', backup_path='../new_new_backup.html', 
+                            start_label='<!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->',
+                            end_label='<!-- wby: 注意，切勿删除，程序代码识别blog结束部分 -->',
+                            update_html=all_filter_html + '\n\n' + all_blog_html)    
 
 if __name__ == "__main__":
 
     pub2html = Pub2HTML()
     # pub2html.wang_to_json()
+    pub2html.news_json_to_html()
     pub2html.paper_json_to_html()
     pub2html.member_json_to_html()
-    pub2html.news_json_to_html()
+    pub2html.blog_json_to_html()

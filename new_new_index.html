@@ -182,9 +182,65 @@
     line-height: 1.6;
   }
 
+  #blogList {
+    margin-top: 20px;
+  }
+
+  #blogList .blog-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #3498db;
+    background-color: #f8f9fa;
+    border-radius: 0 5px 5px 0;
+  }
+
+  #blogList .blog-date {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  #blogList .blog-text {
+    font-size: 1rem;
+    color: #495057;
+  }
+
+  #blogList .blog-text strong {
+    color: #2c3e50;
+  }
+
   /* wby: 字体美化 */
   #thatsAllBtn {
     color: #228B22; /* 自定义绿色，可以换成你喜欢的颜色 */
+    font-family: "Georgia", "Times New Roman", serif; /* 选择优雅的字体 */
+    font-size: 18px; /* 适当调整字体大小 */
+    font-weight: bold; /* 加粗提升视觉效果 */
+    letter-spacing: 0.5px; /* 增加字间距，使排版更精致 */ 
+  }
+  #thatsAllNewsBtn {
+    color: #228B22; /* 自定义绿色，可以换成你喜欢的颜色 */
+    font-family: "Georgia", "Times New Roman", serif; /* 选择优雅的字体 */
+    font-size: 18px; /* 适当调整字体大小 */
+    font-weight: bold; /* 加粗提升视觉效果 */
+    letter-spacing: 0.5px; /* 增加字间距，使排版更精致 */ 
+  }
+  #thatsAllBlogsBtn {
+    color: #228B22; /* 自定义绿色，可以换成你喜欢的颜色 */
+    font-family: "Georgia", "Times New Roman", serif; /* 选择优雅的字体 */
+    font-size: 18px; /* 适当调整字体大小 */
+    font-weight: bold; /* 加粗提升视觉效果 */
+    letter-spacing: 0.5px; /* 增加字间距，使排版更精致 */ 
+  }
+  #noNews{
+    color: #D72638; /* 自定义红色，可以换成你喜欢的颜色 */
+    font-family: "Georgia", "Times New Roman", serif; /* 选择优雅的字体 */
+    font-size: 18px; /* 适当调整字体大小 */
+    font-weight: bold; /* 加粗提升视觉效果 */
+    letter-spacing: 0.5px; /* 增加字间距，使排版更精致 */ 
+  }
+  #noBlogs{
+    color: #D72638; /* 自定义红色，可以换成你喜欢的颜色 */
     font-family: "Georgia", "Times New Roman", serif; /* 选择优雅的字体 */
     font-size: 18px; /* 适当调整字体大小 */
     font-weight: bold; /* 加粗提升视觉效果 */
@@ -292,6 +348,7 @@
           <li class="nav-item"><a class="nav-link" href="#about">Introduction</a></li>
           <li class="nav-item"><a class="nav-link" href="#publications">Publications</a></li>
           <li class="nav-item"><a class="nav-link" href="#news">News</a></li>
+          <li class="nav-item"><a class="nav-link" href="#blogs">Blogs</a></li>
           <li class="nav-item"><a class="nav-link" href="#team">Team Members</a></li>
           <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
         </ul>
@@ -335,7 +392,179 @@
   </section>
  
 
+  <section id="news" class="container">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+<!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
+
+    <!-- 容器：让标题和下拉框在同一行 -->
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">News</h2>
+      <!-- 右侧的下拉框部分 -->
+
+      <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
+        <select id="newsYearFilterDropdown" class="tech-dropdown-select">
+          <option value="">All Years</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+
+        </select>
+      </div>
+ 
+    </div>
+
+
+
+    <!-- 新闻列表容器 -->
+    <div id="newsList">
+
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="2025"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">Mar 26, 2025</div>
+            <div class="news-text">
+                THU-IDM team website was updated!
+            </div>
+        </div>
+      </div>
+
+
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="2025"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">Jan 19, 2025</div>
+            <div class="news-text">
+                Attention! Our paper <strong>Model Predictive Task Sampling for Efficient and Robust Adaptation</strong> is made public! First trial to successfully predict the optimization outcome after zero/few-shot adaptation given some tasks and model predictive task sampling (MPTS) significantly improves the adaptation robustness of multimodal foundation models and sequential decision-making with learning efficiency retained!
+            </div>
+        </div>
+      </div>
+
+
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="2024"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">Dec 10, 2024</div>
+            <div class="news-text">
+                <strong>Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning</strong> was accepted to AAAI2025. Congratulations to Yun Qu and Yuhang!
+            </div>
+        </div>
+      </div>
+
+
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="2024"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">Nov 17, 2024</div>
+            <div class="news-text">
+                <strong>Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation</strong> got accepted to KDD2025 Research Track, the literature work to generate task distributions for meta learning!
+            </div>
+        </div>
+      </div>
+
+
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="2024"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">Sep 26, 2024</div>
+            <div class="news-text">
+                <strong>Doubly Mild Generalization for Offline Reinforcement Learning</strong> and <strong>Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression</strong> got accepted to NeurIPS2024. Congratulations to Yixiu!
+            </div>
+        </div>
+      </div>
+
+
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="2024"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">Sep 26, 2024</div>
+            <div class="news-text">
+                The multi-task learning SOTA work <strong>GO4Align: Group Optimization for Multi-Task Alignment</strong> got accepted to NeurIPS2024. Congratulations to Jiayi!
+            </div>
+        </div>
+      </div>
+
+
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="2024"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">May 1, 2024</div>
+            <div class="news-text">
+                <strong>LLM-Empowered State Representation for Reinforcement Learning</strong> was accepted to ICML2024. Congratulations to Boyuan and Yun Qu!
+            </div>
+        </div>
+      </div>
+
+
+    <!-- 这里可继续添加更多新闻 ... -->
+    </div>
+
+    <!-- 分页或"加载更多"按钮 -->
+    <div class="text-center mt-4">
+      <button id="showMoreNewsBtn" class="btn btn-primary showMoreBtn">Show More</button>
+      <div id="thatsAllNewsBtn" class="section-small-title" style="text-align: center; display: none">That's all news!</div>
+      <div id="noNews" class="section-small-title" style="text-align: center; display: none">No news matching current filter.</div>
+    </div>
+    </div>
+<!-- wby: 注意，切勿删除，程序代码识别news结束部分 -->
+      </section>
+    
+
   <section id="publications" class="container">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -608,28 +837,6 @@
           </p>
           <a href=" https://arxiv.org/pdf/2404.06486 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
           <a href=" https://github.com/autumn9999/GO4Align " class="btn btn-secondary btn-sm" target="_blank">Code</a>
-
-        </div>
-      </div>
-
-
-
-      <div 
-        class="card mb-3" style="display: none"
-        data-year="2024" 
-        data-authors="Ziqi Wang, Chang Che, Qi Wang, Yangyang Li, Zenglin Shi, Meng Wang"
-        data-conference="arXiv 2024"
-      > 
-        <div class="card-body">
-          <span class="badge badge-success" style="margin-bottom: 1em">arXiv 2024</span>
-          <h5 class="card-title" style="color:#576263">
-            <strong>Separable Mixture of Low-Rank Adaptation for Continual Visual Instruction Tuning</strong>
-          </h5>
-          <p class="card-text">
-            <strong>Authors:</strong> Ziqi Wang, Chang Che, Qi Wang, Yangyang Li, Zenglin Shi, Meng Wang
-          </p>
-          <a href=" https://arxiv.org/pdf/2411.13949 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
-
 
         </div>
       </div>
@@ -1355,73 +1562,71 @@
 
   </section> 
 
-  <section id="news" class="container">
+  <section id="blog" class="container">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->
 
-
-
-
-
-
-
-
-
-
-
-<!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
-
-    <!-- 容器：让标题和下拉框在同一行 -->
-    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
-      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">News</h2>
-      <!-- 右侧的下拉框部分 -->
-
+        <!-- 容器：让标题和下拉框在同一行 -->
+        <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
+        <h2 class="wby-section-title" style="margin-bottom: 1.5%;">Blogs</h2>
+        <!-- 右侧的下拉框部分 -->
+    
       <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
-        <select id="newsYearFilterDropdown" class="tech-dropdown-select">
+        <select id="blogYearFilterDropdown" class="tech-dropdown-select">
           <option value="">All Years</option>
-          <option value="2025">2025</option>
-          <option value="2024">2024</option>
 
         </select>
       </div>
  
-    </div>
-
-
-
-    <!-- 新闻列表容器 -->
-    <div id="newsList">
-
-      <div 
-        class="news-item mb-3" style="display: none"
-        data-year="2025"  
-      > 
-        <div class="news-item-body">
-            <div class="news-date">Feb 9, 2025</div>
-            <div class="news-text">
-                Born of the Website of THU-IDM.
-            </div>
         </div>
-      </div>
+    
 
 
-      <div 
-        class="news-item mb-3" style="display: none"
-        data-year="2024"  
-      > 
-        <div class="news-item-body">
-            <div class="news-date">May 1, 2024</div>
-            <div class="news-text">
-                Our work <strong>LLM-Empowered State Representation for Reinforcement Learning</strong> is accepted to ICML2024 !
-            </div>
+        <!-- 博客列表容器 -->
+        <div id="blogList">
+    
         </div>
-      </div>
-
-
-    <!-- 这里可继续添加更多新闻 ... -->
+    
+    <!-- 分页或"加载更多"按钮 -->
+    <div class="text-center mt-4">
+      <button id="showMoreBlogsBtn" class="btn btn-primary showMoreBtn">Show More</button>
+      <div id="thatsAllBlogsBtn" class="section-small-title" style="text-align: center; display: none">That's all blogs!</div>
+      <div id="noBlogs" class="section-small-title" style="text-align: center; display: none">No blogs matching current filter.</div>
     </div>
-<!-- wby: 注意，切勿删除，程序代码识别news结束部分 -->
+    </div>
+<!-- wby: 注意，切勿删除，程序代码识别blog结束部分 -->
   </section>
 
   <section id="team" class="container">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1502,7 +1707,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/Cheems_QW.jfif" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Qi (Cheems) Wang.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1541,7 +1746,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/wbyxhz.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Boyuan Wang.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1580,7 +1785,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/thu-quyun.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Yun Qu.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1619,7 +1824,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/maoyx921.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Yixiu Mao.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1658,7 +1863,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/yuhang_joy.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Yuhang Jiang.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1694,7 +1899,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/LinXiG0409.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Mengge Liu.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1725,7 +1930,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/joseph16683362531.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Jinghao Chen.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1761,7 +1966,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/lxylowxq.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Wendong Huang.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1798,7 +2003,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/sjz_kod.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Jianzhun Shao.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1829,7 +2034,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/nikjay12.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Hongchang Zhang.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1866,7 +2071,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/Dinumner.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Zihan Zhang.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>
@@ -1900,7 +2105,7 @@
                 </div>
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="resources/people_img/thudahsc.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
+                    <img src="resources/people_img/Shuncheng He.jpg" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
             </div>
         </div>

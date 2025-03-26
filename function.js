@@ -7,10 +7,13 @@
     const degreeFilterDropdown = document.getElementById('degreeFilterDropdown');
     // for news-year
     const newsYearFilterDropdown = document.getElementById('newsYearFilterDropdown');
+    const blogYearFilterDropdown = document.getElementById('blogYearFilterDropdown');
+    
     // wby: 获得论文列表的元素
     const cardsContainer = document.getElementById('publicationsList');
     const teamcardsContainer = document.getElementById('teamList');
     const newsContainer = document.getElementById('newsList');
+    const blogContainer = document.getElementById('blogList');
     // wby: 获得展示更多的按钮
     const showMoreBtn = document.getElementById('showMoreBtn');
     // wby: 增加thats-all-button
@@ -22,12 +25,35 @@
     const cards = Array.from(cardsContainer.querySelectorAll('.card'));
     const teamcards = Array.from(teamcardsContainer.querySelectorAll('[data-position]'));
     const newscards = Array.from(newsContainer.querySelectorAll('[data-year]'));
+    const blogItems = Array.from(blogContainer?.querySelectorAll('.blog-item') || []);
+    
+    // 点击"Show More News"时，显示当前筛选条件下的全部新闻
+    const showMoreNewsBtn = document.getElementById('showMoreNewsBtn');
+    if (showMoreNewsBtn) {
+      showMoreNewsBtn.addEventListener('click', function () {
+        showAllNews = true; 
+        newsfilterAndSort();
+      });
+    }
+
+    // 点击"Show More Blogs"时，显示当前筛选条件下的全部博客
+    const showMoreBlogsBtn = document.getElementById('showMoreBlogsBtn');
+    if (showMoreBlogsBtn) {
+      showMoreBlogsBtn.addEventListener('click', function () {
+        showAllBlogs = true; 
+        blogFilterAndSort();
+      });
+    }
 
     // 初始只显示前多少条
-    const itemsToShow = 5;
-    
-    // wby: 新增一个变量来控制是否显示全部论文
-    let showAll = false; 
+    const itemsToShow = 5;  // 论文显示条数
+    const newsToShow = 3;   // 新闻显示条数
+    const blogsToShow = 3;  // 博客显示条数
+
+    // 控制是否显示全部内容的变量
+    let showAll = false;      // 控制论文显示
+    let showAllNews = false;  // 控制新闻显示
+    let showAllBlogs = false; // 控制博客显示
 
     // 筛选并排序的函数
     function filterAndSort() {
@@ -137,29 +163,174 @@
       }); 
     }
 
-    // 筛选新闻的函数
-    function newsfilterAndSort() { 
-      const selectedNewsYear = newsYearFilterDropdown.value.trim();   
 
-      let filteredCards = newscards.filter(card => { 
-        const cardYear = card.dataset.year;   
+    // 重写新闻筛选函数，模仿 filterAndSort() 的结构
+    function newsfilterAndSort() {
+      // 获取下拉框的当前值
+      const selectedNewsYear = newsYearFilterDropdown.value.trim();
 
-        let matchYear = !selectedNewsYear || (cardYear == selectedNewsYear); 
-
+      // 1. 根据下拉框的值进行过滤
+      let filteredCards = newscards.filter(card => {
+        const cardYear = card.dataset.year;
+        // 年份需要精确匹配
+        const matchYear = !selectedNewsYear || cardYear === selectedNewsYear;
         return matchYear;
-      }); 
+      });
 
-      // 3. 先隐藏所有 card
+      // 2. 按年份从大到小降序排序
+      filteredCards = filteredCards.sort((a, b) => {
+        return Number(b.dataset.year) - Number(a.dataset.year);
+      });
+
+      // 3. 先隐藏所有新闻项目
       newscards.forEach(card => {
         card.style.display = 'none';
-      }); 
+      });
 
+      // 4. 只显示过滤后前 newsToShow 条
       filteredCards.forEach((card, index) => {
-        card.style.display = 'block';
-      }); 
+        if (showAllNews || index < newsToShow) {
+          card.style.display = 'block';
+        }
+      });
+
+      // 5. 控制"显示更多"和"全部显示"按钮的显示
+      const newsMoreBtn = document.getElementById('showMoreNewsBtn');
+      const thatsAllNewsBtn = document.getElementById('thatsAllNewsBtn');
+      const noNewsBtn = document.getElementById('noNews');
+
+      if (filteredCards.length == 0) {
+        if (newsMoreBtn) newsMoreBtn.style.display = 'none';
+        if (thatsAllNewsBtn) thatsAllNewsBtn.style.display = 'none';
+        if (noNewsBtn) noNewsBtn.style.display = 'block';
+      }
+      else if (!showAllNews && filteredCards.length > newsToShow) {
+        if (newsMoreBtn) {
+          newsMoreBtn.style.display = 'inline-block';
+          newsMoreBtn.textContent = `${newsToShow} of ${filteredCards.length} News Displayed, Click to Show All`;
+        }
+        if (thatsAllNewsBtn) thatsAllNewsBtn.style.display = 'none';
+        if (noNewsBtn) noNewsBtn.style.display = 'none';
+      } 
+      else {
+        if (newsMoreBtn) newsMoreBtn.style.display = 'none';
+        if (thatsAllNewsBtn) {
+          thatsAllNewsBtn.style.display = 'block';
+          thatsAllNewsBtn.textContent = `That's all ${filteredCards.length} news items under current filter conditions.`;
+        }
+        if (noNewsBtn) noNewsBtn.style.display = 'none';
+      }
     }
 
-    // 当下拉框发生变化时，重新执行过滤+排序
+    // 重写博客筛选函数，模仿 filterAndSort() 的结构
+    function blogFilterAndSort() {
+      // 简单检查博客容器是否存在
+      if (!blogContainer || !blogYearFilterDropdown) return;
+      
+      // 获取下拉框的当前值
+      const selectedYear = blogYearFilterDropdown.value.trim();
+      
+      // 1. 根据下拉框的值进行过滤
+      let filteredBlogs = blogItems.filter(item => { 
+        if (!item.dataset || !item.dataset.year) return false;
+        
+        const itemYear = item.dataset.year;
+        // 年份需要精确匹配
+        return !selectedYear || itemYear === selectedYear;
+      });
+      
+      // 2. 按年份从大到小降序排序
+      filteredBlogs = filteredBlogs.sort((a, b) => {
+        if (!a.dataset || !b.dataset) return 0;
+        return Number(b.dataset.year) - Number(a.dataset.year);
+      });
+      
+      // 3. 先隐藏所有博客项目
+      blogItems.forEach(item => { 
+        item.style.display = 'none';
+      });
+      
+      // 4. 只显示过滤后前 blogsToShow 条
+      filteredBlogs.forEach((item, index) => {
+        if (showAllBlogs || index < blogsToShow) {
+          item.style.display = 'block';
+        }
+      });
+      
+      // 5. 控制"显示更多"和"全部显示"按钮的显示
+      const blogMoreBtn = document.getElementById('showMoreBlogsBtn');
+      const thatsAllBlogsBtn = document.getElementById('thatsAllBlogsBtn');
+      const noBlogsBtn = document.getElementById('noBlogs');
+      
+      if (filteredBlogs.length == 0) {
+        if (blogMoreBtn) blogMoreBtn.style.display = 'none';
+        if (thatsAllBlogsBtn) thatsAllBlogsBtn.style.display = 'none';
+        if (noBlogsBtn) noBlogsBtn.style.display = 'block';
+      }
+      else if (!showAllBlogs && filteredBlogs.length > blogsToShow) {
+        if (blogMoreBtn) {
+          blogMoreBtn.style.display = 'inline-block';
+          blogMoreBtn.textContent = `${blogsToShow} of ${filteredBlogs.length} Blogs Displayed, Click to Show All`;
+        }
+        if (thatsAllBlogsBtn) thatsAllBlogsBtn.style.display = 'none';
+        if (noBlogsBtn) noBlogsBtn.style.display = 'none';
+      } 
+      else {
+        if (blogMoreBtn) blogMoreBtn.style.display = 'none';
+        if (thatsAllBlogsBtn) {
+          thatsAllBlogsBtn.style.display = 'block';
+          thatsAllBlogsBtn.textContent = `That's all ${filteredBlogs.length} blog posts under current filter conditions.`;
+        }
+        if (noBlogsBtn) noBlogsBtn.style.display = 'none';
+      }
+    }
+    
+    // 筛选新闻的函数
+    // function newsfilterAndSort() { 
+    //   const selectedNewsYear = newsYearFilterDropdown.value.trim();   
+
+    //   let filteredCards = newscards.filter(card => { 
+    //     const cardYear = card.dataset.year;   
+
+    //     let matchYear = !selectedNewsYear || (cardYear == selectedNewsYear); 
+
+    //     return matchYear;
+    //   }); 
+
+    //   // 3. 先隐藏所有 card
+    //   newscards.forEach(card => {
+    //     card.style.display = 'none';
+    //   }); 
+
+    //   filteredCards.forEach((card, index) => {
+    //     card.style.display = 'block';
+    //   }); 
+    // }
+  //   function blogFilterAndSort() {
+  //     if (!blogContainer || !blogYearFilterDropdown) return;
+      
+  //     const selectedYear = blogYearFilterDropdown.value.trim();
+      
+  //     let filteredBlogs = blogItems.filter(item => { 
+  //         if (!item.dataset || !item.dataset.year) return false;
+          
+  //         const itemYear = item.dataset.year;
+  //         return !selectedYear || itemYear === selectedYear;
+  //     });
+      
+  //     // 隐藏所有博客项目
+  //     blogItems.forEach(item => { 
+  //         item.style.display = 'none';
+  //     });
+      
+  //     // 显示过滤后的所有博客
+  //     filteredBlogs.forEach(item => {
+  //         item.style.display = 'block';
+  //     });
+  // }
+
+
+  // 当下拉框发生变化时，重新执行过滤+排序
     yearFilterDropdown.addEventListener('change', function() {
       // wby: 选择筛选条件后，回到默认的 10 条显示模式
       showAll = false; 
@@ -183,6 +354,11 @@
     newsYearFilterDropdown.addEventListener('change', function() { 
       newsfilterAndSort();
     });
+    
+    blogYearFilterDropdown.addEventListener('change', function() {
+      blogFilterAndSort();
+    });
+    
 
     // 点击“Show More”时，显示当前筛选条件下的全部卡片
     showMoreBtn.addEventListener('click', function () {
@@ -191,8 +367,21 @@
       filterAndSort();
     });
 
+    // for news
+    newsYearFilterDropdown.addEventListener('change', function() { 
+      showAllNews = false;  // 重置为默认显示模式
+      newsfilterAndSort();
+    });
+
+    // for blogs
+    blogYearFilterDropdown.addEventListener('change', function() {
+      showAllBlogs = false;  // 重置为默认显示模式
+      blogFilterAndSort();
+    });
+
     // 页面加载后，默认先执行一次，保证初始状态下就有结果
     filterAndSort();
     teamfilterAndSort();
     newsfilterAndSort();
+    blogFilterAndSort();
   }); 

@@ -1,10 +1,30 @@
 [
     {
-        "date": "20240501",
-        "content": "Our work <strong>LLM-Empowered State Representation for Reinforcement Learning</strong> is accepted to ICML2024 !"
+        "date": "20250119",
+        "content": "Attention! Our paper <strong>Model Predictive Task Sampling for Efficient and Robust Adaptation</strong> is made public! First trial to successfully predict the optimization outcome after zero/few-shot adaptation given some tasks and model predictive task sampling (MPTS) significantly improves the adaptation robustness of multimodal foundation models and sequential decision-making with learning efficiency retained!"
     },
     {
-        "date": "20250209",
-        "content": "Born of the Website of THU-IDM."
+        "date": "20241210",
+        "content": "<strong>Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning</strong> was accepted to AAAI2025. Congratulations to Yun Qu and Yuhang!"
+    },
+    {
+        "date": "20241117",
+        "content": "<strong>Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation</strong> got accepted to KDD2025 Research Track, the literature work to generate task distributions for meta learning!"
+    },
+    {
+        "date": "20240926",
+        "content": "<strong>Doubly Mild Generalization for Offline Reinforcement Learning</strong> and <strong>Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression</strong> got accepted to NeurIPS2024. Congratulations to Yixiu!"
+    },
+    {
+        "date": "20240926",
+        "content": "The multi-task learning SOTA work <strong>GO4Align: Group Optimization for Multi-Task Alignment</strong> got accepted to NeurIPS2024. Congratulations to Jiayi!"
+    },
+    {
+        "date": "20240501",
+        "content": "<strong>LLM-Empowered State Representation for Reinforcement Learning</strong> was accepted to ICML2024. Congratulations to Boyuan and Yun Qu!"
+    },
+    {
+        "date": "20250326",
+        "content": "THU-IDM team website was updated!"
     }
 ]
