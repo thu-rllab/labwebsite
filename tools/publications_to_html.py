@@ -102,28 +102,19 @@ class Pub2HTML:
     
     def get_all_filter_conditions(self):
         ### now get all filter conditions ### 
-        filter_year, filter_author, filter_conference = {}, {}, {} 
+        filter_year, filter_author, filter_conference, filter_tag = {}, {}, {}, {}
         for cur_title in self.all_pubs.keys():
-            cur_year, cur_conference, cur_authors, cur_paper_link, cur_code_link, cur_demo_link = self.all_pubs[cur_title]
+            cur_year, cur_conference, cur_authors, cur_paper_link, cur_code_link, cur_demo_link, cur_tag = self.all_pubs[cur_title]
             filter_year[cur_year] = 0
             cur_authors = cur_authors.split(',')
             for cur_every_author in cur_authors:
                 filter_author[cur_every_author.replace('*', '').strip()] = 0
             filter_conference[cur_conference.replace(cur_year, '').strip()] = 0
-        # filter_author = [
-        #     'Yixiu Mao',
-        #     'Yun Qu',
-        #     'Qi (Cheems) Wang', 
-        #     'Hongchang Zhang',
-        #     'Boyuan Wang',
-        #     'Shuncheng He',
-        #     'Yuhang Jiang',
-        #     'Jianzhun Shao',
-        #     'Chang Liu', 
-        #     'Mengge Liu' 
-        # ] 
+            if cur_tag != 'nan':
+                filter_tag[cur_tag] = 0
+        ### now get all filter conditions ###
         filter_author = list(self.all_members.keys()) 
-        return sorted(list(filter_year.keys()), reverse=True), sorted(filter_author), sorted(list(filter_conference.keys()))
+        return sorted(list(filter_year.keys()), reverse=True), sorted(filter_author), sorted(list(filter_conference.keys())), sorted(list(filter_tag.keys()))
     
     def get_filter_html(self, id_name, show_name, filter_values):
         option_value = ''
@@ -159,7 +150,7 @@ class Pub2HTML:
 
     def paper_json_to_html(self):  
         ###    step 1: get all filter conditions    ###
-        filter_year, filter_author, filter_conference = self.get_all_filter_conditions()
+        filter_year, filter_author, filter_conference, filter_tag = self.get_all_filter_conditions()
         print('year: ', filter_year)
         print('author: ', filter_author)
         print('conference: ', filter_conference)
@@ -167,6 +158,7 @@ class Pub2HTML:
         year_filter_html = self.get_filter_html('year', 'Year', filter_year)
         author_filter_html = self.get_filter_html('author', 'Author', filter_author)
         conference_filter_html = self.get_filter_html('conference', 'Conferences/Journal', filter_conference)
+        tag_filter_html = self.get_filter_html('tag', 'Tag', filter_tag)
         all_filter_html = f"""
 <!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
 
@@ -178,6 +170,8 @@ class Pub2HTML:
 
 {author_filter_html}
 
+{tag_filter_html}
+
 {conference_filter_html}
 </div>
 """ 
@@ -188,13 +182,13 @@ class Pub2HTML:
 """
         time_sorted_papers = sorted(self.all_pubs.items(), key = lambda x: x[1][0], reverse=True) 
         for cur_title, cur_title_values in time_sorted_papers:
-            cur_year, cur_conference, cur_authors, cur_paper_link, cur_code_link, cur_demo_link = cur_title_values
+            cur_year, cur_conference, cur_authors, cur_paper_link, cur_code_link, cur_demo_link, cur_tag = cur_title_values
 
             ### if no paper/code/demo, then do not show ###
             cur_paper_link_html = '' if cur_paper_link == 'nan' else f'          <a href=" {cur_paper_link} " class="btn btn-secondary btn-sm" target="_blank">Paper</a>'
             cur_code_link_html = '' if cur_code_link == 'nan' else f'          <a href=" {cur_code_link} " class="btn btn-secondary btn-sm" target="_blank">Code</a>'
             cur_demo_link_html = '' if cur_demo_link == 'nan' else f'          <a href=" {cur_demo_link} " class="btn btn-secondary btn-sm" target="_blank">Demo</a>'
-
+            cur_tag_html = '' if cur_tag == 'nan' else f'          <span class="badge badge-info" style="margin-bottom: 1em; margin-left: 0.5em; background-color: #17a2b8;">{cur_tag}</span>'
             html_template = f"""
 
       <div 
@@ -202,9 +196,11 @@ class Pub2HTML:
         data-year="{cur_year}" 
         data-authors="{cur_authors}"
         data-conference="{cur_conference}"
+        data-tag="{cur_tag}"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">{cur_conference}</span>
+          {cur_tag_html}
           <h5 class="card-title" style="color:#576263">
             <strong>{cur_title}</strong>
           </h5>

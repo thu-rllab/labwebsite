@@ -420,6 +420,22 @@
 
 
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
 
     <!-- 容器：让标题和下拉框在同一行 -->
@@ -599,6 +615,20 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
 
     <!-- 容器：让标题和下拉框在同一行 -->
@@ -644,6 +674,19 @@
 
 
       <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
+        <select id="tagFilterDropdown" class="tech-dropdown-select">
+          <option value="">All Tags</option>
+          <option value="LLM4RL">LLM4RL</option>
+          <option value="Meta-RL">Meta-RL</option>
+          <option value="Multi-Task Learning">Multi-Task Learning</option>
+          <option value="Robust Adaptation">Robust Adaptation</option>
+
+        </select>
+      </div>
+
+
+
+      <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
         <select id="conferenceFilterDropdown" class="tech-dropdown-select">
           <option value="">All Conferences/Journals</option>
           <option value="AAAI">AAAI</option>
@@ -672,9 +715,11 @@
         data-year="2025" 
         data-authors="Qi (Cheems) Wang*, Zehao Xiao*, Yixiu Mao*, Yun Qu*, Jiayi Shen, Yiqin Lv, Xiangyang Ji"
         data-conference="arXiv 2025"
+        data-tag="Robust Adaptation"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">arXiv 2025</span>
+                    <span class="badge badge-info" style="margin-bottom: 1em; margin-left: 0.5em; background-color: #17a2b8;">Robust Adaptation</span>
           <h5 class="card-title" style="color:#576263">
             <strong>Beyond Any-Shot Adaptation: Predicting Optimization Outcome for Robustness Gains without Extra Pay</strong>
           </h5>
@@ -694,9 +739,11 @@
         data-year="2025" 
         data-authors="Cheems Wang, Yiqin Lv, Yixiu Mao, Yun Qu, Yi Xu, Xiangyang Ji"
         data-conference="KDD 2025"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">KDD 2025</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation</strong>
           </h5>
@@ -716,9 +763,11 @@
         data-year="2025" 
         data-authors="Zehao Xiao, Shilin Yan, Jack Hong, Jiayin Cai, Xiaolong Jiang, Yao Hu, Jiayi Shen, Qi Wang, Cees G. M. Snoek"
         data-conference="ICLR 2025"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2025</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>DynaPrompt: Dynamic Test-Time Prompt Tuning</strong>
           </h5>
@@ -738,9 +787,11 @@
         data-year="2025" 
         data-authors="Yun Qu, Yuhang Jiang, Boyuan Wang, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji"
         data-conference="AAAI 2025"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">AAAI 2025</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning</strong>
           </h5>
@@ -760,9 +811,11 @@
         data-year="2024" 
         data-authors="Boyuan Wang, Yun Qu, Yuhang Jiang, Jianzhun Shao, Chang Liu, Wenming Yang, Xiangyang Ji"
         data-conference="ICML 2024"
+        data-tag="LLM4RL"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICML 2024</span>
+                    <span class="badge badge-info" style="margin-bottom: 1em; margin-left: 0.5em; background-color: #17a2b8;">LLM4RL</span>
           <h5 class="card-title" style="color:#576263">
             <strong>LLM-Empowered State Representation for Reinforcement Learning</strong>
           </h5>
@@ -782,9 +835,11 @@
         data-year="2024" 
         data-authors="Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji"
         data-conference="NeurIPS 2024"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2024</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression</strong>
           </h5>
@@ -804,9 +859,11 @@
         data-year="2024" 
         data-authors="Yiqin Lv, Qi Wang, Dong Liang, Zheng Xie"
         data-conference="NeurIPS 2024"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2024</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Theoretical Investigations and Practical Enhancements on Tail Task Risk Minimization in Meta Learning</strong>
           </h5>
@@ -826,9 +883,11 @@
         data-year="2024" 
         data-authors="Jiayi Shen, Qi (Cheems) Wang, Zehao Xiao, Nanne Van Noord, Marcel Worring"
         data-conference="NeurIPS 2024"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2024</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>GO4Align: Group Optimization for Multi-Task Alignment</strong>
           </h5>
@@ -848,9 +907,11 @@
         data-year="2024" 
         data-authors="Yuchen Yang, Yingdong Shi, Cheems Wang, Xiantong Zhen, Yuxuan Shi, Jun Xu"
         data-conference="ICML 2024"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICML 2024</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Reducing Fine-Tuning Memory Overhead by Approximate and Memory-Sharing Backpropagation</strong>
           </h5>
@@ -870,9 +931,11 @@
         data-year="2024" 
         data-authors="Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji"
         data-conference="arXiv 2024"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">arXiv 2024</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Choices are More Important than Efforts: LLM Enables Efficient Multi-Agent Exploration</strong>
           </h5>
@@ -892,9 +955,11 @@
         data-year="2024" 
         data-authors="Yixiu Mao, Qi Wang, Yun Qu, Yuhang Jiang, Xiangyang Ji"
         data-conference="NeurIPS 2024"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2024</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Doubly Mild Generalization for Offline Reinforcement Learning</strong>
           </h5>
@@ -914,9 +979,11 @@
         data-year="2024" 
         data-authors="Chen Chen, Zhaoyi Xu, Yixiu Mao, Hongchang Zhang, Xiangyang Ji"
         data-conference="ICLR 2024"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2024</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Enhancing Offline Reinforcement Learning with an Optimal Supported Dataset</strong>
           </h5>
@@ -936,9 +1003,11 @@
         data-year="2023" 
         data-authors="Qi Wang, Marco Federici, Herke van Hoof"
         data-conference="ICLR 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Bridge the Inference Gaps of Neural Processes via Expectation Maximization</strong>
           </h5>
@@ -958,9 +1027,11 @@
         data-year="2023" 
         data-authors="Jiayi Shen, Xiantong Zhen, Qi Wang, Marcel Worring"
         data-conference="NeurIPS 2023"
+        data-tag="Multi-Task Learning"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+                    <span class="badge badge-info" style="margin-bottom: 1em; margin-left: 0.5em; background-color: #17a2b8;">Multi-Task Learning</span>
           <h5 class="card-title" style="color:#576263">
             <strong>Episodic Multi-Task Learning with Heterogeneous Neural Processes</strong>
           </h5>
@@ -980,9 +1051,11 @@
         data-year="2023" 
         data-authors="Qi Wang, Yanghe Feng, Jincai Huang, Yiqin Lv, Zheng Xie, Xiaoshan Gao"
         data-conference="The Innovation 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">The Innovation 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Large-scale generative simulation artificial intelligence: The next hotspot</strong>
           </h5>
@@ -1002,9 +1075,11 @@
         data-year="2023" 
         data-authors="Qi Wang, Yiqin Lv, Yanghe Feng, Zheng Xie, Jincai Huang"
         data-conference="NeurIPS 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>A Simple Yet Effective Strategy to Robustify the Meta Learning Paradigm</strong>
           </h5>
@@ -1024,9 +1099,11 @@
         data-year="2023" 
         data-authors="Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji"
         data-conference="ICML 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICML 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Supported Trust Region Optimization for Offline Reinforcement Learning</strong>
           </h5>
@@ -1046,9 +1123,11 @@
         data-year="2023" 
         data-authors="Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji"
         data-conference="NeurIPS 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Supported Value Regularization for Offline Reinforcement Learning</strong>
           </h5>
@@ -1068,9 +1147,11 @@
         data-year="2023" 
         data-authors="Hongchang Zhang, Jianzhun Shao, Shuncheng He, Yuhang Jiang, Xiangyang Ji"
         data-conference="AAAI 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">AAAI 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>DARL: distance-aware uncertainty estimation for offline reinforcement learning</strong>
           </h5>
@@ -1090,9 +1171,11 @@
         data-year="2023" 
         data-authors="Hongchang Zhang, Yixiu Mao, Boyuan Wang, Shuncheng He, Yi Xu, Xiangyang Ji"
         data-conference="ICLR 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>In-sample Actor Critic for Offline Reinforcement Learning</strong>
           </h5>
@@ -1112,9 +1195,11 @@
         data-year="2023" 
         data-authors="Hongchang Zhang, Boyuan Wang, Yixiu Mao, Jianzhun Shao, Yuhang Jiang, Yi Xu, Xiangyang Ji"
         data-conference="ICLR 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Pessimistic Policy Iteration for Offline Reinforcement Learning</strong>
           </h5>
@@ -1134,9 +1219,11 @@
         data-year="2023" 
         data-authors="Jianzhun Shao, Yun Qu, Chen Chen, Hongchang Zhang, Xiangyang Ji"
         data-conference="NeurIPS 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Counterfactual Conservative Q Learning for Offline Multi-agent Reinforcement Learning</strong>
           </h5>
@@ -1156,9 +1243,11 @@
         data-year="2023" 
         data-authors="Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji"
         data-conference="ICML 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICML 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Complementary Attention for Multi-Agent Reinforcement Learning</strong>
           </h5>
@@ -1178,9 +1267,11 @@
         data-year="2023" 
         data-authors="Yun Qu, Boyuan Wang, Jianzhun Shao, Yuhang Jiang, Chen Chen, Zhenbin Ye, Lin Liu, Junfeng Yang, Lin Lai, Hongyang Qin, Minwen Deng, Juchao Zhuo, Deheng Ye, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Xiangyang Ji"
         data-conference="NeurIPS 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Hokoff: Real Game Dataset from Honor of Kings and its Offline Reinforcement Learning Benchmarks</strong>
           </h5>
@@ -1200,9 +1291,11 @@
         data-year="2023" 
         data-authors="Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji"
         data-conference="ICLR 2023"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICLR 2023</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Consciousness-Aware Multi-Agent Reinforcement Learning</strong>
           </h5>
@@ -1222,9 +1315,11 @@
         data-year="2022" 
         data-authors="Qi Wang, Herke van Hoof"
         data-conference="ICML 2022"
+        data-tag="Meta-RL"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICML 2022</span>
+                    <span class="badge badge-info" style="margin-bottom: 1em; margin-left: 0.5em; background-color: #17a2b8;">Meta-RL</span>
           <h5 class="card-title" style="color:#576263">
             <strong>Model-based Meta Reinforcement Learning using Graph Structured Surrogate Models and Amortized Policy Search</strong>
           </h5>
@@ -1244,9 +1339,11 @@
         data-year="2022" 
         data-authors="Qi Wang, Herke van Hoof"
         data-conference="NeurIPS 2022"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2022</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Learning Expressive Meta-Representations with Mixture of Expert Neural Processes</strong>
           </h5>
@@ -1266,9 +1363,11 @@
         data-year="2022" 
         data-authors="Hongchang Zhang, Jianzhun Shao, Yuhang Jiang, Shuncheng He, Guanwen Zhang, Xiangyang Ji"
         data-conference="AAAI 2022"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">AAAI 2022</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>State deviation correction for offline reinforcement learning</strong>
           </h5>
@@ -1288,9 +1387,11 @@
         data-year="2022" 
         data-authors="Shuncheng He, Yuhang Jiang, Hongchang Zhang, Jianzhun Shao, Xiangyang Ji"
         data-conference="AAAI 2022"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">AAAI 2022</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Wasserstein unsupervised reinforcement learning</strong>
           </h5>
@@ -1310,9 +1411,11 @@
         data-year="2022" 
         data-authors="Yuhang Jiang, Jianzhun Shao, Shuncheng He, Hongchang Zhang, Xiangyang Ji"
         data-conference="NeurIPS 2022"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2022</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Spd: Synergy pattern diversifying oriented unsupervised multi-agent reinforcement learning</strong>
           </h5>
@@ -1332,9 +1435,11 @@
         data-year="2022" 
         data-authors="Zihan Zhang, Xiangyang Ji, Simon Du"
         data-conference="COLT 2022"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">COLT 2022</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Horizon-free reinforcement learning in polynomial time: the power of stationary policies</strong>
           </h5>
@@ -1354,9 +1459,11 @@
         data-year="2022" 
         data-authors="Zihan Zhang, Yuhang Jiang, Yuan Zhou, Xiangyang Ji"
         data-conference="NeurIPS 2022"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2022</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Near-optimal regret bounds for multi-batch reinforcement learning</strong>
           </h5>
@@ -1376,9 +1483,11 @@
         data-year="2021" 
         data-authors="Zihan Zhang, Xiangyang Ji, Simon Du"
         data-conference="COLT 2021"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">COLT 2021</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Is reinforcement learning more difficult than bandits? a near-optimal algorithm escaping the curse of horizon</strong>
           </h5>
@@ -1398,9 +1507,11 @@
         data-year="2021" 
         data-authors="Zihan Zhang, Jiaqi Yang, Xiangyang Ji, Simon S Du"
         data-conference="NeurIPS 2021"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2021</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Improved variance-aware confidence sets for linear bandits and linear mixture mdp</strong>
           </h5>
@@ -1420,9 +1531,11 @@
         data-year="2021" 
         data-authors="Zihan Zhang, Simon Du, Xiangyang Ji"
         data-conference="ICML 2021"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICML 2021</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Near optimal reward-free reinforcement learning</strong>
           </h5>
@@ -1442,9 +1555,11 @@
         data-year="2021" 
         data-authors="Zihan Zhang, Yuan Zhou, Xiangyang Ji"
         data-conference="ICML 2021"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICML 2021</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Model-free reinforcement learning: from clipped pseudo-regret to sample complexity</strong>
           </h5>
@@ -1464,9 +1579,11 @@
         data-year="2020" 
         data-authors="Qi Wang, Herke van Hoof"
         data-conference="ICML 2020"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">ICML 2020</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Doubly Stochastic Variational Inference for Neural Processes with Hierarchical Latent Variables</strong>
           </h5>
@@ -1486,9 +1603,11 @@
         data-year="2020" 
         data-authors="Jianzhun Shao, Yuhang Jiang, Gu Wang, Zhigang Li, Xiangyang Ji"
         data-conference="CVPR 2020"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">CVPR 2020</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Pfrl: Pose-free reinforcement learning for 6d pose estimation</strong>
           </h5>
@@ -1508,9 +1627,11 @@
         data-year="2020" 
         data-authors="Zihan Zhang, Yuan Zhou, Xiangyang Ji"
         data-conference="NeurIPS 2020"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2020</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Almost optimal model-free reinforcement learningvia reference-advantage decomposition</strong>
           </h5>
@@ -1530,9 +1651,11 @@
         data-year="2019" 
         data-authors="Zihan Zhang, Xiangyang Ji"
         data-conference="NeurIPS 2019"
+        data-tag="nan"
       > 
         <div class="card-body">
           <span class="badge badge-success" style="margin-bottom: 1em">NeurIPS 2019</span>
+          
           <h5 class="card-title" style="color:#576263">
             <strong>Regret minimization for reinforcement learning by evaluating the optimal bias function</strong>
           </h5>
@@ -1563,6 +1686,20 @@
   </section> 
 
   <section id="blog" class="container">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -1610,6 +1747,20 @@
   </section>
 
   <section id="team" class="container">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1922,6 +2073,11 @@
                         <p class="card-text">
 
 
+                            <strong>Github:</strong> 
+                            <a href="https://github.com/Joseph-Chen-Jh" target="_blank">view</a><br>
+
+
+                            <strong>Email:</strong> chen-jh22@mails.tsinghua.edu.cn<br>
 
 
                         </p>

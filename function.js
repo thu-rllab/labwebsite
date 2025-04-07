@@ -3,6 +3,7 @@
     const yearFilterDropdown = document.getElementById('yearFilterDropdown');
     const authorFilterDropdown = document.getElementById('authorFilterDropdown');
     const conferenceFilterDropdown = document.getElementById('conferenceFilterDropdown');
+    const tagFilterDropdown = document.getElementById('tagFilterDropdown');
     // for team members
     const degreeFilterDropdown = document.getElementById('degreeFilterDropdown');
     // for news-year
@@ -62,6 +63,7 @@
       const selectedYear = yearFilterDropdown.value.trim(); 
       const selectedAuthor = authorFilterDropdown.value.trim().toLowerCase();
       const selectedConference = conferenceFilterDropdown.value.trim().toLowerCase();
+      const selectedTag = tagFilterDropdown.value.trim().toLowerCase();
 
       // 1. 根据下拉框的值进行过滤
       //    年份需要精确匹配，作者采用包含匹配，会议也采用包含匹配的模式
@@ -71,6 +73,7 @@
         const cardYear = card.dataset.year;                  // data-year
         const cardAuthors = card.dataset.authors.toLowerCase(); // data-authors
         const cardConference = card.dataset.conference.toLowerCase(); // data-conference
+        const cardTag = card.dataset.tag.toLowerCase(); // data-tag
         
         // 注意这里和上面的selectedYear、selectedAuthor为空值对应上了
         // 当为空值时，筛选bool值自动设置为了true，也就是一开始不进行任何筛选
@@ -84,8 +87,9 @@
           matchAuthor = !selectedAuthor || cardAuthors.includes(selectedAuthor); 
         }
         const matchConference = !selectedConference || cardConference.includes(selectedConference);
+        const matchTag = !selectedTag || cardTag.includes(selectedTag);
 
-        return matchYear && matchAuthor && matchConference;
+        return matchYear && matchAuthor && matchConference && matchTag;
       });
 
       // 2. 按年份 (data-year) 从大到小降序排序
@@ -285,50 +289,6 @@
       }
     }
     
-    // 筛选新闻的函数
-    // function newsfilterAndSort() { 
-    //   const selectedNewsYear = newsYearFilterDropdown.value.trim();   
-
-    //   let filteredCards = newscards.filter(card => { 
-    //     const cardYear = card.dataset.year;   
-
-    //     let matchYear = !selectedNewsYear || (cardYear == selectedNewsYear); 
-
-    //     return matchYear;
-    //   }); 
-
-    //   // 3. 先隐藏所有 card
-    //   newscards.forEach(card => {
-    //     card.style.display = 'none';
-    //   }); 
-
-    //   filteredCards.forEach((card, index) => {
-    //     card.style.display = 'block';
-    //   }); 
-    // }
-  //   function blogFilterAndSort() {
-  //     if (!blogContainer || !blogYearFilterDropdown) return;
-      
-  //     const selectedYear = blogYearFilterDropdown.value.trim();
-      
-  //     let filteredBlogs = blogItems.filter(item => { 
-  //         if (!item.dataset || !item.dataset.year) return false;
-          
-  //         const itemYear = item.dataset.year;
-  //         return !selectedYear || itemYear === selectedYear;
-  //     });
-      
-  //     // 隐藏所有博客项目
-  //     blogItems.forEach(item => { 
-  //         item.style.display = 'none';
-  //     });
-      
-  //     // 显示过滤后的所有博客
-  //     filteredBlogs.forEach(item => {
-  //         item.style.display = 'block';
-  //     });
-  // }
-
 
   // 当下拉框发生变化时，重新执行过滤+排序
     yearFilterDropdown.addEventListener('change', function() {
@@ -342,6 +302,11 @@
       filterAndSort();
     });
     conferenceFilterDropdown.addEventListener('change', function() {
+      // wby: 选择筛选条件后，回到默认的 10 条显示模式
+      showAll = false; 
+      filterAndSort();
+    });
+    tagFilterDropdown.addEventListener('change', function() {
       // wby: 选择筛选条件后，回到默认的 10 条显示模式
       showAll = false; 
       filterAndSort();
