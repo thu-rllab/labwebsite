@@ -28,6 +28,10 @@
           "dest": "/tools/$1"
         },
         {
+          "src": "/function.js",
+          "dest": "/function.js"
+        },
+        {
           "src": "/.*",
           "dest": "/new_new_index.html"
         }
