@@ -16,7 +16,7 @@
         "wechat": "wbyxhz"
     },
     "Yun Qu": {
-        "degree": "Doctor Student", 
+        "degree": "Ph.D. Student", 
         "github": "https://github.com/cloud-qu",
         "website": "nan",
         "email": "qy22@mail.tsinghua.edu.cn",
@@ -24,7 +24,7 @@
         "wechat": "thu-quyun"
     },
     "Yixiu Mao": {
-        "degree": "Doctor Student", 
+        "degree": "Ph.D. Student", 
         "github": "https://github.com/maoyixiu",
         "website": "nan",
         "email": "myx21@mails.tsinghua.edu",
@@ -32,7 +32,7 @@
         "wechat": "maoyx921"
     },
     "Yuhang Jiang": {
-        "degree": "Doctor Student", 
+        "degree": "Ph.D. Student", 
         "github": "https://github.com/Joy1112u",
         "website": "nan",
         "email": "jiangyh19@mails.tsinghua.edu",
@@ -40,7 +40,7 @@
         "wechat": "yuhang_joy"
     },
     "Mengge Liu": {
-        "degree": "Doctor Student", 
+        "degree": "Ph.D. Student", 
         "github": "https://github.com/pigeonmg",
         "website": "nan",
         "email": "lmg22@mails.tsinghua.edu.cn",
@@ -63,8 +63,24 @@
         "scholar": "nan",
         "wechat": "lxylowxq"
     }, 
+    "Wutong Xu":{
+        "degree": "Undergraduate Student", 
+        "github": "nan",
+        "website": "nan",
+        "email": "nan",
+        "scholar": "nan",
+        "wechat": "nan"
+    },
+    "Zhenchan Su":{
+        "degree": "Undergraduate Student", 
+        "github": "nan",
+        "website": "nan",
+        "email": "nan",
+        "scholar": "nan",
+        "wechat": "nan"
+    },
     "Jianzhun Shao": {
-        "degree": "Doctor Student (Graduated)", 
+        "degree": "Ph.D. Student (Graduated)", 
         "github": "https://github.com/qyz55",
         "website": "nan",
         "email": "nan",
@@ -72,7 +88,7 @@
         "wechat": "sjz_kod"
     },
     "Hongchang Zhang": {
-        "degree": "Doctor Student (Graduated)", 
+        "degree": "Ph.D. Student (Graduated)", 
         "github": "nan",
         "website": "nan",
         "email": "nan",
@@ -80,7 +96,7 @@
         "wechat": "nikjay12"
     },
     "Zihan Zhang": {
-        "degree": "Doctor Student (Graduated)", 
+        "degree": "Ph.D. Student (Graduated)", 
         "github": "https://github.com/Zsubfunc",
         "website": "nan",
         "email": "nan",
@@ -88,7 +104,7 @@
         "wechat": "Dinumner"
     },
     "Shuncheng He": {
-        "degree": "Doctor Student (Graduated)", 
+        "degree": "Ph.D. Student (Graduated)", 
         "github": "https://github.com/Steven-Ho",
         "website": "nan",
         "email": "nan",
