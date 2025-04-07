@@ -16,16 +16,6 @@
         "src": "function.js",
         "use": "@vercel/static"
       }
-    ],
-    "routes": [
-      {
-        "src": "/resources/(.*)",
-        "dest": "/resources/$1"
-      },
-      {
-        "src": "/.*",
-        "dest": "/new_new_index.html"
-      }
     ]
   }
   
