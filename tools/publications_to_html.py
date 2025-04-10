@@ -1,6 +1,6 @@
 import json 
 from datetime import datetime
-
+import os
 class Pub2HTML:
     
     def __init__(self):
@@ -245,24 +245,17 @@ class Pub2HTML:
     <div id="teamList" class="row">
 """
         for member_name in self.all_members.keys():
-            degree, website, github, email, scholar, wechat = self.all_members[member_name]['degree'],\
+            degree, website, github, email, scholar, member_name = self.all_members[member_name]['degree'],\
                                                         self.all_members[member_name]['website'],\
                                                         self.all_members[member_name]['github'],\
                                                         self.all_members[member_name]['email'],\
                                                         self.all_members[member_name]['scholar'],\
                                                         member_name
-                                                        # self.all_members[member_name]['wechat']
             
             
             ### for different people's img ###
-            # if 'cheems' in member_name.lower(): img_path = f'resources/people_img/{wechat}.jfif'
-            # el
             if 'xiangyang' in member_name.lower(): img_path = f'resources/people_img/ji.jpg'
-            else:  img_path = f'resources/people_img/{wechat}.jpg'
-
-            ### for different people's wechat ###
-            if 'xiangyang' in member_name.lower(): wechat_html = ""
-            else: wechat_html = "" #f'<p style="margin-top: 5%"><strong>WeChat: </strong>{wechat}<p>'
+            else:  img_path = f'resources/people_img/{member_name}.jpg'
 
             ### for different people's degree ###
             background_color = ''
@@ -319,10 +312,14 @@ class Pub2HTML:
                         </p>
                     </div>
                 </div>
+                """
+            member_template+=f"""
                 <!-- 右侧图片，竖直居中 -->
                 <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
                     <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
                 </div>
+            """ if img_path !='nan' else """"""
+            member_template+="""
             </div>
         </div>
       </div>

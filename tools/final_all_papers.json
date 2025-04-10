@@ -11,7 +11,7 @@
     "Beyond Any-Shot Adaptation: Predicting Optimization Outcome for Robustness Gains without Extra Pay": [
         "2025",
         "arXiv 2025",
-        "Qi (Cheems) Wang*, Zehao Xiao*, Yixiu Mao*, Yun Qu*, Jiayi Shen, Yiqin Lv, Xiangyang Ji",
+        "Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji",
         "https://arxiv.org/pdf/2501.11039",
         "https://github.com/thu-rllab/MPTS",
         "nan",
@@ -78,7 +78,7 @@
         "https://proceedings.neurips.cc/paper_files/paper/2023/file/2a28bea6298d106eed091ac403d8c22b-Paper-Conference.pdf",
         "nan",
         "nan",
-        "nan"
+        "Robust Adaptation"
     ],
     "Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression": [
         "2024",
@@ -87,7 +87,7 @@
         "https://proceedings.neurips.cc/paper_files/paper/2024/file/a9f3457fa97f106f1756885237787789-Paper-Conference.pdf",
         "nan",
         "nan",
-        "nan"
+        "Offline RL"
     ],
     "Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation": [
         "2025",
@@ -96,7 +96,7 @@
         "https://arxiv.org/pdf/2407.19523",
         "nan",
         "nan",
-        "nan"
+        "Robust Adaptation"
     ],
     "Theoretical Investigations and Practical Enhancements on Tail Task Risk Minimization in Meta Learning": [
         "2024",
@@ -105,7 +105,7 @@
         "https://arxiv.org/pdf/2410.22788",
         "nan",
         "nan",
-        "nan"
+        "Robust Adaptation"
     ],
     "GO4Align: Group Optimization for Multi-Task Alignment": [
         "2024",
@@ -114,7 +114,7 @@
         "https://arxiv.org/pdf/2404.06486",
         "https://github.com/autumn9999/GO4Align",
         "nan",
-        "nan"
+        "Multi-Task Learning"
     ],
     "DynaPrompt: Dynamic Test-Time Prompt Tuning": [
         "2025",
@@ -141,7 +141,7 @@
         "https://proceedings.mlr.press/v202/mao23c/mao23c.pdf",
         "https://github.com/thu-rllab/STR",
         "nan",
-        "nan"
+        "Offline RL"
     ],
     "Supported Value Regularization for Offline Reinforcement Learning": [
         "2023",
@@ -150,7 +150,7 @@
         "https://proceedings.neurips.cc/paper_files/paper/2023/file/7fa46657df480226112d5be3faf096c4-Paper-Conference.pdf",
         "https://github.com/thu-rllab/SVR",
         "nan",
-        "nan"
+        "Offline RL"
     ],
     "State deviation correction for offline reinforcement learning":[
         "2022",
@@ -159,7 +159,7 @@
         "https://ojs.aaai.org/index.php/AAAI/article/view/20886",
         "nan",
         "nan",
-        "nan"
+        "Offline RL"
     ],
     "DARL: distance-aware uncertainty estimation for offline reinforcement learning":[
         "2023",
@@ -168,7 +168,7 @@
         "https://ojs.aaai.org/index.php/AAAI/article/view/26327",
         "nan",
         "nan",
-        "nan"
+        "Offline RL"
     ],
     "Wasserstein unsupervised reinforcement learning":[
         "2022",
@@ -177,7 +177,7 @@
         "https://ojs.aaai.org/index.php/AAAI/article/view/20645",
         "nan",
         "nan",
-        "nan"
+        "Unsupervised RL"
     ],
     "In-sample Actor Critic for Offline Reinforcement Learning": [
         "2023",
@@ -186,7 +186,7 @@
         "https://openreview.net/pdf?id=dfDv0WU853R",
         "nan",
         "nan",
-        "nan"
+        "Offline RL"
     ],
     "Spd: Synergy pattern diversifying oriented unsupervised multi-agent reinforcement learning": [
         "2022",
@@ -195,7 +195,7 @@
         "https://proceedings.neurips.cc/paper_files/paper/2022/file/825341ab91db01bf063add41ac022702-Paper-Conference.pdf",
         "https://github.com/thu-rllab/SPD",
         "nan",
-        "nan"
+        "Unsupervised RL"
     ],
     "Choices are More Important than Efforts: LLM Enables Efficient Multi-Agent Exploration": [
         "2024",
@@ -204,7 +204,7 @@
         "https://arxiv.org/pdf/2410.02511",
         "nan",
         "nan",
-        "nan"
+        "LLM4RL"
     ],
     "Doubly Mild Generalization for Offline Reinforcement Learning": [
         "2024",
@@ -213,16 +213,7 @@
         "https://arxiv.org/pdf/2411.07934",
         "https://github.com/thu-rllab/DMG",
         "nan",
-        "nan"
-    ],
-    "Enhancing Offline Reinforcement Learning with an Optimal Supported Dataset": [
-        "2024",
-        "ICLR 2024",
-        "Chen Chen, Zhaoyi Xu, Yixiu Mao, Hongchang Zhang, Xiangyang Ji",
-        "https://openreview.net/pdf?id=1Akd36hG9z",
-        "https://github.com/thu-rllab/OSD-DICE",
-        "nan",
-        "nan"
+        "Offline RL"
     ],
     "Pessimistic Policy Iteration for Offline Reinforcement Learning": [
         "2023",
@@ -231,7 +222,7 @@
         "https://openreview.net/pdf?id=TmJtBnIWkB",
         "nan",
         "nan",
-        "nan"
+        "Offline RL"
     ],
     "Counterfactual Conservative Q Learning for Offline Multi-agent Reinforcement Learning": [
         "2023",
@@ -240,7 +231,7 @@
         "https://proceedings.neurips.cc/paper_files/paper/2023/file/f3f2ff9579ba6deeb89caa2fe1f0b99c-Paper-Conference.pdf",
         "https://github.com/thu-rllab/CFCQL",
         "nan",
-        "nan"
+        "Offline RL"
     ],
     "Complementary Attention for Multi-Agent Reinforcement Learning": [
         "2023",
@@ -249,7 +240,7 @@
         "https://proceedings.mlr.press/v202/shao23b/shao23b.pdf",
         "https://github.com/thu-rllab/CAMA",
         "nan",
-        "nan"
+        "MARL"
     ],
     "Hokoff: Real Game Dataset from Honor of Kings and its Offline Reinforcement Learning Benchmarks": [
         "2023",
@@ -258,7 +249,7 @@
         "https://proceedings.neurips.cc/paper_files/paper/2023/file/464fefa022aaefc85d901317bbf13f85-Paper-Datasets_and_Benchmarks.pdf",
         "https://github.com/thu-rllab/Hokoff",
         "nan",
-        "nan"
+        "Offline RL"
     ],
     "Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning": [
         "2025",
@@ -267,7 +258,7 @@
         "https://arxiv.org/pdf/2412.11120",
         "https://github.com/thu-rllab/LaRe",
         "nan",
-        "nan"
+        "LLM4RL"
     ],
     "Consciousness-Aware Multi-Agent Reinforcement Learning": [
         "2023",
@@ -276,7 +267,7 @@
         "https://openreview.net/pdf?id=u0aNcjqhEJ",
         "https://github.com/thu-rllab/CAMA",
         "nan",
-        "nan"
+        "MARL"
     ],
     "Pfrl: Pose-free reinforcement learning for 6d pose estimation": [
         "2020",
@@ -294,7 +285,7 @@
         "https://proceedings.neurips.cc/paper_files/paper/2020/file/ad71c82b22f4f65b9398f76d8be4c615-Paper.pdf",
         "nan",
         "nan",
-        "nan"
+        "RL Theory"
     ],
     "Is reinforcement learning more difficult than bandits? a near-optimal algorithm escaping the curse of horizon":[
         "2021",
@@ -303,7 +294,7 @@
         "http://proceedings.mlr.press/v134/zhang21b/zhang21b.pdf",
         "nan",
         "nan",
-        "nan"
+        "RL Theory"
     ],
     "Regret minimization for reinforcement learning by evaluating the optimal bias function":[
         "2019",
@@ -312,7 +303,7 @@
         "https://proceedings.neurips.cc/paper_files/paper/2019/file/9e984c108157cea74c894b5cf34efc44-Paper.pdf",
         "nan",
         "nan",
-        "nan"
+        "RL Theory"
     ],
     "Improved variance-aware confidence sets for linear bandits and linear mixture mdp":[
         "2021",
@@ -321,7 +312,7 @@
         "https://proceedings.neurips.cc/paper/2021/file/228bbc2f87caeb21bb7f6949fddcb91d-Paper.pdf",
         "nan",
         "nan",
-        "nan"
+        "RL Theory"
     ],
     "Near optimal reward-free reinforcement learning":[
         "2021",
@@ -330,7 +321,7 @@
         "http://proceedings.mlr.press/v139/zhang21e/zhang21e.pdf",
         "nan",
         "nan",
-        "nan"
+        "RL Theory"
     ],
     "Model-free reinforcement learning: from clipped pseudo-regret to sample complexity":[
         "2021",
@@ -339,7 +330,7 @@
         "http://proceedings.mlr.press/v139/zhang21ab/zhang21ab.pdf",
         "nan",
         "nan",
-        "nan"
+        "RL Theory"
     ],
     "Horizon-free reinforcement learning in polynomial time: the power of stationary policies":[
         "2022",
@@ -348,7 +339,7 @@
         "https://proceedings.mlr.press/v178/zhang22a/zhang22a.pdf",
         "nan",
         "nan",
-        "nan"
+        "RL Theory"
     ],
     "Near-optimal regret bounds for multi-batch reinforcement learning":[
         "2022",
@@ -357,6 +348,6 @@
         "https://proceedings.neurips.cc/paper_files/paper/2022/file/9bcd1fa0c05e5f25ba7a1261f1852e82-Paper-Conference.pdf",
         "nan",
         "nan",
-        "nan"
+        "RL Theory"
     ]
 }
