@@ -1,4 +1,13 @@
 {
+    "Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments": [
+        "2025",
+        "ICML 2025",
+        "Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Yiqin Lv,  Xiangyang Ji",
+        "https://arxiv.org/pdf/2504.19139",
+        "https://github.com/thu-rllab/PDTS",
+        "nan",
+        "Robust Adaptation"
+    ],
     "LLM-Empowered State Representation for Reinforcement Learning": [
         "2024",
         "ICML 2024",

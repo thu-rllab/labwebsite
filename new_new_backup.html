@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>THU-IDM</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css"> -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="resources/packages/bootstrap.min.css">
+  <!-- <link href="resources/packages/font.css" rel="stylesheet"> -->
   <style>
     /* 全局设置 */
     body {
@@ -446,6 +449,28 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
 
     <!-- 容器：让标题和下拉框在同一行 -->
@@ -468,6 +493,19 @@
 
     <!-- 新闻列表容器 -->
     <div id="newsList">
+
+      <div 
+        class="news-item mb-3" style="display: none"
+        data-year="2025"  
+      > 
+        <div class="news-item-body">
+            <div class="news-date">May 1, 2025</div>
+            <div class="news-text">
+                Our paper <strong>Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments</strong> has been accepted to ICML2025 with high scores (5443)! This work introduces PDTS to accommodate fast and robust sequential decision-making, unlocking the power of robust active task sampling. Congratulations to Yun Qu and Yixiu!
+            </div>
+        </div>
+      </div>
+
 
       <div 
         class="news-item mb-3" style="display: none"
@@ -649,6 +687,28 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
 
     <!-- 容器：让标题和下拉框在同一行 -->
@@ -735,6 +795,30 @@
 
     <!-- 论文列表容器 -->
     <div id="publicationsList">
+
+
+      <div 
+        class="card mb-3" style="display: none"
+        data-year="2025" 
+        data-authors="Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Yiqin Lv,  Xiangyang Ji"
+        data-conference="ICML 2025"
+        data-tag="Robust Adaptation"
+      > 
+        <div class="card-body">
+          <span class="badge badge-success" style="margin-bottom: 1em">ICML 2025</span>
+                    <span class="badge badge-info" style="margin-bottom: 1em; margin-left: 0.5em; background-color: #17a2b8;">Robust Adaptation</span>
+          <h5 class="card-title" style="color:#576263">
+            <strong>Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments</strong>
+          </h5>
+          <p class="card-text">
+            <strong>Authors:</strong> Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Yiqin Lv,  Xiangyang Ji
+          </p>
+          <a href=" https://arxiv.org/pdf/2504.19139 " class="btn btn-secondary btn-sm" target="_blank">Paper</a>
+          <a href=" https://github.com/thu-rllab/PDTS " class="btn btn-secondary btn-sm" target="_blank">Code</a>
+
+        </div>
+      </div>
+
 
 
       <div 
@@ -1725,6 +1809,28 @@
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->
 
         <!-- 容器：让标题和下拉框在同一行 -->
@@ -1735,6 +1841,7 @@
       <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
         <select id="blogYearFilterDropdown" class="tech-dropdown-select">
           <option value="">All Years</option>
+          <option value="2025">2025</option>
 
         </select>
       </div>
@@ -1746,6 +1853,21 @@
         <!-- 博客列表容器 -->
         <div id="blogList">
     
+        <div 
+            class="blog-item mb-3" style="display: none"
+            data-year="2025"  
+        > 
+            <div class="blog-item-body">
+                <div class="blog-date">May 5, 2025</div>
+                <div class="blog-text">
+                    Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments (ICML2025)
+                </div>
+                <div class="blog-links" style="margin-top: 10px;">
+                    <a href="https://zhuanlan.zhihu.com/p/1901391961841210704" class="btn btn-secondary btn-sm" target="_blank" style="margin-right: 5px;">中文</a><a href="resources/blogs/html/PDTS_2025-05-05.html" class="btn btn-secondary btn-sm" target="_blank">English</a>
+                </div>
+            </div>
+        </div>
+        
         </div>
     
     <!-- 分页或"加载更多"按钮 -->
@@ -1759,6 +1881,28 @@
   </section>
 
   <section id="team" class="container">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,6 +1,18 @@
 import json 
 from datetime import datetime
+import os    
+import markdown
 import os
+import json
+from markdown.extensions.codehilite import CodeHiliteExtension
+from markdown.extensions.extra import ExtraExtension
+from pymdownx.arithmatex import ArithmatexExtension
+
+import re
+import urllib.request
+import os.path
+import uuid
+from urllib.parse import urlparse, unquote
 class Pub2HTML:
     
     def __init__(self):
@@ -444,6 +456,8 @@ class Pub2HTML:
         for every_blog in self.all_blogs:
             cur_date = every_blog['date']
             cur_content = every_blog['content']
+            cur_cn_link = every_blog['cn_link']
+            cur_en_link = every_blog['en_link']
             
             # 解析输入的日期字符串
             parsed_date = datetime.strptime(cur_date, "%Y%m%d")
@@ -452,7 +466,31 @@ class Pub2HTML:
             cur_day = str(parsed_date.day) 
             cur_year = str(parsed_date.year)
             
-            # 简化的博客HTML模板，类似新闻项目的样式
+    #         # 简化的博客HTML模板，类似新闻项目的样式
+    #         every_blog_html_template = f"""
+    #     <div 
+    #         class="blog-item mb-3" style="display: none"
+    #         data-year="{cur_year}"  
+    #     > 
+    #         <div class="blog-item-body">
+    #             <div class="blog-date">{cur_month} {cur_day}, {cur_year}</div>
+    #             <div class="blog-text">
+    #                 {cur_content}
+    #             </div>
+    #         </div>
+    #     </div>
+    # """
+    #         all_blog_html += every_blog_html_template
+            # 处理链接按钮 - 如果链接为"nan"则不显示对应按钮
+            cn_link_html = '' if cur_cn_link == 'nan' else f'<a href="{cur_cn_link}" class="btn btn-secondary btn-sm" target="_blank" style="margin-right: 5px;">中文</a>'
+            en_link_html = '' if cur_en_link == 'nan' else f'<a href="{cur_en_link}" class="btn btn-secondary btn-sm" target="_blank">English</a>'
+
+            # 对英文链接的处理，无论是markdown还是html都通过博客查看器显示
+            # en_link_html = ''
+            # if cur_en_link != 'nan':
+            #     # 统一使用blog-viewer.html来显示内容
+            #     en_link_html = f'<a href="blog-viewer.html?path={cur_en_link}" class="btn btn-secondary btn-sm" target="_blank">English</a>'
+            # 更新的博客HTML模板，包含链接按钮
             every_blog_html_template = f"""
         <div 
             class="blog-item mb-3" style="display: none"
@@ -463,9 +501,12 @@ class Pub2HTML:
                 <div class="blog-text">
                     {cur_content}
                 </div>
+                <div class="blog-links" style="margin-top: 10px;">
+                    {cn_link_html}{en_link_html}
+                </div>
             </div>
         </div>
-    """
+        """
             all_blog_html += every_blog_html_template
         
         all_blog_html += """
@@ -487,9 +528,278 @@ class Pub2HTML:
                             end_label='<!-- wby: 注意，切勿删除，程序代码识别blog结束部分 -->',
                             update_html=all_filter_html + '\n\n' + all_blog_html)    
 
+    def convert_markdown_to_html(self):
+        """将Markdown文件转换为HTML文件，包括数学公式和图片支持，并下载图片到本地"""
+        
+        blogs_dir = os.path.join('..', 'resources', 'blogs')
+        html_dir = os.path.join('..', 'resources', 'blogs', 'html')
+        img_dir = os.path.join('..', 'resources', 'blogs', 'images')
+        
+        # 确保目录存在
+        for directory in [html_dir, img_dir]:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+        
+        # 配置Markdown扩展
+        extensions = [
+            'markdown.extensions.tables',
+            'markdown.extensions.fenced_code',
+            ExtraExtension(),
+            CodeHiliteExtension(css_class='highlight'),
+            ArithmatexExtension(generic=True)  # 用于LaTeX数学公式
+        ]
+
+        # 配置转换器
+        md = markdown.Markdown(extensions=extensions)
+        
+        # 改进的图片链接正则表达式，支持多行文本
+        md_img_pattern = re.compile(r'!\[([\s\S]*?)\]\((https?://[^)]+)\)', re.DOTALL)
+        
+        # 遍历博客列表，处理所有Markdown文件
+        for blog in self.all_blogs:
+            en_link = blog.get('en_link', '')
+            if en_link.endswith('.md'):
+                md_path = os.path.join('..', en_link)
+                if os.path.exists(md_path):
+                    # 读取Markdown内容
+                    with open(md_path, 'r', encoding='utf-8') as f:
+                        md_content = f.read()
+                    
+                    # 找到所有图片链接
+                    img_matches = md_img_pattern.findall(md_content)
+                    print(f"找到 {len(img_matches)} 个图片链接")
+                    
+                    # 逐个处理图片
+                    for alt_text, img_url in img_matches:
+                        print(f"处理图片URL: {img_url}")
+                        
+                        # 下载图片到本地
+                        local_path = self.download_image(img_url, img_dir)
+                        
+                        if local_path:
+                            # 使用直接替换而不是正则表达式替换
+                            # 这样可以避免alt_text中的特殊字符被解释为正则表达式
+                            original_md = f'![{alt_text}]({img_url})'
+                            new_md = f'![{alt_text}]({local_path})'
+                            md_content = md_content.replace(original_md, new_md)
+                            print(f'成功替换图片: {img_url} -> {local_path}')
+                        else:
+                            print(f'无法下载图片: {img_url}，保留原始链接')
+                    
+                    # 保存修改后的Markdown文件(可选，用于调试)
+                    debug_md_path = os.path.join(html_dir, os.path.basename(en_link) + '.debug')
+                    with open(debug_md_path, 'w', encoding='utf-8') as f:
+                        f.write(md_content)
+                    
+                    # 转换为HTML
+                    html_content = md.convert(md_content)
+                    
+                    # 创建完整的HTML文档，包含MathJax支持
+                    html_doc = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{blog.get('content', 'Blog Post')}</title>
+        <link rel="stylesheet" href="../../css/bootstrap-flatly.min.css">
+        
+        <!-- 代码高亮样式 -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        
+        <!-- MathJax支持 -->
+        <script>
+        MathJax = {{
+            tex: {{
+                inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
+                displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }},
+            options: {{
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }}
+        }};
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        
+        <style>
+            body {{
+                font-family: 'Montserrat', sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background-color: #f4f7f9;
+                padding-top: 20px;
+            }}
+            .blog-content {{
+                max-width: 800px;
+                margin: 30px auto;
+                padding: 40px;
+                background: #fff;
+                border-radius: 15px;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            }}
+            .blog-content img {{
+                max-width: 100%;
+                height: auto;
+                margin: 20px auto;
+                display: block;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }}
+            h1, h2, h3, h4, h5, h6 {{
+                color: #2c3e50;
+                margin-top: 1.5em;
+                margin-bottom: 0.8em;
+            }}
+            h1 {{
+                font-size: 2.2em;
+                border-bottom: 2px solid #3498db;
+                padding-bottom: 10px;
+            }}
+            h2 {{
+                font-size: 1.8em;
+            }}
+            a {{
+                color: #3498db;
+            }}
+            pre {{
+                background: #f8f9fa;
+                border-radius: 5px;
+                padding: 15px;
+                overflow: auto;
+            }}
+            blockquote {{
+                border-left: 4px solid #3498db;
+                padding-left: 15px;
+                color: #555;
+                background: #f9f9f9;
+                border-radius: 0 5px 5px 0;
+            }}
+            .back-btn {{
+                margin: 20px auto;
+                width: 800px;
+            }}
+            .highlight {{
+                background: #f8f9fa;
+                border-radius: 5px;
+                padding: 15px;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="blog-content">
+            {html_content}
+        </div>
+        
+        <!-- 代码高亮 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </body>
+    </html>
+    """
+                    
+                    # 生成HTML文件名
+                    html_filename = os.path.basename(en_link).replace('.md', '.html')
+                    html_path = os.path.join(html_dir, html_filename)
+                    
+                    # 保存HTML文件
+                    with open(html_path, 'w', encoding='utf-8') as f:
+                        f.write(html_doc)
+                    
+                    # 更新博客数据中的链接
+                    blog['en_link'] = f"resources/blogs/html/{html_filename}"
+        
+        # 保存更新后的博客数据
+        with open(self.blog_path, 'w', encoding='utf-8') as f:
+            json.dump(self.all_blogs, f, indent=4)
+        
+        print(f"已成功将Markdown文件转换为HTML，下载图片到本地，并更新了博客数据")
+    def download_image(self, img_url, img_dir):
+        """专用图片下载函数，尝试多种下载方法"""
+        try:
+            # 从URL解析文件名
+            parsed_url = urlparse(unquote(img_url))
+            img_filename = os.path.basename(parsed_url.path)
+            
+            # 处理无效文件名
+            if not img_filename or '.' not in img_filename:
+                img_filename = f"{uuid.uuid4().hex[:8]}.jpg"
+            
+            # 确保文件名安全
+            img_filename = re.sub(r'[^\w\.-]', '_', img_filename)
+            
+            # 本地保存路径
+            local_img_path = os.path.join(img_dir, img_filename)
+            relative_img_path = f"../images/{img_filename}"
+            
+            # 如果文件已存在，直接返回
+            if os.path.exists(local_img_path) and os.path.getsize(local_img_path) > 0:
+                print(f"图片已存在: {local_img_path}")
+                return relative_img_path
+            
+            print(f"开始下载图片: {img_url}")
+            
+            # 方法1: 使用urllib
+            try:
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    'Referer': 'https://mdnice.com/'
+                }
+                req = urllib.request.Request(img_url, headers=headers)
+                with urllib.request.urlopen(req, timeout=15) as response, open(local_img_path, 'wb') as out_file:
+                    out_file.write(response.read())
+                
+                if os.path.exists(local_img_path) and os.path.getsize(local_img_path) > 0:
+                    print(f"urllib下载成功: {img_url}")
+                    return relative_img_path
+            except Exception as e:
+                print(f"urllib下载失败: {e}")
+            
+            # 方法2: 使用wget命令
+            try:
+                print(f"尝试使用wget下载: {img_url}")
+                subprocess.run([
+                    'wget', 
+                    '-O', local_img_path, 
+                    img_url,
+                    '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    '--timeout=30',
+                    '--tries=3'
+                ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                
+                if os.path.exists(local_img_path) and os.path.getsize(local_img_path) > 0:
+                    print(f"wget下载成功: {img_url}")
+                    return relative_img_path
+            except Exception as e:
+                print(f"wget下载失败: {e}")
+            
+            # 方法3: 使用curl命令
+            try:
+                print(f"尝试使用curl下载: {img_url}")
+                subprocess.run([
+                    'curl', 
+                    '-o', local_img_path,
+                    '-A', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    '-L', img_url,
+                    '--max-time', '30'
+                ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                
+                if os.path.exists(local_img_path) and os.path.getsize(local_img_path) > 0:
+                    print(f"curl下载成功: {img_url}")
+                    return relative_img_path
+            except Exception as e:
+                print(f"curl下载失败: {e}")
+            
+            raise Exception("所有下载方法都失败")
+            
+        except Exception as e:
+            print(f"图片下载完全失败: {img_url}, 错误: {e}")
+            return None
 if __name__ == "__main__":
 
     pub2html = Pub2HTML()
+    pub2html.convert_markdown_to_html()  # 添加这一行
     # pub2html.wang_to_json()
     pub2html.news_json_to_html()
     pub2html.paper_json_to_html()

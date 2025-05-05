@@ -1,0 +1,178 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments (ICML2025)</title>
+        <link rel="stylesheet" href="../../css/bootstrap-flatly.min.css">
+        
+        <!-- 代码高亮样式 -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        
+        <!-- MathJax支持 -->
+        <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        
+        <style>
+            body {
+                font-family: 'Montserrat', sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background-color: #f4f7f9;
+                padding-top: 20px;
+            }
+            .blog-content {
+                max-width: 800px;
+                margin: 30px auto;
+                padding: 40px;
+                background: #fff;
+                border-radius: 15px;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            }
+            .blog-content img {
+                max-width: 100%;
+                height: auto;
+                margin: 20px auto;
+                display: block;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            h1, h2, h3, h4, h5, h6 {
+                color: #2c3e50;
+                margin-top: 1.5em;
+                margin-bottom: 0.8em;
+            }
+            h1 {
+                font-size: 2.2em;
+                border-bottom: 2px solid #3498db;
+                padding-bottom: 10px;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            a {
+                color: #3498db;
+            }
+            pre {
+                background: #f8f9fa;
+                border-radius: 5px;
+                padding: 15px;
+                overflow: auto;
+            }
+            blockquote {
+                border-left: 4px solid #3498db;
+                padding-left: 15px;
+                color: #555;
+                background: #f9f9f9;
+                border-radius: 0 5px 5px 0;
+            }
+            .back-btn {
+                margin: 20px auto;
+                width: 800px;
+            }
+            .highlight {
+                background: #f8f9fa;
+                border-radius: 5px;
+                padding: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="blog-content">
+            <h1>Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments</h1>
+<p><strong>Authors</strong>: Yun Qu<em>, Qi (Cheems) Wang</em>, Yixiu Mao<em>, Yiqin Lv, Xiangyang Ji<br />
+</em><em>Affiliation</em><em>: Tsinghua University<br />
+</em><em>Link</em><em>: </em>https://github.com/thu-rllab/PDTS/*</p>
+<hr />
+<h2>🚀 Introduction: Toward Fast and Robust Adaptation</h2>
+<p>Modern adaptive decision-makers like reinforcement learning agents or foundation models often operate in highly dynamic environments. A long-standing goal is to ensure these agents can <strong>robustly adapt to unseen or out-of-distribution (OOD) scenarios</strong>. However, methods like Conditional Value-at-Risk (CVaR), though robust, suffer from <strong>intensive computational cost</strong> due to exhaustive task evaluation.</p>
+<p>To address this challenge, the authors introduce <strong>Posterior and Diversity Task Sampling (PDTS)</strong>, a new method for <strong>robust active task sampling</strong> that achieves stronger adaptation robustness with minimal overhead. The key idea is to treat task selection as a <strong>secret MDP</strong> and leverage posterior sampling and diversity regularization to efficiently select challenging tasks.</p>
+<hr />
+<h2>🧠 Motivation: What Makes Adaptation Difficult?</h2>
+<p>In meta-reinforcement learning (Meta-RL) and domain randomization (DR), agents must generalize to new MDPs sampled from a task distribution. Real-world deployments (e.g., autonomous driving or robotics) demand robustness to rare but high-risk events. However, sampling tasks uniformly from a task distribution <strong>misses these critical edge cases</strong>.</p>
+<p>To bridge this gap, <strong>PDTS prioritizes task selection</strong> based on:
+- Predicted adaptation risk (from a learned risk predictive model),
+- Task diversity (to avoid overfitting narrow regions),
+- Posterior sampling (to simplify and optimize task sampling).</p>
+<p>This framework is analyzed in a theoretical task-selection MDP abstraction and empirically improves robustness across multiple benchmarks.</p>
+<hr />
+<p><img alt="(a) General RATS in risk-averse decision-making. The pipeline involves amortized evaluation of task difficulties, robust subset selection, policy optimization in the MDP batch, and risk predictive models' update. [fire: updates; snow: evalluation] 
+    (b) PDTS as a RATS method. PDTS treats task subsets as bandit arms, evaluates values through posterior sampling, and solves a regularized problem." src="../images/063a2bd6-c993-46b3-9788-81e4a6771ac0.jpg" /></p>
+<h2>⚙️ Methodology: From Theory to Practical PDTS</h2>
+<h3>🧩 Setting: Meta-RL and Domain Randomization</h3>
+<p>Each task is modeled as an MDP <span class="arithmatex">\(\tau \in \mathbb{R}^d\)</span> with support data <span class="arithmatex">\(\mathcal{D}_\tau^S\)</span> and query data <span class="arithmatex">\(\mathcal{D}_\tau^Q\)</span>. The adaptation risk is measured by <span class="arithmatex">\(\ell(\mathcal{D}_\tau^Q, \mathcal{D}_\tau^S; \theta)\)</span>, and the goal is to optimize for worst-case performance under a task distribution <span class="arithmatex">\(p(\tau)\)</span>.</p>
+<h3>📈 Step 1: Risk Prediction via Variational Generative Model</h3>
+<p>A <strong>VAE-style generative model</strong> predicts adaptation risk:
+<span class="arithmatex">\(\mathbb{E}_{q_\phi(z_t|H_t)}[p_\psi(\ell|\tau, z_t)]\)</span>
+where <span class="arithmatex">\(H_t\)</span> is the task history and <span class="arithmatex">\(z_t\)</span> summarizes adaptation dynamics. This amortizes costly environment interactions.</p>
+<h3>🎯 Step 2: Robust Subset Selection via i-MAB</h3>
+<p>The task space is viewed as an <strong>infinite-armed bandit (i-MAB)</strong>:
+- <strong>State</strong>: model parameters <span class="arithmatex">\(\theta\)</span>
+- <strong>Action</strong>: select task batch <span class="arithmatex">\(\mathcal{T}_{t+1}^\mathcal{B}\)</span>
+- <strong>Reward</strong>: reduction in CVaR
+- <strong>Goal</strong>: maximize cumulative robustness gain</p>
+<p>PDTS samples tasks based on:
+$
+\mathcal{A}(\mathcal{T}^\mathcal{B}) + \gamma \cdot \text{Diversity}(\mathcal{T}^\mathcal{B})
+$
+with diversity measured via pairwise distance in <span class="arithmatex">\(\tau\)</span>-space, which addresses the concentration issue in MPTS.</p>
+<p><img alt="MPTS's Performance Collapse with Greater \(\hat{\mathcal{B}}\).
+    We report the performance collapses of MPTS on Walker2dVel in the case \(\hat{\mathcal{B}}=8\mathcal{B}\). The task sampling frequency reveals the presence of the concentration issue." src="../images/99778f23-9d88-4119-ad2d-8af278b07c1f.png" /></p>
+<h3>🔄 Step 3: Posterior Sampling Instead of UCB</h3>
+<p>Unlike UCB-based MPTS, PDTS uses <strong>posterior sampling</strong>:
+$
+z_t \sim q_\phi(z_t | H_t), \quad \ell_i \sim p_\psi(\ell | \tau_i, z_t)
+$
+This avoids dedicated hyperparameter tradeoff and encourages stochastic optimism.</p>
+<p><img alt="" src="../images/82b9901b-1cf7-423d-9011-e54740f14f27.png" />
+<img alt="PDTS Algorithm" src="../images/47d26467-dbe1-41d7-b2ce-987f31cf8d3b.png" /></p>
+<hr />
+<h2>📊 Results: Faster and More Reliable Learning</h2>
+<p>PDTS is benchmarked across:
+- <strong>Meta-RL</strong>: MuJoCo tasks like Reacher, Walker2d, HalfCheetah.
+- <strong>Physical DR</strong>: Domain randomization with randomized physics properties, including tasks like Pusher, LunarLander, and ErgoReacher.
+- <strong>Visual DR</strong>: LiftPegUpright (light randomized), AnymalCReach (goal randomized).</p>
+<p><img alt="Meta-RL results. The top depicts the cumulative return curves for \(\text{CVaR}_{0.9}\) validation MDPs during meta-training; the middle shows the average cumulative returns curves during meta-training; and the bottom presents the meta-testing results with various \(\alpha\)." src="../images/5b21c809-be89-49e1-91a7-f6aad5d19826.jpg" /></p>
+<p><img alt="Physical Robotics DR results. (a) The top shows the cumulative return curves for \(\text{CVaR}_{0.9}\) validation MDPs during training; the middle displays the average cumulative return curves across all validation MDPs during training; and the bottom presents the test results at various \(\text{CVaR}_{\alpha}\). (b) We evaluate the trained policies in both in-distribution (ID) and out-of-distribution (OOD) domains on LunarLander, reporting the average returns for each sampled task." src="../images/6f625dcb-64bc-4ea0-adb1-8513e9b536fd.jpg" /></p>
+<p><img alt="Visual Robotics DR results. (a) Illustrations of two scenarios. (b) Curves of the average success ratio and the \(\text{CVaR}_{0.5}\) success ratio on validation tasks during training. (c) Training curves of PCC values between predicted and true episode returns. (d) Memory cost and clock time relative to ERM during meta-training." src="../images/d00bfcec-ad9b-4b1e-a249-efe0514ba662.jpg" /></p>
+<h3>✅ Highlights:</h3>
+<ul>
+<li><strong>Best CVaR@0.9 performance</strong> in almost all tasks.</li>
+<li><strong>Outperforms DRM and MPTS</strong> without expensive task evaluation and hyperparameters tuning.</li>
+<li><strong>Superior exploration</strong> with larger candidate batches (<span class="arithmatex">\(\hat{\mathcal{B}} = 64 \cdot \mathcal{B}\)</span>).</li>
+<li><strong>Accelerated learning</strong> (2.4× faster in Pusher, 1.3× in LunarLander).</li>
+<li><strong>OOD generalization</strong> improves dramatically (e.g., in LunarLander).</li>
+<li><strong>Minimal overhead</strong>: runtime increase is negligible compared to traditional risk-averse baselines DRM.</li>
+</ul>
+<hr />
+<h2>🧠 Insights and Future Work</h2>
+<p>PDTS provides a <strong>plug-and-play solution</strong> for robust adaptive learning in randomized environments. By integrating posterior inference and diversity-regularized selection, it achieves nearly worst-case optimization without sacrificing scalability.</p>
+<p><strong>Future directions</strong>:
+- Enhanced risk models with better uncertainty quantification,
+- Integration with multimodal agents or language models,
+- Real-world deployment in robotics and decision-critical AI.</p>
+<hr />
+<h2>📌 Conclusion</h2>
+<p>The PDTS framework redefines how adaptive agents should sample tasks for training. Instead of brute-force evaluation or handcrafted priors, PDTS offers a <strong>principled, efficient, and scalable</strong> alternative to boost both <strong>robustness</strong> and <strong>efficiency</strong> in learning under uncertainty. Whether you're training a robot, an AI assistant, or a simulation policy, PDTS makes your adaptation <strong>faster</strong>, <strong>robuster</strong>, and <strong>smarter</strong>.</p>
+<hr />
+        </div>
+        
+        <!-- 代码高亮 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </body>
+    </html>
+    
