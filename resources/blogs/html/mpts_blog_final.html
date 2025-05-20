@@ -1,0 +1,252 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Model Predictive Task Sampling: Enhancing Robustness and Efficiency in Adaptive Learning</title>
+        <link rel="stylesheet" href="../../css/bootstrap-flatly.min.css">
+        
+        <!-- 代码高亮样式 -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        
+        <!-- MathJax支持 -->
+        <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        
+        <style>
+            body {
+                font-family: 'Montserrat', sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background-color: #f4f7f9;
+                padding-top: 20px;
+            }
+            .blog-content {
+                max-width: 800px;
+                margin: 30px auto;
+                padding: 40px;
+                background: #fff;
+                border-radius: 15px;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            }
+            .blog-content img {
+                max-width: 100%;
+                height: auto;
+                margin: 20px auto;
+                display: block;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            h1, h2, h3, h4, h5, h6 {
+                color: #2c3e50;
+                margin-top: 1.5em;
+                margin-bottom: 0.8em;
+            }
+            h1 {
+                font-size: 2.2em;
+                border-bottom: 2px solid #3498db;
+                padding-bottom: 10px;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            a {
+                color: #3498db;
+            }
+            pre {
+                background: #f8f9fa;
+                border-radius: 5px;
+                padding: 15px;
+                overflow: auto;
+            }
+            blockquote {
+                border-left: 4px solid #3498db;
+                padding-left: 15px;
+                color: #555;
+                background: #f9f9f9;
+                border-radius: 0 5px 5px 0;
+            }
+            .back-btn {
+                margin: 20px auto;
+                width: 800px;
+            }
+            .highlight {
+                background: #f8f9fa;
+                border-radius: 5px;
+                padding: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="blog-content">
+            <h1>🚀 Model Predictive Task Sampling: Enhancing Robustness and Efficiency in Adaptive Learning</h1>
+<h2>🧠 Introduction</h2>
+<p>Modern foundation models, such as large language models and generalist robots, have transformed adaptive learning across diverse tasks. However, ensuring <strong>robust generalization</strong> remains challenging, especially under <strong>task distribution shifts</strong>.</p>
+<p>A key issue:  </p>
+<blockquote>
+<p>Uniform task sampling often underrepresents rare but critical scenarios, leading to catastrophic failures.</p>
+<p>CVaR optimization improves robustness yet is computationally or annotation expensive in task evaluation.</p>
+</blockquote>
+<p>While prior solutions prioritize challenging tasks via methods like CVaR sampling, they often suffer from <strong>prohibitively high computational costs</strong>.</p>
+<p>✨ To address this, <strong>Model Predictive Task Sampling (MPTS)</strong> proposes a <strong>lightweight predictive strategy</strong>, learning to model task risks and actively guide task selection, leading to <strong>robust and efficient adaptation</strong> without massive resource overhead.</p>
+<hr>
+<h2>🎯 Motivation</h2>
+<p>Real-world demands for <strong>robust learning</strong> are rising:</p>
+<ul>
+<li><strong>Autonomous driving</strong> must handle rare traffic accidents, not just typical road conditions.</li>
+<li><strong>Embodied robots</strong> must generalize to diverse, sometimes unstructured environments.</li>
+<li><strong>Large foundation models</strong> require resilience against rare distributional shifts.</li>
+</ul>
+<p>Existing <strong>uniform sampling</strong> and <strong>adversarial task optimization</strong> approaches either:
+- Miss rare cases, or
+- Require <strong>full evaluations</strong> over all tasks per iteration → <strong>Expensive!</strong></p>
+<p>🔎 <strong>Key Insight of MPTS</strong>:  </p>
+<blockquote>
+<p>Learn a <strong>generative model</strong> to predict task risks directly from historical optimization results, thus <strong>amortizing task evaluations</strong> and guiding robust adaptation.</p>
+</blockquote>
+<hr>
+<h2>🛠️ Methodology: How MPTS Works</h2>
+<p>MPTS consists of three interacting modules:</p>
+<h3>1. 🔮 Risk Learner (Generative Risk Model)</h3>
+<ul>
+<li>Learns to predict <strong>task-specific adaptation risk</strong>.</li>
+<li>Modeled via a <strong>probabilistic latent variable model</strong> (e.g., a VAE).</li>
+<li>Trained with <strong>streaming variational inference</strong> using past task batches.</li>
+</ul>
+<p>Formally, the risk learner approximates: <span class="arithmatex">\(p(\ell \mid \tau, H_{1:t}; \theta_t)\)</span>,
+where <span class="arithmatex">\(H_{1:t}\)</span> records past adaptation results.</p>
+<hr>
+<h3>2. 🚀 Amortized Evaluation (Efficient Risk Prediction)</h3>
+<p>Instead of evaluating each task exhaustively, MPTS:
+- Samples a <strong>pseudo batch</strong> of task candidates.
+- Predicts their risks using the trained risk learner.
+- Scores tasks <strong>without expensive rollouts</strong>.</p>
+<p>Predicted task acquisition score:</p>
+<p><span class="arithmatex">\(a(\tau) = \gamma_0 \cdot \mathbb{E}[\ell] + \gamma_1 \cdot \sqrt{\text{Var}[\ell]}\)</span></p>
+<p>where:
+- <span class="arithmatex">\(\gamma_0\)</span>: worst-case focus weight
+- <span class="arithmatex">\(\gamma_1\)</span>: exploration (uncertainty) weight</p>
+<hr>
+<h3>3. 🎯 Active Task Sampling (Guided Optimization)</h3>
+<p>Select top-B tasks maximizing <span class="arithmatex">\(a(\tau)\)</span> for adaptation, balancing:
+- Worst-case risk minimization
+- Uncertainty-driven exploration</p>
+<p>This ensures that:
+- <strong>Challenging tasks</strong> are prioritized.
+- <strong>Diverse scenarios</strong> are still explored.</p>
+<hr>
+<h2>🔍 Theoretical Guarantee</h2>
+<p>Under mild assumptions (e.g., Lipschitz continuity, boundedness),<br>
+MPTS enjoys <strong>difficulty ranking stability</strong>:</p>
+<blockquote>
+<p>Predicted task rankings remain valid even after small parameter updates.</p>
+</blockquote>
+<p>Thus, the risk learner reliably amortizes task evaluation across training iterations.</p>
+<hr>
+<h2>🔗 Related Work</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>MPTS Relationship</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Robust Meta-Learning (CVaR, DRM)</strong></td>
+<td>Shares worst-case risk focus, improves efficiency</td>
+</tr>
+<tr>
+<td><strong>Bayesian Active Learning</strong></td>
+<td>Leverages predictive uncertainty for task sampling</td>
+</tr>
+<tr>
+<td><strong>Variational Meta-Learning</strong></td>
+<td>Learns latent task embeddings like Neural Processes</td>
+</tr>
+<tr>
+<td><strong>Model Predictive Control</strong></td>
+<td>Plans active task selection based on risk prediction</td>
+</tr>
+</tbody>
+</table>
+<p>MPTS bridges these domains into a unified, efficient framework for task-robust adaptation.</p>
+<hr>
+<h2>🧪 Experiments: Where MPTS Excels</h2>
+<p><strong>Benchmarks</strong>:
+- Few-shot <strong>Sinusoid Regression</strong>
+- Few-shot <strong>Image Classification</strong> (CLIP + MaPLe)
+- <strong>Meta Reinforcement Learning</strong> (HalfCheetah, Walker2D, Reacher)
+- <strong>Robotic Domain Randomization</strong> (Ergo-Reacher, Lunar-Lander)
+- <strong>Prompt-tuning Foundation Models</strong> (ImageNet and OOD datasets)</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Gains with MPTS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Adaptation Robustness (CVaR)</strong></td>
+<td>✅ Significant improvement</td>
+</tr>
+<tr>
+<td><strong>Average Accuracy/Return</strong></td>
+<td>✅ Higher across tasks</td>
+</tr>
+<tr>
+<td><strong>Computational Efficiency</strong></td>
+<td>✅ 60–80% less runtime vs DRM</td>
+</tr>
+<tr>
+<td><strong>Memory Footprint</strong></td>
+<td>✅ Marginal overhead</td>
+</tr>
+<tr>
+<td><strong>Exploration Diversity</strong></td>
+<td>✅ Maintained by pseudo-batch sampling</td>
+</tr>
+</tbody>
+</table>
+<p>✅ <strong>Result</strong>: MPTS outperforms strong baselines such as ERM, DRM, and GDRM across almost all domains.</p>
+<hr>
+<h2>🏆 Conclusion: Why MPTS Matters</h2>
+<ul>
+<li><strong>Efficiency</strong>: Reduces the cost of robust learning by avoiding massive environment interactions or expensive forward passes.</li>
+<li><strong>Scalability</strong>: Easily deployable to large backbone models and expensive simulators.</li>
+<li><strong>Generalizability</strong>: Compatible with zero-shot, few-shot, and fine-tuning paradigms.</li>
+</ul>
+<p><strong>MPTS</strong> shows that <strong>predicting</strong> what to learn next, not just learning blindly, is key to building <strong>truly adaptive foundation models</strong> for the future.</p>
+<hr>
+<h1>📚 References</h1>
+<p>@misc{wang2025modelpredictivetasksampling,
+      title={Model Predictive Task Sampling for Efficient and Robust Adaptation}, 
+      author={Qi Cheems Wang and Zehao Xiao and Yixiu Mao and Yun Qu and Jiayi Shen and Yiqin Lv and Xiangyang Ji},
+      year={2025},
+      eprint={2501.11039},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2501.11039}, 
+}</p>
+        </div>
+        
+        <!-- 代码高亮 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </body>
+    </html>
+    

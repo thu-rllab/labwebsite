@@ -541,12 +541,21 @@ class Pub2HTML:
                 os.makedirs(directory)
         
         # 配置Markdown扩展
+        # extensions = [
+        #     'markdown.extensions.tables',
+        #     'markdown.extensions.fenced_code',
+        #     ExtraExtension(),
+        #     CodeHiliteExtension(css_class='highlight'),
+        #     ArithmatexExtension(generic=True)  # 用于LaTeX数学公式
+        # ]
         extensions = [
             'markdown.extensions.tables',
             'markdown.extensions.fenced_code',
+            'markdown.extensions.sane_lists',    # 处理混合符号列表
+            'markdown.extensions.attr_list',     # 支持元素属性
             ExtraExtension(),
             CodeHiliteExtension(css_class='highlight'),
-            ArithmatexExtension(generic=True)  # 用于LaTeX数学公式
+            ArithmatexExtension(generic=True)
         ]
 
         # 配置转换器
@@ -558,12 +567,15 @@ class Pub2HTML:
         # 遍历博客列表，处理所有Markdown文件
         for blog in self.all_blogs:
             en_link = blog.get('en_link', '')
+            if not en_link.endswith('.md'):
+                continue
             if en_link.endswith('.md'):
                 md_path = os.path.join('..', en_link)
                 if os.path.exists(md_path):
                     # 读取Markdown内容
                     with open(md_path, 'r', encoding='utf-8') as f:
                         md_content = f.read()
+                    md = markdown.Markdown(extensions=extensions, output_format='html5')
                     
                     # 找到所有图片链接
                     img_matches = md_img_pattern.findall(md_content)
@@ -587,12 +599,13 @@ class Pub2HTML:
                             print(f'无法下载图片: {img_url}，保留原始链接')
                     
                     # 保存修改后的Markdown文件(可选，用于调试)
-                    debug_md_path = os.path.join(html_dir, os.path.basename(en_link) + '.debug')
-                    with open(debug_md_path, 'w', encoding='utf-8') as f:
-                        f.write(md_content)
+                    # debug_md_path = os.path.join(html_dir, os.path.basename(en_link) + '.debug')
+                    # with open(debug_md_path, 'w', encoding='utf-8') as f:
+                    #     f.write(md_content)
                     
                     # 转换为HTML
                     html_content = md.convert(md_content)
+                    md.reset()
                     
                     # 创建完整的HTML文档，包含MathJax支持
                     html_doc = f"""
@@ -715,6 +728,7 @@ class Pub2HTML:
             json.dump(self.all_blogs, f, indent=4)
         
         print(f"已成功将Markdown文件转换为HTML，下载图片到本地，并更新了博客数据")
+    
     def download_image(self, img_url, img_dir):
         """专用图片下载函数，尝试多种下载方法"""
         try:
