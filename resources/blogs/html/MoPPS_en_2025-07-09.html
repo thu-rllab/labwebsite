@@ -1,0 +1,167 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?</title>
+        <link rel="stylesheet" href="../../css/bootstrap-flatly.min.css">
+        
+        <!-- 代码高亮样式 -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        
+        <!-- MathJax支持 -->
+        <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        
+        <style>
+            body {
+                font-family: 'Montserrat', sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background-color: #f4f7f9;
+                padding-top: 20px;
+            }
+            .blog-content {
+                max-width: 800px;
+                margin: 30px auto;
+                padding: 40px;
+                background: #fff;
+                border-radius: 15px;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            }
+            .blog-content img {
+                max-width: 100%;
+                height: auto;
+                margin: 20px auto;
+                display: block;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            h1, h2, h3, h4, h5, h6 {
+                color: #2c3e50;
+                margin-top: 1.5em;
+                margin-bottom: 0.8em;
+            }
+            h1 {
+                font-size: 2.2em;
+                border-bottom: 2px solid #3498db;
+                padding-bottom: 10px;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            a {
+                color: #3498db;
+            }
+            pre {
+                background: #f8f9fa;
+                border-radius: 5px;
+                padding: 15px;
+                overflow: auto;
+            }
+            blockquote {
+                border-left: 4px solid #3498db;
+                padding-left: 15px;
+                color: #555;
+                background: #f9f9f9;
+                border-radius: 0 5px 5px 0;
+            }
+            .back-btn {
+                margin: 20px auto;
+                width: 800px;
+            }
+            .highlight {
+                background: #f8f9fa;
+                border-radius: 5px;
+                padding: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="blog-content">
+            <h2>Faster, Cheaper, Smarter: Accelerating LLM Reasoning with Predictive Prompt Selection</h2>
+<hr>
+<p><strong>Title</strong>: Can Prompt Difficulty be online Predicted for Accelerating RL Finetuning of Reasoning Models?</p>
+<p><strong>Paper</strong>: <a href="https://arxiv.org/abs/2507.04632">https://arxiv.org/abs/2507.04632</a></p>
+<p><strong>Authors</strong>: Yun Qu, Qi Cheems Wang, Yixiu Mao, Vincent Tao Hu, Xiangyang Ji</p>
+<p><strong>Institutions</strong>: THU-IDM, Tsinghua University; CompVis @ LMU Munich</p>
+<p><strong>Keywords</strong>: Reinforcement Learning, Reasoning Models, Model Predictive Sampling</p>
+<hr>
+<p>Reinforcement learning (RL) finetuning has unlocked impressive reasoning abilities in Large Language Models (LLMs) for complex areas like mathematics and planning. However, this power comes at a steep price. The training process is notoriously resource-intensive, demanding massive computational power for model inferences and policy updates.</p>
+<p>While recent online prompt selection methods aim to improve efficiency by focusing on the most informative prompts, they share a critical bottleneck: they still rely on performing expensive LLM evaluations on a large number of candidate prompts just to decide which ones to use for training. This "evaluate-then-select" pipeline, while effective, burns through GPU cycles.</p>
+<div class="arithmatex">\[
+\text{Online Prompt Selection:} \quad 
+\mathcal{T}_t^{\hat{\mathcal{B}}} \xrightarrow{\text{Evaluate}} \{\mathcal{T}_t^{\hat{\mathcal{B}}},\mathcal{R}_t^{\hat{\mathcal{B}}} \}\xrightarrow{\text{Filter}} \{\mathcal{T}_t^{\mathcal{B}},\mathcal{R}_t^{\mathcal{B}} \}.\quad(8)
+\]</div>
+<div class="arithmatex">\[
+p(\mathcal{T}_t^\mathcal{B}\mid \theta_t) 
+= \int
+    p(\mathcal{T}_t^\mathcal{B} \mid \mathcal{R}_t^{\hat{\mathcal{B}}}, \mathcal{T}_t^{\hat{\mathcal{B}}}) p(\mathcal{T}_t^{\hat{\mathcal{B}}}) 
+    \underbrace{\int p(\Gamma_t^{\hat{\mathcal{B}}} \mid \mathcal{T}_t^{\hat{\mathcal{B}}}, \theta_t)
+    \, p(\mathcal{R}_t^{\hat{\mathcal{B}}} \mid \Gamma_t^{\hat{\mathcal{B}}}) 
+    \, d\Gamma_t^{\hat{\mathcal{B}}}}_{\text{Extra Prompt Evaluation}} \;d\mathcal{R}_t^{\hat{\mathcal{B}}}\;d\mathcal{T}_t^{\hat{\mathcal{B}}},\quad(9)
+\]</div>
+<p>This work aims to answer two <strong>research questions (RQs)</strong> below
+-  <em>Can prompt difficulty be dynamically predicted without exactly interacting with LLMs?</em>
+-  <em>How can predicted outcome serve data selection for enhancing LLMs' reasoning power?</em></p>
+<p>We introduce <strong>Model Predictive Prompt Selection (MoPPS)</strong>, a new framework that does exactly that. MoPPS reframes prompt selection, shifting from expensive direct evaluation to efficient, amortized prediction.</p>
+<p><img alt="" src="../images/f7daf924-316d-48c3-8d3f-7b85543dba69.png">
+  <em>Figure 1: Framework Overview. Left: Comparison between Dynamic Sampling (Oracle), which filters prompts based on actual LLM evaluation on candidates, and our Model Predictive Prompt Selection (MoPPS), which predicts success rates to avoid extra inference cost. Right: MoPPS  predicts success rates for candidates from posterior parameters, based on which prompts closest to a target <span class="arithmatex">\(\gamma^*\)</span> are selected for training; the posterior is then updated using new feedback.</em></p>
+<h3>How MoPPS Works: Predict, Don't Just Evaluate</h3>
+<p>The core idea is simple yet powerful. We treat online prompt selection as a multi-armed bandit problem, where each prompt is an "arm". The "reward" for pulling an arm is the prompt's success rate, a latent variable we want to estimate.</p>
+<p>Instead of running the full LLM, MoPPS uses a lightweight Bayesian surrogate model for each prompt. This model maintains a belief about the prompt's success rate (as a Beta distribution) and recursively updates this belief over time using the actual outcomes from prompts that were selected for training.</p>
+<p>At each step, to select a training batch, we:</p>
+<ol>
+<li><strong>Sample Candidates:</strong> Randomly sample a large set of candidate prompts, which can be easily extended to the full prompt pool.</li>
+<li><strong>Predict Difficulty:</strong> For each candidate, we use Thompson Sampling to draw a predicted success rate from its current Beta posterior distribution. This step is incredibly fast and requires no LLM inference.</li>
+<li><strong>Select for Training:</strong> We then build our training batch by selecting the prompts whose predicted success rates are closest to a target value (e.g., 0.5), which are often the most informative for learning.</li>
+<li><strong>Update Posteriors</strong>: After the selected batch is used to generate responses and collect rewards, this new feedback is used to update the posterior parameters via a recursive Bayesian update rule, which accumulates evidence over time and allows the predictive models to adapt as the main LLM evolves.</li>
+</ol>
+<p>This <strong>"predict-then-optimize"</strong> approach allows us to intelligently select high-quality prompts without the massive overhead of traditional methods.</p>
+<p><img alt="" src="../images/d010a82b-b5b1-4a26-a9f3-ab951b1217ce.png"></p>
+<h3>The Results: Massive Efficiency Gains</h3>
+<p>So, does it work? The evidence is compelling.</p>
+<ul>
+<li>
+<p><strong>Accurate Prediction:</strong> Our Bayesian model's difficulty predictions show a consistently high Spearman rank correlation with the empirical success rates, validating that our lightweight surrogate is an effective proxy for costly LLM evaluations.
+<img alt="" src="../images/67bb538d-199e-4491-b9ef-ccca8f5d4015.png">
+    <em>Figure 2: The predicted prompt difficulty from our Bayesian surrogate strongly correlates with the empirical success rate across various tasks and model sizes[cite: 41, 42].</em></p>
+</li>
+<li>
+<p><strong>Accelerated Training:</strong> MoPPS significantly speeds up RL finetuning. For example, on the Countdown planning task, it achieves up to a <strong>1.8x speedup</strong> over uniform sampling.</p>
+</li>
+</ul>
+<p><img alt="" src="../images/3e9e7088-9c5e-4e50-95be-b26ec10a630b.png">
+<em>Figure 3: Training curves of MoPPS and baseline methods across three reasoning tasks with varying backbone sizes. 
+    Notably, DS serves as an oracle baseline, as it relies on expensive exact LLM evaluations and demands significantly more rollouts.</em>
+<img alt="" src="../images/8e95f1f8-aca3-40b7-a225-92a819a0ae58.png"></p>
+<ul>
+<li><strong>Drastically Reduced Cost:</strong> This is the most significant advantage. Compared to evaluation-heavy methods like Dynamic Sampling (DS), MoPPS achieves comparable or even better final performance with a fraction of the computational cost. On the Countdown task, MoPPS requires <strong>78.46% fewer rollouts</strong>. On the MATH dataset, it achieves similar performance to DS with only 25% of the rollouts.</li>
+</ul>
+<p><img alt="" src="../images/957f6a5c-8213-46d4-84f8-96f9d05a781e.png">
+    <em>Figure 4: MoPPS achieves the same accuracy as DS with significantly fewer LLM rollouts, demonstrating huge computational savings.</em></p>
+<h3>Why It Matters</h3>
+<p>MoPPS offers a more sustainable path for developing powerful reasoning models. By replacing the most expensive part of the online selection pipeline with a highly efficient predictive model, it lowers the computational barrier, saves significant resources, and accelerates the development cycle. It is a versatile framework that is easy to implement and can be integrated with a variety of RL algorithms and LLM backbones.</p>
+<p>We believe this approach is a critical step towards more efficient and accessible RL finetuning for the entire community.</p>
+<p><strong>To learn more, please check out our <a href="https://arxiv.org/abs/2507.04632">full paper</a>!</strong></p>
+        </div>
+        
+        <!-- 代码高亮 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </body>
+    </html>
+    

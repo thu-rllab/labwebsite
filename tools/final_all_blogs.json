@@ -1,5 +1,11 @@
 [
     {
+        "date": "20250709",
+        "content": "Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?",
+        "cn_link": "https://mp.weixin.qq.com/s/pYTTCaG-NUGQaBzNImyhIg",
+        "en_link": "resources/blogs/html/MoPPS_en_2025-07-09.html"
+    },
+    {
         "date": "20250520",
         "content": "Model Predictive Task Sampling: Enhancing Robustness and Efficiency in Adaptive Learning",
         "cn_link": "https://zhuanlan.zhihu.com/p/19813707921",
