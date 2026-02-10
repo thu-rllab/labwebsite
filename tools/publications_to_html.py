@@ -1,821 +1,572 @@
-import json 
-from datetime import datetime
-import os    
-import markdown
-import os
 import json
+import os
+import re
+import uuid
+import urllib.request
+import subprocess
+import markdown
+from datetime import datetime
 from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.extra import ExtraExtension
 from pymdownx.arithmatex import ArithmatexExtension
-
-import re
-import urllib.request
-import os.path
-import uuid
 from urllib.parse import urlparse, unquote
+
+
 class Pub2HTML:
-    
+    """实验室网站 HTML 生成器：从 JSON 数据生成学术风格的网页内容。"""
+
+    # ── 成员分类排序权重 ──
+    MEMBER_ORDER = {
+        "Faculty": 0,
+        "Postdoc": 1,
+        "Graduate Student": 2,
+        "Undergraduate": 3,
+        "Alumni": 4,
+    }
+
+    # ── 学位 → badge 样式映射 ──
+    DEGREE_STYLE_MAP = {
+        "associate professor": ("badge badge-warning", ""),
+        "postdoctoral fellow": ("badge badge-info", ""),
+        "ph.d. student": ("badge badge-primary", "background-color:#007bff"),
+        "master student": ("badge badge-success", ""),
+        "undergraduate student": ("badge badge-secondary", ""),
+        "ph.d. student (graduated)": ("badge badge-light", "background-color:#adb5bd; color:#fff"),
+    }
+
     def __init__(self):
+        self.pub_path = "final_all_papers.json"
+        self.member_path = "final_all_members.json"
+        self.news_path = "final_all_news.json"
+        self.blog_path = "final_all_blogs.json"
 
-        self.pub_path = 'final_all_papers.json'
-        self.member_path = 'final_all_members.json'
-        self.news_path = 'final_all_news.json'
-        self.blog_path = 'final_all_blogs.json'
+        self.all_pubs = self._load_json(self.pub_path)
+        self.all_members = self._load_json(self.member_path)
 
-        with open(self.pub_path, 'r') as fp: 
-            self.all_pubs = json.load(fp)
-            fp.close()
-        with open(self.member_path, 'r') as fp: 
-            self.all_members = json.load(fp)
-            fp.close()
-        with open(self.news_path, 'r') as fp: 
-            self.all_news = json.load(fp)
-            ### sort by date ### 
-            self.all_news = sorted(self.all_news, key = lambda x: x['date'], reverse = True)  
-            fp.close()
+        self.all_news = self._load_json(self.news_path)
+        self.all_news = sorted(self.all_news, key=lambda x: x["date"], reverse=True)
 
-        with open(self.blog_path, 'r') as fp: 
-            self.all_blogs = json.load(fp)
-            ### 按日期排序 ### 
-            self.all_blogs = sorted(self.all_blogs, key = lambda x: x['date'], reverse = True)  
-            fp.close()
+        self.all_blogs = self._load_json(self.blog_path)
+        self.all_blogs = sorted(self.all_blogs, key=lambda x: x["date"], reverse=True)
+
+    # ──────────────────── 工具方法 ────────────────────
+
+    @staticmethod
+    def _load_json(path):
+        with open(path, "r", encoding="utf-8") as fp:
+            return json.load(fp)
+
+    @staticmethod
+    def _format_date(date_str):
+        """将 '20250709' 解析为 (month_abbr, day, year)"""
+        d = datetime.strptime(date_str, "%Y%m%d")
+        return d.strftime("%b"), str(d.day), str(d.year)
+
+    @staticmethod
+    def _link_btn(url, label, css_class="btn btn-outline-secondary btn-sm"):
+        """仅在 url 有效时生成按钮 HTML。"""
+        if not url or url == "nan":
+            return ""
+        return f'<a href="{url.strip()}" class="{css_class}" target="_blank">{label}</a>\n'
+
+    def update_copy_new_new(self, src_path, backup_path, start_label, end_label, update_html):
+        with open(src_path, "r", encoding="utf-8") as fp:
+            all_source_html = fp.read()
+        with open(backup_path, "w", encoding="utf-8") as fp:
+            fp.write(all_source_html)
+        start_index = all_source_html.index(start_label)
+        end_index = all_source_html.index(end_label)
+        to_be_replace = all_source_html[start_index:end_index]
+        all_source_html = all_source_html.replace(to_be_replace, update_html)
+        with open(src_path, "w", encoding="utf-8") as fp:
+            fp.write(all_source_html)
+
+    # ──────────────────── 筛选器 ────────────────────
+
+    def get_all_filter_conditions(self):
+        filter_year, filter_conference, filter_tag = {}, {}, {}
+        for title, vals in self.all_pubs.items():
+            cur_year, cur_conference, cur_authors, *_, cur_tag = vals
+            filter_year[cur_year] = 0
+            filter_conference[cur_conference.replace(cur_year, "").strip()] = 0
+            if cur_tag != "nan":
+                filter_tag[cur_tag] = 0
+        filter_author = list(self.all_members.keys())
+        return (
+            sorted(filter_year.keys(), reverse=True),
+            sorted(filter_author),
+            sorted(filter_conference.keys()),
+            sorted(filter_tag.keys()),
+        )
+
+    def get_filter_html(self, id_name, show_name, filter_values):
+        options = "\n".join(
+            f'          <option value="{v}">{v}</option>' for v in filter_values
+        )
+        return f"""
+      <div class="tech-dropdown-container" style="margin-bottom:1.5%;">
+        <select id="{id_name}FilterDropdown" class="tech-dropdown-select">
+          <option value="">All {show_name}s</option>
+{options}
+        </select>
+      </div>"""
+
+    # ──────────────────── 旧 HTML → JSON (保留) ────────────────────
 
     def wang_to_json(self):
-        with open('wang_html_publications.txt', 'r') as fp:
+        with open("wang_html_publications.txt", "r", encoding="utf-8") as fp:
             all_lines = fp.readlines()
-            fp.close() 
 
         def get_link(s):
             first_i = s.index('"')
-            second_i = s[first_i + 1:].index('"')
-            return s[first_i + 1:first_i + 1 + second_i]
+            second_i = s[first_i + 1 :].index('"')
+            return s[first_i + 1 : first_i + 1 + second_i]
 
-        index = 0
-        total_papers = 0
+        index, total_papers = 0, 0
         while index < len(all_lines):
             if '<div class="card">' in all_lines[index]:
-                ### now start a paper ### 
                 index += 1
-                assert '<div class="card-body">' in all_lines[index], all_lines[index] 
+                assert '<div class="card-body">' in all_lines[index]
                 index += 1
-                assert '<h5 class="card-title">' in all_lines[index], all_lines[index] 
+                assert '<h5 class="card-title">' in all_lines[index]
                 index += 1
-                ### now the title ###
-                cur_title = all_lines[index].strip() 
+                cur_title = all_lines[index].strip()
                 index += 1
-                ### now the conference ### 
-                assert '<span class="badge badge-success">' in all_lines[index] and '</span>' in all_lines[index], all_lines[index] 
-                cur_conference = all_lines[index].replace('<span class="badge badge-success">', '').replace('</span>', '').strip() 
-                cur_year = cur_conference.split(' ')[-1].strip()
-                index += 1 
-                assert '</h5>' in all_lines[index], all_lines[index] 
+                assert '<span class="badge badge-success">' in all_lines[index]
+                cur_conference = (
+                    all_lines[index]
+                    .replace('<span class="badge badge-success">', "")
+                    .replace("</span>", "")
+                    .strip()
+                )
+                cur_year = cur_conference.split(" ")[-1].strip()
                 index += 1
-                assert '<p class="card-text">' in all_lines[index] and '</p>' in all_lines[index], all_lines[index] 
-                cur_authors_start_index = all_lines[index].index('</strong>')
-                cur_authors = all_lines[index][cur_authors_start_index:].replace('</strong>', '').replace('</p>', '').strip() 
+                assert "</h5>" in all_lines[index]
                 index += 1
-                ### now the links ### 
-                assert '<a href' in all_lines[index], all_lines[index] 
-                cur_paper_link = get_link(all_lines[index]).strip() 
+                assert '<p class="card-text">' in all_lines[index]
+                ci = all_lines[index].index("</strong>")
+                cur_authors = (
+                    all_lines[index][ci:]
+                    .replace("</strong>", "")
+                    .replace("</p>", "")
+                    .strip()
+                )
                 index += 1
-                assert '<a href' in all_lines[index], all_lines[index] 
-                cur_code_link = get_link(all_lines[index]).strip() 
-                index += 1
-                assert '<a href' in all_lines[index], all_lines[index] 
-                cur_demo_link = get_link(all_lines[index]).strip() 
-                index += 1
-                ### now the last two divs ### 
-                assert '</div>' in all_lines[index], all_lines[index] 
-                index += 1 
-                assert '</div>' in all_lines[index], all_lines[index] 
-                
+                cur_paper_link = get_link(all_lines[index]).strip(); index += 1
+                cur_code_link = get_link(all_lines[index]).strip(); index += 1
+                cur_demo_link = get_link(all_lines[index]).strip(); index += 1
+                assert "</div>" in all_lines[index]; index += 1
+                assert "</div>" in all_lines[index]
                 total_papers += 1
-
-                if cur_title in self.all_pubs.keys():
-                    print(f'... Paper {cur_title} Already Exist ...')
-                else:
+                if cur_title not in self.all_pubs:
                     self.all_pubs[cur_title] = [
-                        cur_year,
-                        cur_conference,
-                        cur_authors,
-                        cur_paper_link,
-                        cur_code_link,
-                        cur_demo_link
-                    ]  
-
+                        cur_year, cur_conference, cur_authors,
+                        cur_paper_link, cur_code_link, cur_demo_link,
+                    ]
             index += 1
-        
-        print(f'A total of {total_papers} papers detected')
 
-        ### transfer them to json ###  
-        with open('final_all_papers.json', 'w') as fp:
+        print(f"A total of {total_papers} papers detected")
+        with open("final_all_papers.json", "w", encoding="utf-8") as fp:
             json.dump(self.all_pubs, fp, indent=4)
-            fp.close()
-    
-    def get_all_filter_conditions(self):
-        ### now get all filter conditions ### 
-        filter_year, filter_author, filter_conference, filter_tag = {}, {}, {}, {}
-        for cur_title in self.all_pubs.keys():
-            cur_year, cur_conference, cur_authors, cur_paper_link, cur_code_link, cur_demo_link, cur_tag = self.all_pubs[cur_title]
-            filter_year[cur_year] = 0
-            cur_authors = cur_authors.split(',')
-            for cur_every_author in cur_authors:
-                filter_author[cur_every_author.replace('*', '').strip()] = 0
-            filter_conference[cur_conference.replace(cur_year, '').strip()] = 0
-            if cur_tag != 'nan':
-                filter_tag[cur_tag] = 0
-        ### now get all filter conditions ###
-        filter_author = list(self.all_members.keys()) 
-        return sorted(list(filter_year.keys()), reverse=True), sorted(filter_author), sorted(list(filter_conference.keys())), sorted(list(filter_tag.keys()))
-    
-    def get_filter_html(self, id_name, show_name, filter_values):
-        option_value = ''
-        for value in filter_values:
-            option_value += f'          <option value="{value}">{value}</option>\n'
-        filter_html = f"""
-      <div class="tech-dropdown-container" style="margin-bottom: 1.5%;"> 
-        <select id="{id_name}FilterDropdown" class="tech-dropdown-select">
-          <option value="">All {show_name}s</option>
-{option_value}
-        </select>
-      </div>
-"""
-        return filter_html
 
-    def update_copy_new_new(self, src_path, backup_path, start_label, end_label, update_html):
-        ###    final step: 进行牛牛备案 以及 更新源网页   ###
-        with open(src_path, 'r') as fp:
-            all_source_html = fp.read()
-            fp.close()
-        with open(backup_path, 'w') as fp:
-            fp.write(all_source_html)
-            fp.close()
-        start_index = all_source_html.index(start_label)
-        end_index = all_source_html.index(end_label)
-        to_be_replace = all_source_html[start_index:end_index]  
-        all_source_html = all_source_html.replace(to_be_replace, update_html)
+    # ──────────────────── Publications HTML ────────────────────
 
-        ### write to source html ###
-        with open(src_path, 'w') as fp:
-            fp.write(all_source_html)
-            fp.close()
+    def paper_json_to_html(self):
+        filter_year, filter_author, filter_conference, filter_tag = (
+            self.get_all_filter_conditions()
+        )
 
-    def paper_json_to_html(self):  
-        ###    step 1: get all filter conditions    ###
-        filter_year, filter_author, filter_conference, filter_tag = self.get_all_filter_conditions()
-        print('year: ', filter_year)
-        print('author: ', filter_author)
-        print('conference: ', filter_conference)
-        ###    step 2: get all paper filter html    ###
-        year_filter_html = self.get_filter_html('year', 'Year', filter_year)
-        author_filter_html = self.get_filter_html('author', 'Author', filter_author)
-        conference_filter_html = self.get_filter_html('conference', 'Conferences/Journal', filter_conference)
-        tag_filter_html = self.get_filter_html('tag', 'Tag', filter_tag)
         all_filter_html = f"""
 <!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
 
-    <!-- 容器：让标题和下拉框在同一行 -->
-    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
-      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">Publications</h2> 
-      <!-- 右侧的下拉框部分 -->
-{year_filter_html}
-
-{author_filter_html}
-
-{tag_filter_html}
-
-{conference_filter_html}
-</div>
-""" 
-        ###    step 3: get all paper html   ####
-        all_paper_html = """
-    <!-- 论文列表容器 -->
-    <div id="publicationsList">
-"""
-        time_sorted_papers = sorted(self.all_pubs.items(), key = lambda x: x[1][0], reverse=True) 
-        for cur_title, cur_title_values in time_sorted_papers:
-            cur_year, cur_conference, cur_authors, cur_paper_link, cur_code_link, cur_demo_link, cur_tag = cur_title_values
-
-            ### if no paper/code/demo, then do not show ###
-            cur_paper_link_html = '' if cur_paper_link == 'nan' else f'          <a href=" {cur_paper_link} " class="btn btn-secondary btn-sm" target="_blank">Paper</a>'
-            cur_code_link_html = '' if cur_code_link == 'nan' else f'          <a href=" {cur_code_link} " class="btn btn-secondary btn-sm" target="_blank">Code</a>'
-            cur_demo_link_html = '' if cur_demo_link == 'nan' else f'          <a href=" {cur_demo_link} " class="btn btn-secondary btn-sm" target="_blank">Demo</a>'
-            cur_tag_html = '' if cur_tag == 'nan' else f'          <span class="badge badge-info" style="margin-bottom: 1em; margin-left: 0.5em; background-color: #17a2b8;">{cur_tag}</span>'
-            html_template = f"""
-
-      <div 
-        class="card mb-3" style="display: none"
-        data-year="{cur_year}" 
-        data-authors="{cur_authors}"
-        data-conference="{cur_conference}"
-        data-tag="{cur_tag}"
-      > 
-        <div class="card-body">
-          <span class="badge badge-success" style="margin-bottom: 1em">{cur_conference}</span>
-          {cur_tag_html}
-          <h5 class="card-title" style="color:#576263">
-            <strong>{cur_title}</strong>
-          </h5>
-          <p class="card-text">
-            <strong>Authors:</strong> {cur_authors}
-          </p>
-{cur_paper_link_html}
-{cur_code_link_html}
-{cur_demo_link_html}
-        </div>
-      </div>
-
-"""
-            all_paper_html += html_template
-        all_paper_html += """
-    <!-- 这里可继续添加更多论文 ... -->
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom:2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom:1.5%;">Publications</h2>
+{self.get_filter_html('year', 'Year', filter_year)}
+{self.get_filter_html('author', 'Author', filter_author)}
+{self.get_filter_html('tag', 'Tag', filter_tag)}
+{self.get_filter_html('conference', 'Conferences/Journal', filter_conference)}
     </div>
 """
-        self.update_copy_new_new(src_path='../new_new_index.html', backup_path='../new_new_backup.html', 
-                                 start_label='<!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->',
-                                 end_label='<!-- wby: 注意，切勿删除，程序代码识别publications结束部分 -->',
-                                 update_html=all_filter_html + '\n\n' + all_paper_html) 
-    
+
+        # 按年份降序 → 会议名排序
+        time_sorted = sorted(
+            self.all_pubs.items(),
+            key=lambda x: (-int(x[1][0]), x[1][1]),
+        )
+
+        cards = []
+        for title, vals in time_sorted:
+            year, conf, authors, paper_url, code_url, demo_url, tag = vals
+
+            paper_btn = self._link_btn(paper_url, "Paper", "btn btn-outline-primary btn-sm")
+            code_btn = self._link_btn(code_url, "Code", "btn btn-outline-success btn-sm")
+            demo_btn = self._link_btn(demo_url, "Demo", "btn btn-outline-info btn-sm")
+            tag_badge = (
+                ""
+                if tag == "nan"
+                else f'<span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">{tag}</span>'
+            )
+
+            card = f"""
+      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+           data-year="{year}" data-authors="{authors}" data-conference="{conf}" data-tag="{tag}">
+        <div class="card-body">
+          <div style="margin-bottom:.6em;">
+            <span class="badge" style="background-color:#2c3e50;color:#fff;">{conf}</span>
+            {tag_badge}
+          </div>
+          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>{title}</strong></h5>
+          <p class="card-text" style="color:#555;font-size:.9rem;">
+            {authors}
+          </p>
+          <div class="btn-group" role="group" style="margin-top:.5em;">
+            {paper_btn}{code_btn}{demo_btn}
+          </div>
+        </div>
+      </div>
+"""
+            cards.append(card)
+
+        all_paper_html = """
+    <div id="publicationsList">
+""" + "".join(cards) + """
+    </div>
+"""
+
+        self.update_copy_new_new(
+            src_path="../new_new_index.html",
+            backup_path="../new_new_backup.html",
+            start_label="<!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->",
+            end_label="<!-- wby: 注意，切勿删除，程序代码识别publications结束部分 -->",
+            update_html=all_filter_html + "\n" + all_paper_html,
+        )
+
+    # ──────────────────── Team Members HTML ────────────────────
+
     def member_json_to_html(self):
-        ### first step: get all member filter conditions ### 
-        all_degree_filter_conditions = ['Associate Professor', 'Postdoctoral Fellow', 'Doctor Student', 'Master Student']
-        ### second step: get all filter html ### 
-        degree_filter_html = self.get_filter_html('degree', 'Position', all_degree_filter_conditions)
+        degree_filter = ["Associate Professor", "Postdoctoral Fellow", "Ph.D. Student", "Master Student", "Undergraduate Student"]
+        degree_filter_html = self.get_filter_html("degree", "Position", degree_filter)
+
         all_filter_html = f"""
 <!-- wby: 注意，切勿删除，程序代码识别team开始部分 -->
 
-    <!-- 容器：让标题和下拉框在同一行 -->
-    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
-      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">Team Members</h2>
-      <!-- 右侧的下拉框部分 -->
-{degree_filter_html} 
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom:2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom:1.5%;">Team Members</h2>
+{degree_filter_html}
     </div>
-"""     
-        ### 程序性生成整个成员 ### 
-        all_member_html = """
-    <!-- 团队成员列表容器 -->
-    <div id="teamList" class="row">
 """
-        for member_name in self.all_members.keys():
-            degree, website, github, email, scholar, member_name = self.all_members[member_name]['degree'],\
-                                                        self.all_members[member_name]['website'],\
-                                                        self.all_members[member_name]['github'],\
-                                                        self.all_members[member_name]['email'],\
-                                                        self.all_members[member_name]['scholar'],\
-                                                        member_name
-            
-            
-            ### for different people's img ###
-            if 'xiangyang' in member_name.lower(): img_path = f'resources/people_img/ji.jpg'
-            else:  img_path = f'resources/people_img/{member_name}.jpg'
 
-            ### for different people's degree ###
-            background_color = ''
-            if 'associate professor' in degree.lower(): degree_style = 'badge badge-warning'
-            elif 'professor' in degree.lower(): degree_style = 'badge badge-info'
-            elif 'doctor' in degree.lower(): 
-                degree_style = 'badge badge-primary'
-                background_color = 'background-color: #007bff'
-            else: degree_style = 'badge badge-success'
+        # 按 title 权重排序
+        sorted_members = sorted(
+            self.all_members.items(),
+            key=lambda x: self.MEMBER_ORDER.get(x[1].get("title", ""), 99),
+        )
 
-            ### for different people's website, email, google scholar ###
-            if 'nan' in website: website_html = ''
-            else: website_html = f"""
-                            <strong>Website:</strong> 
-                            <a href="{website}" target="_blank">view</a><br>
-"""
-            if 'nan' in github: github_html = ''
-            else: github_html = f"""
-                            <strong>Github:</strong> 
-                            <a href="{github}" target="_blank">view</a><br>
-"""
-            if 'nan' in email: email_html = ''
-            else: email_html = f"""
-                            <strong>Email:</strong> {email}<br>
-"""
-            if 'nan' in scholar: scholar_html = ''
-            else: scholar_html = f"""
-                            <strong>Google Scholar:</strong> 
-                            <a href="{scholar}" target="_blank">View</a>
-"""
-            ### set img margin top ### 
-            # if '' in [website, email, scholar]: img_margin_top = 0
-            # else: img_margin_top = 5
+        # 按类别分组
+        current_title = None
+        member_cards = []
 
-            member_template = f"""
-      <div 
-        class="col-md-6 mb-3" style="display: none"
-        data-position="{degree}"  
-      > 
-      <div class="card h-100">
-        <div class="card-body" style="display: table; width: 100%;">
-            <!-- 一行(table-row)里分为两列(table-cell)：左侧放文字，右侧放图片 -->
-            <div style="display: table-row;">
-                <!-- 左侧文字内容，竖直居中 -->
-                <div style="display: table-cell; vertical-align: middle;">
-                    <span class="{degree_style}" style="margin-bottom: 1em;{background_color}">{degree}</span>
-                    <div style="margin-left: 3%;">
-                        <h5 class="card-title" style="color:#576263"><strong>{member_name}</strong></h5>
-                        <p class="card-text">
-{website_html}
-{github_html}
-{email_html}
-{scholar_html}
-                        </p>
-                    </div>
-                </div>
-                """
-            member_template+=f"""
-                <!-- 右侧图片，竖直居中 -->
-                <div style="display: table-cell; vertical-align: middle; width: 225px; text-align: center;">
-                    <img src="{img_path}" alt="Profile Photo" style="width: 50%; height: 100%; object-fit: cover; border-radius: 8px">
-                </div>
-            """ if img_path !='nan' else """"""
-            member_template+="""
+        for name, info in sorted_members:
+            title = info.get("title", "Graduate Student")
+            degree = info["degree"]
+
+            # 插入分组标题
+            if title != current_title:
+                current_title = title
+                section_label = {
+                    "Faculty": "Faculty",
+                    "Postdoc": "Postdoctoral Researchers",
+                    "Graduate Student": "Graduate Students",
+                    "Undergraduate": "Undergraduate Students",
+                    "Alumni": "Alumni",
+                }.get(title, title)
+                member_cards.append(f"""
+      <div class="col-12 member-section-header" data-position="{degree}">
+        <h4 style="color:#2c3e50;border-bottom:1px solid #e0e0e0;padding-bottom:.4em;margin-top:1.5em;margin-bottom:.8em;font-weight:600;">
+          {section_label}
+        </h4>
+      </div>
+""")
+
+            # 头像路径
+            if "xiangyang" in name.lower():
+                img_path = "resources/people_img/ji.jpg"
+            else:
+                img_path = f"resources/people_img/{name}.jpg"
+
+            # badge 样式
+            degree_style, bg_color = self.DEGREE_STYLE_MAP.get(
+                degree.lower(), ("badge badge-secondary", "")
+            )
+            bg_attr = f"background-color:{bg_color};" if bg_color else ""
+
+            # 链接行
+            links = []
+            if info.get("website", "nan") != "nan":
+                links.append(f'<a href="{info["website"]}" target="_blank" title="Homepage"><i class="fas fa-globe"></i></a>')
+            if info.get("github", "nan") != "nan":
+                links.append(f'<a href="{info["github"]}" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>')
+            if info.get("scholar", "nan") != "nan":
+                links.append(f'<a href="{info["scholar"]}" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>')
+            if info.get("email", "nan") != "nan":
+                links.append(f'<a href="mailto:{info["email"]}" title="Email"><i class="fas fa-envelope"></i></a>')
+
+            links_html = " &nbsp; ".join(links) if links else ""
+            bio_html = f'<p class="card-text text-muted" style="font-size:.85rem;margin-top:.4em;">{info.get("bio","")}</p>' if info.get("bio") else ""
+
+            member_cards.append(f"""
+      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="{degree}">
+        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
+          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+            <img src="{img_path}" alt="{name}"
+                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
+                 onerror="this.src='resources/people_img/default.jpg'">
+            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">{name}</h6>
+            <span class="{degree_style}" style="{bg_attr}font-size:.75rem;">{degree}</span>
+            {bio_html}
+            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
+              {links_html}
             </div>
+          </div>
         </div>
       </div>
-    </div>
+""")
 
-""" 
-            all_member_html += member_template
-        all_member_html += """
-    <!-- 这里可继续添加更多成员 ... -->
+        all_member_html = """
+    <div id="teamList" class="row">
+""" + "".join(member_cards) + """
     </div>
-""" 
-        self.update_copy_new_new(src_path='../new_new_index.html', backup_path='../new_new_backup.html', 
-                            start_label='<!-- wby: 注意，切勿删除，程序代码识别team开始部分 -->',
-                            end_label='<!-- wby: 注意，切勿删除，程序代码识别team结束部分 -->',
-                            update_html=all_filter_html + '\n\n' + all_member_html) 
+"""
+
+        self.update_copy_new_new(
+            src_path="../new_new_index.html",
+            backup_path="../new_new_backup.html",
+            start_label="<!-- wby: 注意，切勿删除，程序代码识别team开始部分 -->",
+            end_label="<!-- wby: 注意，切勿删除，程序代码识别team结束部分 -->",
+            update_html=all_filter_html + "\n" + all_member_html,
+        )
+
+    # ──────────────────── News HTML ────────────────────
 
     def news_json_to_html(self):
-        ### first step: get all news date filter conditions ### 
-        all_news_date_filter_conditions = {}
-        for every_news in self.all_news:
-            all_news_date_filter_conditions[every_news['date'][:4]] = 1 
-        all_news_date_filter_conditions = sorted(list(all_news_date_filter_conditions.keys()), reverse=True)
-        ### second step: get all filter html ### 
-        news_date_filter_html = self.get_filter_html('newsYear', 'Year', all_news_date_filter_conditions)
+        year_set = sorted(
+            {n["date"][:4] for n in self.all_news}, reverse=True
+        )
+        news_date_filter_html = self.get_filter_html("newsYear", "Year", year_set)
+
         all_filter_html = f"""
 <!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
 
-    <!-- 容器：让标题和下拉框在同一行 -->
-    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
-      <h2 class="wby-section-title" style="margin-bottom: 1.5%;">News</h2>
-      <!-- 右侧的下拉框部分 -->
-{news_date_filter_html} 
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom:2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom:1.5%;">News</h2>
+{news_date_filter_html}
     </div>
 """
-        ### third step: get all news html   ####
-        all_news_html = """
-    <!-- 新闻列表容器 -->
-    <div id="newsList">
-"""
-        for every_news in self.all_news:
-            cur_date, cur_content = every_news['date'], every_news['content']
-            # 解析输入的日期字符串
-            cur_date = datetime.strptime(cur_date, "%Y%m%d")
-            # 格式化为需要的输出格式
-            cur_month = cur_date.strftime("%b") 
-            cur_day = str(cur_date.day) 
-            cur_year = str(cur_date.year)  
 
-            every_news_html_template = f"""
-      <div 
-        class="news-item mb-3" style="display: none"
-        data-year="{cur_year}"  
-      > 
-        <div class="news-item-body">
-            <div class="news-date">{cur_month} {cur_day}, {cur_year}</div>
-            <div class="news-text">
-                {cur_content}
-            </div>
+        items = []
+        for n in self.all_news:
+            mon, day, year = self._format_date(n["date"])
+            items.append(f"""
+      <div class="news-item mb-3" style="display:none" data-year="{year}">
+        <div class="news-item-body" style="display:flex;align-items:flex-start;">
+          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">{mon} {day}, {year}</div>
+          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;">{n["content"]}</div>
         </div>
       </div>
+""")
 
-"""
-            all_news_html += every_news_html_template
-        all_news_html += """
-    <!-- 这里可继续添加更多新闻 ... -->
+        all_news_html = """
+    <div id="newsList">
+""" + "".join(items) + """
     </div>
-"""
-        all_news_html += """
-    <!-- 分页或"加载更多"按钮 -->
+
     <div class="text-center mt-4">
       <button id="showMoreNewsBtn" class="btn btn-primary showMoreBtn">Show More</button>
-      <div id="thatsAllNewsBtn" class="section-small-title" style="text-align: center; display: none">That's all news!</div>
-      <div id="noNews" class="section-small-title" style="text-align: center; display: none">No news matching current filter.</div>
+      <div id="thatsAllNewsBtn" class="section-small-title" style="text-align:center;display:none">That's all news!</div>
+      <div id="noNews" class="section-small-title" style="text-align:center;display:none">No news matching current filter.</div>
     </div>
     </div>
 """
-        self.update_copy_new_new(src_path='../new_new_index.html', backup_path='../new_new_backup.html', 
-                            start_label='<!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->',
-                            end_label='<!-- wby: 注意，切勿删除，程序代码识别news结束部分 -->',
-                            update_html=all_filter_html + '\n\n' + all_news_html) 
-    
+
+        self.update_copy_new_new(
+            src_path="../new_new_index.html",
+            backup_path="../new_new_backup.html",
+            start_label="<!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->",
+            end_label="<!-- wby: 注意，切勿删除，程序代码识别news结束部分 -->",
+            update_html=all_filter_html + "\n" + all_news_html,
+        )
+
+    # ──────────────────── Blogs HTML ────────────────────
+
     def blog_json_to_html(self):
-        ### 首先，加载博客数据文件
-        self.blog_path = 'final_all_blogs.json'
-        try:
-            with open(self.blog_path, 'r') as fp: 
-                self.all_blogs = json.load(fp)
-                ### 按日期对博客排序 ### 
-                self.all_blogs = sorted(self.all_blogs, key = lambda x: x['date'], reverse = True)  
-                fp.close()
-        except FileNotFoundError:
-            self.all_blogs = []  # 如果文件不存在，初始化为空列表
-            
-        ### first step: 获取所有博客日期筛选条件 ### 
-        all_blog_date_filter_conditions = {}
-        for every_blog in self.all_blogs:
-            # 按年份筛选
-            all_blog_date_filter_conditions[every_blog['date'][:4]] = 1
-        
-        all_blog_date_filter_conditions = sorted(list(all_blog_date_filter_conditions.keys()), reverse=True)
-        
-        ### second step: 生成筛选条件的HTML ### 
-        blog_date_filter_html = self.get_filter_html('blogYear', 'Year', all_blog_date_filter_conditions)
-        
+        year_set = sorted({b["date"][:4] for b in self.all_blogs}, reverse=True)
+        blog_date_filter_html = self.get_filter_html("blogYear", "Year", year_set)
+
         all_filter_html = f"""
-    <!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->
+<!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->
 
-        <!-- 容器：让标题和下拉框在同一行 -->
-        <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom: 2px solid #3498db">
-        <h2 class="wby-section-title" style="margin-bottom: 1.5%;">Blogs</h2>
-        <!-- 右侧的下拉框部分 -->
-    {blog_date_filter_html} 
-        </div>
-    """
-        
-        ### third step: 生成所有博客的HTML ####
-        all_blog_html = """
-        <!-- 博客列表容器 -->
-        <div id="blogList">
-    """
-        
-        for every_blog in self.all_blogs:
-            cur_date = every_blog['date']
-            cur_content = every_blog['content']
-            cur_cn_link = every_blog['cn_link']
-            cur_en_link = every_blog['en_link']
-            
-            # 解析输入的日期字符串
-            parsed_date = datetime.strptime(cur_date, "%Y%m%d")
-            # 格式化为需要的输出格式
-            cur_month = parsed_date.strftime("%b") 
-            cur_day = str(parsed_date.day) 
-            cur_year = str(parsed_date.year)
-            
-    #         # 简化的博客HTML模板，类似新闻项目的样式
-    #         every_blog_html_template = f"""
-    #     <div 
-    #         class="blog-item mb-3" style="display: none"
-    #         data-year="{cur_year}"  
-    #     > 
-    #         <div class="blog-item-body">
-    #             <div class="blog-date">{cur_month} {cur_day}, {cur_year}</div>
-    #             <div class="blog-text">
-    #                 {cur_content}
-    #             </div>
-    #         </div>
-    #     </div>
-    # """
-    #         all_blog_html += every_blog_html_template
-            # 处理链接按钮 - 如果链接为"nan"则不显示对应按钮
-            cn_link_html = '' if cur_cn_link == 'nan' else f'<a href="{cur_cn_link}" class="btn btn-secondary btn-sm" target="_blank" style="margin-right: 5px;">中文</a>'
-            en_link_html = '' if cur_en_link == 'nan' else f'<a href="{cur_en_link}" class="btn btn-secondary btn-sm" target="_blank">English</a>'
+    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom:2px solid #3498db">
+      <h2 class="wby-section-title" style="margin-bottom:1.5%;">Blogs</h2>
+{blog_date_filter_html}
+    </div>
+"""
 
-            # 对英文链接的处理，无论是markdown还是html都通过博客查看器显示
-            # en_link_html = ''
-            # if cur_en_link != 'nan':
-            #     # 统一使用blog-viewer.html来显示内容
-            #     en_link_html = f'<a href="blog-viewer.html?path={cur_en_link}" class="btn btn-secondary btn-sm" target="_blank">English</a>'
-            # 更新的博客HTML模板，包含链接按钮
-            every_blog_html_template = f"""
-        <div 
-            class="blog-item mb-3" style="display: none"
-            data-year="{cur_year}"  
-        > 
-            <div class="blog-item-body">
-                <div class="blog-date">{cur_month} {cur_day}, {cur_year}</div>
-                <div class="blog-text">
-                    {cur_content}
-                </div>
-                <div class="blog-links" style="margin-top: 10px;">
-                    {cn_link_html}{en_link_html}
-                </div>
+        items = []
+        for b in self.all_blogs:
+            mon, day, year = self._format_date(b["date"])
+            cn_btn = self._link_btn(b.get("cn_link", "nan"), "中文", "btn btn-outline-secondary btn-sm")
+            en_btn = self._link_btn(b.get("en_link", "nan"), "English", "btn btn-outline-secondary btn-sm")
+
+            items.append(f"""
+      <div class="blog-item mb-3" style="display:none" data-year="{year}">
+        <div class="blog-item-body" style="display:flex;align-items:flex-start;">
+          <div class="blog-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">{mon} {day}, {year}</div>
+          <div style="flex:1;">
+            <div class="blog-text" style="color:#444;font-size:.95rem;">{b["content"]}</div>
+            <div class="blog-links" style="margin-top:.5em;">
+              {cn_btn}{en_btn}
             </div>
+          </div>
         </div>
-        """
-            all_blog_html += every_blog_html_template
-        
-        all_blog_html += """
-        </div>
-    """
-        all_blog_html += """
-    <!-- 分页或"加载更多"按钮 -->
+      </div>
+""")
+
+        all_blog_html = """
+    <div id="blogList">
+""" + "".join(items) + """
+    </div>
+
     <div class="text-center mt-4">
       <button id="showMoreBlogsBtn" class="btn btn-primary showMoreBtn">Show More</button>
-      <div id="thatsAllBlogsBtn" class="section-small-title" style="text-align: center; display: none">That's all blogs!</div>
-      <div id="noBlogs" class="section-small-title" style="text-align: center; display: none">No blogs matching current filter.</div>
+      <div id="thatsAllBlogsBtn" class="section-small-title" style="text-align:center;display:none">That's all blogs!</div>
+      <div id="noBlogs" class="section-small-title" style="text-align:center;display:none">No blogs matching current filter.</div>
     </div>
     </div>
 """
-        
-        # 更新HTML文件
-        self.update_copy_new_new(src_path='../new_new_index.html', backup_path='../new_new_backup.html', 
-                            start_label='<!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->',
-                            end_label='<!-- wby: 注意，切勿删除，程序代码识别blog结束部分 -->',
-                            update_html=all_filter_html + '\n\n' + all_blog_html)    
+
+        self.update_copy_new_new(
+            src_path="../new_new_index.html",
+            backup_path="../new_new_backup.html",
+            start_label="<!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->",
+            end_label="<!-- wby: 注意，切勿删除，程序代码识别blog结束部分 -->",
+            update_html=all_filter_html + "\n" + all_blog_html,
+        )
+
+    # ──────────────────── Markdown → HTML ────────────────────
 
     def convert_markdown_to_html(self):
-        """将Markdown文件转换为HTML文件，包括数学公式和图片支持，并下载图片到本地"""
-        
-        blogs_dir = os.path.join('..', 'resources', 'blogs')
-        html_dir = os.path.join('..', 'resources', 'blogs', 'html')
-        img_dir = os.path.join('..', 'resources', 'blogs', 'images')
-        
-        # 确保目录存在
-        for directory in [html_dir, img_dir]:
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-        
-        # 配置Markdown扩展
-        # extensions = [
-        #     'markdown.extensions.tables',
-        #     'markdown.extensions.fenced_code',
-        #     ExtraExtension(),
-        #     CodeHiliteExtension(css_class='highlight'),
-        #     ArithmatexExtension(generic=True)  # 用于LaTeX数学公式
-        # ]
+        """将 Markdown 博客文件转换为独立 HTML 页面。"""
+        html_dir = os.path.join("..", "resources", "blogs", "html")
+        img_dir = os.path.join("..", "resources", "blogs", "images")
+        for d in [html_dir, img_dir]:
+            os.makedirs(d, exist_ok=True)
+
         extensions = [
-            'markdown.extensions.tables',
-            'markdown.extensions.fenced_code',
-            'markdown.extensions.sane_lists',    # 处理混合符号列表
-            'markdown.extensions.attr_list',     # 支持元素属性
+            "markdown.extensions.tables",
+            "markdown.extensions.fenced_code",
+            "markdown.extensions.sane_lists",
+            "markdown.extensions.attr_list",
             ExtraExtension(),
-            CodeHiliteExtension(css_class='highlight'),
-            ArithmatexExtension(generic=True)
+            CodeHiliteExtension(css_class="highlight"),
+            ArithmatexExtension(generic=True),
         ]
 
-        # 配置转换器
-        md = markdown.Markdown(extensions=extensions)
-        
-        # 改进的图片链接正则表达式，支持多行文本
-        md_img_pattern = re.compile(r'!\[([\s\S]*?)\]\((https?://[^)]+)\)', re.DOTALL)
-        
-        # 遍历博客列表，处理所有Markdown文件
-        for blog in self.all_blogs:
-            en_link = blog.get('en_link', '')
-            if not en_link.endswith('.md'):
-                continue
-            if en_link.endswith('.md'):
-                md_path = os.path.join('..', en_link)
-                if os.path.exists(md_path):
-                    # 读取Markdown内容
-                    with open(md_path, 'r', encoding='utf-8') as f:
-                        md_content = f.read()
-                    md = markdown.Markdown(extensions=extensions, output_format='html5')
-                    
-                    # 找到所有图片链接
-                    img_matches = md_img_pattern.findall(md_content)
-                    print(f"找到 {len(img_matches)} 个图片链接")
-                    
-                    # 逐个处理图片
-                    for alt_text, img_url in img_matches:
-                        print(f"处理图片URL: {img_url}")
-                        
-                        # 下载图片到本地
-                        local_path = self.download_image(img_url, img_dir)
-                        
-                        if local_path:
-                            # 使用直接替换而不是正则表达式替换
-                            # 这样可以避免alt_text中的特殊字符被解释为正则表达式
-                            original_md = f'![{alt_text}]({img_url})'
-                            new_md = f'![{alt_text}]({local_path})'
-                            md_content = md_content.replace(original_md, new_md)
-                            print(f'成功替换图片: {img_url} -> {local_path}')
-                        else:
-                            print(f'无法下载图片: {img_url}，保留原始链接')
-                    
-                    # 保存修改后的Markdown文件(可选，用于调试)
-                    # debug_md_path = os.path.join(html_dir, os.path.basename(en_link) + '.debug')
-                    # with open(debug_md_path, 'w', encoding='utf-8') as f:
-                    #     f.write(md_content)
-                    
-                    # 转换为HTML
-                    html_content = md.convert(md_content)
-                    md.reset()
-                    
-                    # 创建完整的HTML文档，包含MathJax支持
-                    html_doc = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{blog.get('content', 'Blog Post')}</title>
-        <link rel="stylesheet" href="../../css/bootstrap-flatly.min.css">
-        
-        <!-- 代码高亮样式 -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
-        
-        <!-- MathJax支持 -->
-        <script>
-        MathJax = {{
-            tex: {{
-                inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
-                displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']],
-                processEscapes: true,
-                processEnvironments: true
-            }},
-            options: {{
-                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
-            }}
-        }};
-        </script>
-        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-        
-        <style>
-            body {{
-                font-family: 'Montserrat', sans-serif;
-                line-height: 1.6;
-                color: #333;
-                background-color: #f4f7f9;
-                padding-top: 20px;
-            }}
-            .blog-content {{
-                max-width: 800px;
-                margin: 30px auto;
-                padding: 40px;
-                background: #fff;
-                border-radius: 15px;
-                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            }}
-            .blog-content img {{
-                max-width: 100%;
-                height: auto;
-                margin: 20px auto;
-                display: block;
-                border-radius: 8px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }}
-            h1, h2, h3, h4, h5, h6 {{
-                color: #2c3e50;
-                margin-top: 1.5em;
-                margin-bottom: 0.8em;
-            }}
-            h1 {{
-                font-size: 2.2em;
-                border-bottom: 2px solid #3498db;
-                padding-bottom: 10px;
-            }}
-            h2 {{
-                font-size: 1.8em;
-            }}
-            a {{
-                color: #3498db;
-            }}
-            pre {{
-                background: #f8f9fa;
-                border-radius: 5px;
-                padding: 15px;
-                overflow: auto;
-            }}
-            blockquote {{
-                border-left: 4px solid #3498db;
-                padding-left: 15px;
-                color: #555;
-                background: #f9f9f9;
-                border-radius: 0 5px 5px 0;
-            }}
-            .back-btn {{
-                margin: 20px auto;
-                width: 800px;
-            }}
-            .highlight {{
-                background: #f8f9fa;
-                border-radius: 5px;
-                padding: 15px;
-            }}
-        </style>
-    </head>
-    <body>
-        <div class="blog-content">
-            {html_content}
-        </div>
-        
-        <!-- 代码高亮 -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-        <script>hljs.highlightAll();</script>
-    </body>
-    </html>
-    """
-                    
-                    # 生成HTML文件名
-                    html_filename = os.path.basename(en_link).replace('.md', '.html')
-                    html_path = os.path.join(html_dir, html_filename)
-                    
-                    # 保存HTML文件
-                    with open(html_path, 'w', encoding='utf-8') as f:
-                        f.write(html_doc)
-                    
-                    # 更新博客数据中的链接
-                    blog['en_link'] = f"resources/blogs/html/{html_filename}"
-        
-        # 保存更新后的博客数据
-        with open(self.blog_path, 'w', encoding='utf-8') as f:
-            json.dump(self.all_blogs, f, indent=4)
-        
-        print(f"已成功将Markdown文件转换为HTML，下载图片到本地，并更新了博客数据")
-    
-    def download_image(self, img_url, img_dir):
-        """专用图片下载函数，尝试多种下载方法"""
-        try:
-            # 从URL解析文件名
-            parsed_url = urlparse(unquote(img_url))
-            img_filename = os.path.basename(parsed_url.path)
-            
-            # 处理无效文件名
-            if not img_filename or '.' not in img_filename:
-                img_filename = f"{uuid.uuid4().hex[:8]}.jpg"
-            
-            # 确保文件名安全
-            img_filename = re.sub(r'[^\w\.-]', '_', img_filename)
-            
-            # 本地保存路径
-            local_img_path = os.path.join(img_dir, img_filename)
-            relative_img_path = f"../images/{img_filename}"
-            
-            # 如果文件已存在，直接返回
-            if os.path.exists(local_img_path) and os.path.getsize(local_img_path) > 0:
-                print(f"图片已存在: {local_img_path}")
-                return relative_img_path
-            
-            print(f"开始下载图片: {img_url}")
-            
-            # 方法1: 使用urllib
-            try:
-                headers = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                    'Referer': 'https://mdnice.com/'
-                }
-                req = urllib.request.Request(img_url, headers=headers)
-                with urllib.request.urlopen(req, timeout=15) as response, open(local_img_path, 'wb') as out_file:
-                    out_file.write(response.read())
-                
-                if os.path.exists(local_img_path) and os.path.getsize(local_img_path) > 0:
-                    print(f"urllib下载成功: {img_url}")
-                    return relative_img_path
-            except Exception as e:
-                print(f"urllib下载失败: {e}")
-            
-            # 方法2: 使用wget命令
-            try:
-                print(f"尝试使用wget下载: {img_url}")
-                subprocess.run([
-                    'wget', 
-                    '-O', local_img_path, 
-                    img_url,
-                    '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                    '--timeout=30',
-                    '--tries=3'
-                ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                
-                if os.path.exists(local_img_path) and os.path.getsize(local_img_path) > 0:
-                    print(f"wget下载成功: {img_url}")
-                    return relative_img_path
-            except Exception as e:
-                print(f"wget下载失败: {e}")
-            
-            # 方法3: 使用curl命令
-            try:
-                print(f"尝试使用curl下载: {img_url}")
-                subprocess.run([
-                    'curl', 
-                    '-o', local_img_path,
-                    '-A', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                    '-L', img_url,
-                    '--max-time', '30'
-                ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                
-                if os.path.exists(local_img_path) and os.path.getsize(local_img_path) > 0:
-                    print(f"curl下载成功: {img_url}")
-                    return relative_img_path
-            except Exception as e:
-                print(f"curl下载失败: {e}")
-            
-            raise Exception("所有下载方法都失败")
-            
-        except Exception as e:
-            print(f"图片下载完全失败: {img_url}, 错误: {e}")
-            return None
-if __name__ == "__main__":
+        md_img_pattern = re.compile(r"!\[([\s\S]*?)\]\((https?://[^)]+)\)", re.DOTALL)
 
-    pub2html = Pub2HTML()
-    pub2html.convert_markdown_to_html()  # 添加这一行
-    # pub2html.wang_to_json()
-    pub2html.news_json_to_html()
-    pub2html.paper_json_to_html()
-    pub2html.member_json_to_html()
-    pub2html.blog_json_to_html()
+        for blog in self.all_blogs:
+            en_link = blog.get("en_link", "")
+            if not en_link.endswith(".md"):
+                continue
+
+            md_path = os.path.join("..", en_link)
+            if not os.path.exists(md_path):
+                continue
+
+            with open(md_path, "r", encoding="utf-8") as f:
+                md_content = f.read()
+
+            md_converter = markdown.Markdown(extensions=extensions, output_format="html5")
+
+            # 下载图片并替换链接
+            for alt_text, img_url in md_img_pattern.findall(md_content):
+                local_path = self.download_image(img_url, img_dir)
+                if local_path:
+                    md_content = md_content.replace(img_url, local_path)
+
+            html_body = md_converter.convert(md_content)
+            md_converter.reset()
+
+            # 完整 HTML 页面模板
+            full_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{blog['content']}</title>
+<style>
+  body {{ font-family: 'Segoe UI', system-ui, sans-serif; max-width: 860px; margin: 2rem auto; padding: 0 1.5rem; color: #333; line-height: 1.8; }}
+  img {{ max-width: 100%; height: auto; border-radius: 6px; margin: 1em 0; }}
+  h1,h2,h3 {{ color: #2c3e50; }}
+  pre {{ background: #f6f8fa; padding: 1em; border-radius: 6px; overflow-x: auto; }}
+  code {{ font-size: .9em; }}
+  .highlight {{ background: #f6f8fa; }}
+</style>
+<script>
+  MathJax = {{ tex: {{ inlineMath: [['$','$'],['\\\\(','\\\\)']], displayMath: [['$$','$$'],['\\\\[','\\\\]']] }} }};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+{html_body}
+</body>
+</html>"""
+
+            html_filename = os.path.splitext(os.path.basename(en_link))[0] + ".html"
+            html_path = os.path.join(html_dir, html_filename)
+            with open(html_path, "w", encoding="utf-8") as f:
+                f.write(full_html)
+
+            # 更新博客链接指向 HTML
+            blog["en_link"] = f"resources/blogs/html/{html_filename}"
+
+        with open(self.blog_path, "w", encoding="utf-8") as f:
+            json.dump(self.all_blogs, f, indent=4)
+
+        print("Markdown → HTML conversion complete.")
+
+    def download_image(self, img_url, img_dir):
+        """下载远程图片到本地，返回相对路径。"""
+        try:
+            parsed = urlparse(unquote(img_url))
+            filename = os.path.basename(parsed.path)
+            if not filename or "." not in filename:
+                filename = f"{uuid.uuid4().hex[:8]}.jpg"
+            filename = re.sub(r"[^\w.\-]", "_", filename)
+            local_path = os.path.join(img_dir, filename)
+            relative_path = f"../images/{filename}"
+
+            if os.path.exists(local_path) and os.path.getsize(local_path) > 0:
+                return relative_path
+
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            }
+            req = urllib.request.Request(img_url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as resp, open(local_path, "wb") as out:
+                out.write(resp.read())
+
+            if os.path.exists(local_path) and os.path.getsize(local_path) > 0:
+                return relative_path
+        except Exception as e:
+            print(f"Image download failed: {img_url} — {e}")
+        return None
+
+
+if __name__ == "__main__":
+    pub = Pub2HTML()
+    pub.convert_markdown_to_html()
+    pub.news_json_to_html()
+    pub.paper_json_to_html()
+    pub.member_json_to_html()
+    pub.blog_json_to_html()
+    print("All sections generated successfully.")
