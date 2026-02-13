@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#e8edf3"/>
+  <!-- Head -->
+  <circle cx="100" cy="78" r="36" fill="#b0bec5"/>
+  <!-- Body / shoulders -->
+  <path d="M 20 200 Q 20 138 100 138 Q 180 138 180 200 Z" fill="#b0bec5"/>
+</svg>

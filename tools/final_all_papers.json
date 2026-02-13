@@ -1,7 +1,7 @@
 {
     "Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?": [
-        "2025",
-        "arxiv 2025",
+        "2026",
+        "KDD 2026",
         "Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Vincent Tao Hu,  Xiangyang Ji",
         "https://arxiv.org/abs/2507.04632",
         "https://github.com/thu-rllab/MoPPS",
@@ -170,7 +170,7 @@
         "nan",
         "Offline RL"
     ],
-    "State deviation correction for offline reinforcement learning":[
+    "State deviation correction for offline reinforcement learning": [
         "2022",
         "AAAI 2022",
         "Hongchang Zhang, Jianzhun Shao, Yuhang Jiang, Shuncheng He, Guanwen Zhang, Xiangyang Ji",
@@ -179,7 +179,7 @@
         "nan",
         "Offline RL"
     ],
-    "DARL: distance-aware uncertainty estimation for offline reinforcement learning":[
+    "DARL: distance-aware uncertainty estimation for offline reinforcement learning": [
         "2023",
         "AAAI 2023",
         "Hongchang Zhang, Jianzhun Shao, Shuncheng He, Yuhang Jiang, Xiangyang Ji",
@@ -188,7 +188,7 @@
         "nan",
         "Offline RL"
     ],
-    "Wasserstein unsupervised reinforcement learning":[
+    "Wasserstein unsupervised reinforcement learning": [
         "2022",
         "AAAI 2022",
         "Shuncheng He, Yuhang Jiang, Hongchang Zhang, Jianzhun Shao, Xiangyang Ji",
@@ -296,7 +296,7 @@
         "nan",
         "nan"
     ],
-    "Almost optimal model-free reinforcement learningvia reference-advantage decomposition":[
+    "Almost optimal model-free reinforcement learningvia reference-advantage decomposition": [
         "2020",
         "NeurIPS 2020",
         "Zihan Zhang, Yuan Zhou, Xiangyang Ji",
@@ -305,7 +305,7 @@
         "nan",
         "RL Theory"
     ],
-    "Is reinforcement learning more difficult than bandits? a near-optimal algorithm escaping the curse of horizon":[
+    "Is reinforcement learning more difficult than bandits? a near-optimal algorithm escaping the curse of horizon": [
         "2021",
         "COLT 2021",
         "Zihan Zhang, Xiangyang Ji, Simon Du",
@@ -314,7 +314,7 @@
         "nan",
         "RL Theory"
     ],
-    "Regret minimization for reinforcement learning by evaluating the optimal bias function":[
+    "Regret minimization for reinforcement learning by evaluating the optimal bias function": [
         "2019",
         "NeurIPS 2019",
         "Zihan Zhang, Xiangyang Ji",
@@ -323,7 +323,7 @@
         "nan",
         "RL Theory"
     ],
-    "Improved variance-aware confidence sets for linear bandits and linear mixture mdp":[
+    "Improved variance-aware confidence sets for linear bandits and linear mixture mdp": [
         "2021",
         "NeurIPS 2021",
         "Zihan Zhang, Jiaqi Yang, Xiangyang Ji, Simon S Du",
@@ -332,7 +332,7 @@
         "nan",
         "RL Theory"
     ],
-    "Near optimal reward-free reinforcement learning":[
+    "Near optimal reward-free reinforcement learning": [
         "2021",
         "ICML 2021",
         "Zihan Zhang, Simon Du, Xiangyang Ji",
@@ -341,7 +341,7 @@
         "nan",
         "RL Theory"
     ],
-    "Model-free reinforcement learning: from clipped pseudo-regret to sample complexity":[
+    "Model-free reinforcement learning: from clipped pseudo-regret to sample complexity": [
         "2021",
         "ICML 2021",
         "Zihan Zhang, Yuan Zhou, Xiangyang Ji",
@@ -350,7 +350,7 @@
         "nan",
         "RL Theory"
     ],
-    "Horizon-free reinforcement learning in polynomial time: the power of stationary policies":[
+    "Horizon-free reinforcement learning in polynomial time: the power of stationary policies": [
         "2022",
         "COLT 2022",
         "Zihan Zhang, Xiangyang Ji, Simon Du",
@@ -359,7 +359,7 @@
         "nan",
         "RL Theory"
     ],
-    "Near-optimal regret bounds for multi-batch reinforcement learning":[
+    "Near-optimal regret bounds for multi-batch reinforcement learning": [
         "2022",
         "NeurIPS 2022",
         "Zihan Zhang, Yuhang Jiang, Yuan Zhou, Xiangyang Ji",
@@ -367,5 +367,41 @@
         "nan",
         "nan",
         "RL Theory"
+    ],
+    "Small Generalizable Prompt Predictive Models Can Steer Efficient RL Post-Training of Large Reasoning Models": [
+        "2026",
+        "arXiv 2026",
+        "Yun Qu, Qi Wang, Yixiu Mao, Heming Zou, Yuhang Jiang, Weijie Liu, Clive Bai, Kai Yang, Yangkun Chen, Saiyong Yang, Xiangyang Ji",
+        "https://arxiv.org/abs/2602.01970",
+        "nan",
+        "nan",
+        "Reasoning Models"
+    ],
+    "Utility-Diversity Aware Online Batch Selection for LLM Supervised Fine-tuning": [
+        "2025",
+        "arXiv 2025",
+        "Heming Zou, Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji",
+        "https://arxiv.org/abs/2510.16882",
+        "nan",
+        "nan",
+        "SFT"
+    ],
+    "Adaptive Neighborhood-Constrained Q Learning for Offline Reinforcement Learning": [
+        "2025",
+        "arXiv 2025",
+        "Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji",
+        "https://arxiv.org/abs/2511.02567",
+        "nan",
+        "nan",
+        "Offline RL"
+    ],
+    "VAO: Validation-Aligned Optimization for Cross-Task Generative Auto-Bidding": [
+        "2025",
+        "arXiv 2025",
+        "Yiqin Lv, Zhiyu Mou, Miao Xu, Jinghao Chen, Qi Cheems Wang, Yixiu Mao, Yun Qu, Rongquan Bai, Chuan Yu, Jian Xu, Bo Zheng, Xiangyang Ji",
+        "https://arxiv.org/abs/2510.07760",
+        "nan",
+        "nan",
+        "Multi-Task Learning"
     ]
 }

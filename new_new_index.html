@@ -4,481 +4,429 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>THU-IDM | Intelligent Decision-Making Lab</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="resources/packages/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <style>
-    /* ══════════ CSS Variables ══════════ */
+    /* ══════════ Variables ══════════ */
     :root {
-      --primary: #2c3e50;
-      --accent: #3498db;
-      --accent-light: #ebf5fb;
-      --bg: #f5f7fa;
-      --card-bg: #ffffff;
-      --text: #333333;
-      --text-muted: #6c757d;
-      --border: #e8ecf1;
-      --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
-      --radius: 10px;
-      --radius-sm: 6px;
+      --navy:        #1e3a5f;
+      --navy-dark:   #0f2240;
+      --blue:        #2563eb;
+      --blue-hover:  #1d4ed8;
+      --blue-light:  #eff6ff;
+      --blue-mid:    #dbeafe;
+      --green:       #059669;
+      --teal:        #0284c7;
+      --bg:          #f1f5f9;
+      --surface:     #ffffff;
+      --border:      #e2e8f0;
+      --text:        #1e293b;
+      --text-muted:  #64748b;
+      --text-light:  #94a3b8;
+      --radius:      12px;
+      --radius-sm:   8px;
+      --shadow:      0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+      --shadow-md:   0 4px 12px rgba(0,0,0,0.09), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-lg:   0 12px 28px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.06);
     }
 
-    /* ══════════ Global ══════════ */
+    /* ══════════ Base ══════════ */
+    *, *::before, *::after { box-sizing: border-box; }
     body {
-      padding-top: 68px;
-      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding-top: 64px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
       color: var(--text);
+      background: var(--bg);
       line-height: 1.7;
-      background-color: var(--bg);
       -webkit-font-smoothing: antialiased;
     }
-
-    ::selection {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    a {
-      color: var(--accent);
-      transition: color 0.2s;
-    }
-    a:hover {
-      color: #2180b9;
-      text-decoration: none;
-    }
+    ::selection { background: var(--blue); color: #fff; }
+    a { color: var(--blue); text-decoration: none; transition: color .2s; }
+    a:hover { color: var(--blue-hover); text-decoration: none; }
 
     /* ══════════ Navbar ══════════ */
     .navbar {
-      background: var(--primary) !important;
-      padding: 0.6rem 0;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      background: var(--navy-dark) !important;
+      padding: .75rem 0;
+      box-shadow: 0 2px 20px rgba(0,0,0,.25);
       border: none;
     }
     .navbar-brand {
-      font-weight: 700;
-      font-size: 1.3rem;
-      letter-spacing: -0.02em;
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: -.02em;
+      color: #fff !important;
     }
+    .navbar-brand .brand-accent { color: #60a5fa; }
     .nav-link {
+      color: rgba(255,255,255,.78) !important;
       font-weight: 500;
-      font-size: 0.9rem;
-      padding: 0.5rem 1rem !important;
-      transition: opacity 0.2s;
+      font-size: .875rem;
+      padding: .38rem .9rem !important;
+      border-radius: 6px;
+      transition: background .18s, color .18s;
     }
     .nav-link:hover {
-      opacity: 0.85;
+      color: #fff !important;
+      background: rgba(255,255,255,.12);
     }
 
-    /* ══════════ Container / Sections ══════════ */
-    .container {
+    /* ══════════ Hero ══════════ */
+    .hero {
+      background: linear-gradient(135deg, var(--navy-dark) 0%, #1a3468 45%, #1e4bb5 100%);
+      padding: 5rem 0 4.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 80% at 75% 50%, rgba(59,130,246,.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 1100px; width: 92%; margin: 0 auto; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+      color: rgba(255,255,255,.88); font-size: .78rem; font-weight: 600;
+      padding: .28rem .85rem; border-radius: 20px;
+      margin-bottom: 1.2rem; letter-spacing: .04em; text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; color: #fff;
+      line-height: 1.18; margin-bottom: .9rem; letter-spacing: -.03em;
+    }
+    .hero h1 .brand-accent { color: #60a5fa; }
+    .hero-sub {
+      font-size: 1.05rem; color: rgba(255,255,255,.72);
+      max-width: 580px; margin-bottom: 1.6rem; line-height: 1.75;
+    }
+    .hero-topics { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 2.5rem; }
+    .hero-topic {
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.88); font-size: .78rem; font-weight: 500;
+      padding: .28rem .72rem; border-radius: 20px;
+    }
+    .hero-stats {
+      display: inline-flex; gap: 0; flex-wrap: wrap;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,.12);
+    }
+    .hero-stats > div {
+      padding: 0 2.8rem;
+    }
+    .hero-stats > div:first-child {
+      padding-left: 0;
+    }
+    .hero-stats > div + div {
+      border-left: 1px solid rgba(255,255,255,.2);
+    }
+    .hero-stat-num {
+      font-size: 2.8rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: .4rem;
+    }
+    .hero-stat-label {
+      font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.58);
+      text-transform: uppercase; letter-spacing: .1em;
+    }
+
+    /* ══════════ Page Wrapper ══════════ */
+    .page-inner {
       max-width: 1100px;
       width: 92%;
-    }
-    section.container {
-      background: var(--card-bg);
-      padding: 2.5rem 3rem;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 2rem;
+      margin: 0 auto;
+      padding-top: 2rem;
+      padding-bottom: .5rem;
     }
 
-    /* ══════════ Section Titles ══════════ */
+    /* ══════════ Section Cards ══════════ */
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2.4rem 3rem;
+      margin-bottom: 1.8rem;
+    }
+
+    /* ══════════ Section Headers ══════════ */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .8rem;
+      padding-bottom: 1.1rem;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.6rem;
+    }
     .section-title {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.6rem;
-      border-bottom: 2.5px solid var(--accent);
-      letter-spacing: -0.01em;
+      font-size: 1.4rem; font-weight: 700; color: var(--navy);
+      margin: 0; display: flex; align-items: center; gap: .55rem;
     }
-    .wby-section-title {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0;
-      padding-bottom: 0.5rem;
-      letter-spacing: -0.01em;
+    .section-title::before {
+      content: ''; display: inline-block;
+      width: 4px; height: 1.35em;
+      background: var(--blue); border-radius: 2px; flex-shrink: 0;
     }
-    .section-small-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      border: none;
-      margin: 1rem 0;
-      padding: 0;
-    }
+    .section-filters { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
 
-    /* ══════════ Introduction Card ══════════ */
-    .ji_card {
-      border: none;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-sm);
-      background: var(--card-bg);
-      margin-bottom: 1.5rem;
-      overflow: hidden;
-      transition: box-shadow 0.3s;
+    /* ══════════ Filter Selects ══════════ */
+    .filter-select {
+      appearance: none; -webkit-appearance: none;
+      background: var(--bg);
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: .38rem 2rem .38rem .75rem;
+      font-size: .8rem; font-weight: 500; color: var(--text);
+      cursor: pointer; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2364748b' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right .65rem center;
     }
-    .ji_card:hover {
-      box-shadow: var(--shadow-md);
-    }
-    .ji_card .card-body {
-      padding: 2rem;
-    }
+    .filter-select:hover { border-color: var(--blue); }
+    .filter-select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
 
     /* ══════════ Publication Cards ══════════ */
-    .card.pub-card,
-    #publicationsList > .card {
-      background: var(--card-bg) !important;
+    .pub-card {
+      background: var(--surface) !important;
       background-image: none !important;
-      border: none !important;
-      border-left: 4px solid var(--accent) !important;
+      border: 1px solid var(--border) !important;
+      border-left: 4px solid var(--blue) !important;
       border-radius: var(--radius-sm) !important;
-      box-shadow: var(--shadow-sm);
-      padding: 0;
-      margin-bottom: 1rem;
-      display: block;
-      transition: box-shadow 0.25s, transform 0.25s;
+      box-shadow: var(--shadow) !important;
+      margin-bottom: .8rem !important;
+      transition: box-shadow .22s, transform .22s;
       animation: none !important;
     }
-    #publicationsList > .card:hover {
-      box-shadow: 0 6px 20px rgba(52,152,219,0.13);
+    .pub-card:hover {
+      box-shadow: var(--shadow-md) !important;
       transform: translateY(-2px);
       animation: none !important;
     }
-    #publicationsList .card-body {
-      padding: 1.2rem 1.5rem;
+    .pub-card .card-body { padding: 1.05rem 1.35rem; }
+    .pub-venue-row {
+      display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; margin-bottom: .5rem;
     }
-    #publicationsList .card-title {
-      font-size: 1.02rem;
-      line-height: 1.55;
-      color: var(--primary) !important;
-      margin-bottom: 0.4rem;
+    .venue-badge {
+      font-size: .7rem; font-weight: 700;
+      padding: .22em .62em; border-radius: 4px; letter-spacing: .03em;
     }
-    #publicationsList .card-text {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      margin-bottom: 0.6rem;
+    .venue-top    { background: var(--navy); color: #fff; }
+    .venue-good   { background: var(--blue-mid); color: #1d4ed8; }
+    .venue-arxiv  { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); }
+    .tag-badge {
+      font-size: .68rem; font-weight: 600;
+      padding: .2em .6em; border-radius: 20px;
+      background: #ecfdf5; color: var(--green); border: 1px solid #a7f3d0;
     }
+    .pub-title {
+      font-size: .97rem; font-weight: 600; color: var(--navy); line-height: 1.5; margin-bottom: .3rem;
+    }
+    .pub-authors {
+      font-size: .83rem; color: var(--text-muted); margin-bottom: .5rem; line-height: 1.5;
+    }
+    .pub-btn {
+      display: inline-flex; align-items: center; gap: .28em;
+      font-size: .75rem; font-weight: 600;
+      padding: .24rem .72rem; border-radius: 20px;
+      border: 1.5px solid transparent;
+      transition: all .18s; margin-right: .3rem; margin-top: .22rem;
+    }
+    .pub-btn-paper { border-color: var(--blue); color: var(--blue); }
+    .pub-btn-paper:hover { background: var(--blue); color: #fff; }
+    .pub-btn-code  { border-color: var(--green); color: var(--green); }
+    .pub-btn-code:hover  { background: var(--green); color: #fff; }
+    .pub-btn-demo  { border-color: var(--teal); color: var(--teal); }
+    .pub-btn-demo:hover  { background: var(--teal); color: #fff; }
 
-    /* Publication buttons */
-    #publicationsList .btn,
-    #blogList .btn {
+    /* ══════════ News & Blog ══════════ */
+    .news-item, .blog-item {
+      padding: .85rem 0; border-bottom: 1px solid var(--border);
+      transition: background .15s, padding .15s, margin .15s;
+      background: transparent;
+    }
+    .news-item:hover, .blog-item:hover {
+      background: var(--blue-light);
+      margin-left: -1.5rem; margin-right: -1.5rem;
+      padding-left: 1.5rem; padding-right: 1.5rem;
+      border-radius: var(--radius-sm); border-bottom-color: transparent;
+    }
+    .news-item:last-child, .blog-item:last-child { border-bottom: none; }
+    .news-item-body, .blog-item-body {
+      display: flex; align-items: flex-start; gap: 1rem;
+    }
+    .news-date, .blog-date {
+      min-width: 106px; font-weight: 600; color: var(--blue);
+      font-size: .82rem; padding-top: .15rem; flex-shrink: 0;
+    }
+    .news-text, .blog-text { font-size: .93rem; line-height: 1.65; color: var(--text); flex: 1; }
+    .blog-links { margin-top: .45rem; }
+    .blog-links .btn {
+      font-size: .75rem; font-weight: 600;
+      padding: .22rem .72rem; border-radius: 20px;
+      margin-right: .3rem;
+      border-color: var(--text-muted) !important;
+      color: var(--text-muted) !important;
       background: transparent !important;
       background-image: none !important;
-      border: 1.5px solid var(--accent) !important;
-      color: var(--accent) !important;
-      border-radius: 20px;
-      padding: 0.22rem 0.85rem;
-      font-size: 0.78rem;
-      font-weight: 500;
-      margin-right: 0.4rem;
-      margin-top: 0.3rem;
-      transition: all 0.2s;
-      animation: none !important;
+      transition: all .18s; animation: none !important;
     }
-    #publicationsList .btn:hover,
-    #blogList .btn:hover {
-      background: var(--accent) !important;
-      color: #fff !important;
+    .blog-links .btn:hover {
+      border-color: var(--blue) !important;
+      color: var(--blue) !important;
       animation: none !important;
     }
 
-    /* ══════════ Team Member Cards ══════════ */
-    #teamList > .col-md-6 > .card {
-      background: var(--card-bg) !important;
+    /* ══════════ Show More / Status ══════════ */
+    .show-more-btn, .showMoreBtn {
+      background: var(--blue) !important;
       background-image: none !important;
+      color: #fff !important;
       border: none !important;
+      border-radius: 24px;
+      padding: .48rem 2rem;
+      font-size: .86rem; font-weight: 600;
+      transition: background .2s, box-shadow .2s;
+      animation: none !important;
+    }
+    .show-more-btn:hover, .showMoreBtn:hover {
+      background: var(--blue-hover) !important;
+      box-shadow: 0 4px 16px rgba(37,99,235,.35);
+      animation: none !important;
+    }
+    .status-all, #thatsAllBtn, #thatsAllNewsBtn, #thatsAllBlogsBtn {
+      color: var(--green); font-size: .9rem; font-weight: 600;
+      font-family: 'Inter', sans-serif; border: none; padding: .4rem 0;
+    }
+    .status-none, #noNews, #noBlogs, #noPapers {
+      color: #ef4444; font-size: .9rem; font-weight: 600;
+      font-family: 'Inter', sans-serif; border: none; padding: .4rem 0;
+    }
+
+    /* ══════════ Team Members ══════════ */
+    .member-section-header {
+      padding: .4rem .5rem 0; margin-top: 1.2rem;
+    }
+    .member-section-header h4 {
+      font-size: .8rem; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: .09em;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: .45rem; margin: 0;
+    }
+    #teamList > .col-md-6 > .card,
+    #teamList > .col-lg-4 > .card {
+      background: var(--surface) !important;
+      background-image: none !important;
+      border: 1px solid var(--border) !important;
       border-radius: var(--radius) !important;
-      box-shadow: var(--shadow-sm);
-      transition: box-shadow 0.3s, transform 0.3s;
+      box-shadow: var(--shadow) !important;
+      transition: box-shadow .25s, transform .25s;
       animation: none !important;
     }
-    #teamList > .col-md-6 > .card:hover {
-      box-shadow: var(--shadow-md);
-      transform: translateY(-3px);
+    #teamList > .col-md-6 > .card:hover,
+    #teamList > .col-lg-4 > .card:hover {
+      box-shadow: var(--shadow-lg) !important;
+      transform: translateY(-4px);
       animation: none !important;
     }
-    #teamList .card-title {
-      color: var(--primary) !important;
-      font-size: 1.1rem;
+    .member-card .card-body { padding: 1.8rem 1.2rem; text-align: center; }
+    .member-avatar {
+      width: 96px; height: 96px;
+      border-radius: 50%; object-fit: cover;
+      border: 3px solid var(--border);
+      margin-bottom: .9rem;
+      transition: border-color .22s;
     }
-    #teamList .card-text {
-      font-size: 0.9rem;
-      color: var(--text-muted);
+    #teamList > .col-md-6 > .card:hover .member-avatar,
+    #teamList > .col-lg-4 > .card:hover .member-avatar { border-color: var(--blue); }
+    .member-name {
+      font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .38rem;
     }
-    #teamList .card-text a {
-      color: var(--accent);
+    .member-badge {
+      font-size: .72rem; font-weight: 600; padding: .24em .72em; border-radius: 20px;
     }
-    #teamList img {
-      border-radius: 50% !important;
-      border: 3px solid var(--border) !important;
-      width: 100px !important;
-      height: 100px !important;
-      object-fit: cover;
+    .badge-faculty   { background: #fef3c7; color: #92400e; }
+    .badge-postdoc   { background: #ede9fe; color: #6d28d9; }
+    .badge-phd       { background: var(--blue-mid); color: #1d4ed8; }
+    .badge-master    { background: #d1fae5; color: #065f46; }
+    .badge-undergrad { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-alumni    { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+    .member-bio { font-size: .8rem; color: var(--text-muted); margin-top: .45rem; line-height: 1.5; }
+    .member-links {
+      display: flex; justify-content: center; gap: .75rem;
+      margin-top: .85rem; font-size: 1rem;
     }
+    .member-links a { color: var(--text-muted); transition: color .18s; }
+    .member-links a:hover { color: var(--blue); }
 
-    /* ══════════ Badges ══════════ */
-    .badge {
-      font-size: 0.75rem;
-      font-weight: 600;
-      border-radius: 4px;
-      padding: 0.3em 0.65em;
-      letter-spacing: 0.01em;
+    /* ══════════ About Section ══════════ */
+    .prof-card {
+      display: flex; align-items: center; gap: 1.8rem;
+      background: var(--bg); border-radius: var(--radius);
+      padding: 1.6rem 2rem; margin-bottom: 1.4rem;
+      border: 1px solid var(--border);
     }
-    .badge-success {
-      background-color: var(--primary) !important;
-      color: #fff !important;
+    .prof-avatar {
+      width: 108px; height: 108px; border-radius: 50%;
+      object-fit: cover; border: 3px solid var(--border); flex-shrink: 0;
     }
-    .badge-info {
-      background-color: #e8f4fd !important;
-      color: var(--accent) !important;
-      border: 1px solid #bee5f7;
-    }
-    .badge-warning {
-      background-color: #fef3e2 !important;
-      color: #e67e22 !important;
-      border: 1px solid #fdd49e;
-    }
-    .badge-primary {
-      background-color: #e8f4fd !important;
-      color: var(--accent) !important;
-      border: 1px solid #bee5f7;
-    }
-
-    /* ══════════ News Section ══════════ */
-    #news .news-item {
-      margin-bottom: 0;
-      padding: 1rem 0;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.2s;
-    }
-    #news .news-item:hover {
-      background: var(--accent-light);
-      margin-left: -1rem;
-      margin-right: -1rem;
-      padding-left: 1rem;
-      padding-right: 1rem;
-      border-radius: var(--radius-sm);
-    }
-    #news .news-item:last-child {
-      border-bottom: none;
-    }
-    #news .news-item-body {
-      display: flex;
-      align-items: flex-start;
-      gap: 1.2rem;
-    }
-    #news .news-date {
-      min-width: 120px;
-      font-weight: 600;
-      color: var(--accent);
-      font-size: 0.9rem;
-      padding-top: 0.1rem;
-      font-variant-numeric: tabular-nums;
-    }
-    #news .news-text {
-      font-size: 0.95rem;
-      line-height: 1.65;
-      flex: 1;
-    }
-
-    /* ══════════ Blog Section ══════════ */
-    #blogList {
-      margin-top: 0.5rem;
-    }
-    #blogList .blog-item {
-      padding: 1rem 0;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.2s;
-      margin-bottom: 0;
-      background: transparent;
-      border-left: none;
-      border-radius: 0;
-    }
-    #blogList .blog-item:hover {
-      background: var(--accent-light);
-      margin-left: -1rem;
-      margin-right: -1rem;
-      padding-left: 1rem;
-      padding-right: 1rem;
-      border-radius: var(--radius-sm);
-    }
-    #blogList .blog-item:last-child {
-      border-bottom: none;
-    }
-    #blogList .blog-item-body {
-      display: flex;
-      align-items: flex-start;
-      gap: 1.2rem;
-    }
-    #blogList .blog-date {
-      min-width: 120px;
-      font-weight: 600;
-      color: var(--accent);
-      font-size: 0.9rem;
-      margin-bottom: 0;
-    }
-    #blogList .blog-text {
-      font-size: 0.95rem;
-      color: var(--text);
-    }
-
-    /* ══════════ Dropdown Filters ══════════ */
-    .tech-dropdown-container {
-      margin-right: 0.6em;
-      display: inline-block;
-      position: relative;
-    }
-    .tech-dropdown-container::after {
-      content: "▾";
-      position: absolute;
-      top: 50%;
-      right: 0.8em;
-      transform: translateY(-50%);
-      pointer-events: none;
-      color: var(--accent);
-      font-size: 0.85em;
-      font-weight: 700;
-    }
-    .tech-dropdown-select {
-      appearance: none;
-      -moz-appearance: none;
-      -webkit-appearance: none;
-      background: var(--card-bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 0.4rem 2.2rem 0.4rem 0.8rem;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--primary);
-      cursor: pointer;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      min-width: 150px;
-      height: auto;
-      text-align: left;
-      text-align-last: left;
-      text-indent: 0;
-      width: auto;
-      background-image: none;
-      background-size: auto;
-    }
-    .tech-dropdown-select:hover {
-      border-color: var(--accent);
-      animation: none;
-    }
-    .tech-dropdown-select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(52,152,219,0.12);
-    }
-    .tech-dropdown-select option {
-      color: var(--text);
-    }
-
-    /* ══════════ Show More Button ══════════ */
-    .showMoreBtn {
-      background: var(--accent) !important;
-      background-image: none !important;
-      border: none !important;
-      border-radius: 22px;
-      padding: 0.45rem 1.8rem;
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: #fff !important;
-      transition: background 0.2s, box-shadow 0.2s;
-      animation: none !important;
-    }
-    .showMoreBtn:hover {
-      background: #2980b9 !important;
-      box-shadow: 0 4px 12px rgba(52,152,219,0.3);
-      animation: none !important;
-    }
-
-    /* ══════════ Status Messages ══════════ */
-    #thatsAllBtn, #thatsAllNewsBtn, #thatsAllBlogsBtn {
-      color: #27ae60;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0;
-      border: none;
-      padding: 0.5rem 0;
-    }
-    #noNews, #noBlogs, #noPapers {
-      color: #e74c3c;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0;
-      border: none;
-      padding: 0.5rem 0;
+    .prof-name { font-size: 1.12rem; font-weight: 700; color: var(--navy); margin-bottom: .2rem; }
+    .prof-meta { font-size: .86rem; color: var(--text-muted); margin: .15rem 0; }
+    .prof-meta a { color: var(--blue); }
+    .prof-meta i { color: var(--blue); width: 1.1em; }
+    .about-description { font-size: .95rem; line-height: 1.8; color: var(--text); }
+    .research-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem; }
+    .research-tag {
+      background: var(--blue-light); color: var(--blue);
+      font-size: .8rem; font-weight: 600;
+      padding: .3rem .8rem; border-radius: 20px;
+      border: 1px solid var(--blue-mid);
     }
 
     /* ══════════ Footer ══════════ */
-    footer.container {
-      background: var(--primary);
-      color: rgba(255,255,255,0.85);
-      padding: 2rem 3rem;
-      border-radius: var(--radius);
-      text-align: center;
-      margin-top: 1rem;
+    .site-footer {
+      background: var(--navy-dark); color: rgba(255,255,255,.8);
+      border-radius: var(--radius); padding: 2.5rem 3rem;
       margin-bottom: 2rem;
-      box-shadow: none;
     }
-    footer h4 {
-      color: #fff;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
-    }
-    footer p {
-      font-size: 0.92rem;
-      line-height: 1.8;
-      margin-bottom: 0.5rem;
-    }
-    footer a {
-      color: #85c1e9;
-    }
-    footer a:hover {
-      color: #fff;
-    }
-    footer h6 {
-      color: rgba(255,255,255,0.5);
-      font-size: 0.8rem;
-      font-weight: 400;
-    }
-    footer strong {
-      color: rgba(255,255,255,0.95);
-    }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .footer-brand-name { font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: .4rem; }
+    .footer-brand-name .brand-accent { color: #60a5fa; }
+    .footer-tagline { font-size: .86rem; color: rgba(255,255,255,.5); margin-bottom: 0; }
+    .footer-info p { font-size: .88rem; line-height: 1.95; margin: 0; }
+    .footer-info a { color: #93c5fd; }
+    .footer-info a:hover { color: #fff; }
+    .footer-divider { border: none; border-top: 1px solid rgba(255,255,255,.1); margin: 1.6rem 0 1rem; }
+    .footer-credits { font-size: .78rem; color: rgba(255,255,255,.3); text-align: center; }
 
     /* ══════════ Responsive ══════════ */
+    @media (max-width: 991px) {
+      .section-card { padding: 2rem 2rem; }
+    }
     @media (max-width: 768px) {
-      section.container {
-        padding: 1.5rem 1.2rem;
+      .hero { padding: 3.5rem 0 3rem; }
+      .hero-stats { gap: 2rem; }
+      .section-card { padding: 1.4rem 1.2rem; }
+      .section-header { flex-direction: column; align-items: flex-start; }
+      .news-item:hover, .blog-item:hover {
+        margin-left: -1.2rem; margin-right: -1.2rem;
+        padding-left: 1.2rem; padding-right: 1.2rem;
       }
-      .container {
-        width: 96%;
-      }
-      .d-flex.justify-content-between {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-      .tech-dropdown-select {
-        min-width: 130px;
-        font-size: 0.78rem;
-      }
-      #news .news-item-body,
-      #blogList .blog-item-body {
-        flex-direction: column;
-        gap: 0.3rem;
-      }
-      #news .news-date,
-      #blogList .blog-date {
-        min-width: auto;
-      }
+      .news-item-body, .blog-item-body { flex-direction: column; gap: .2rem; }
+      .news-date, .blog-date { min-width: auto; }
+      .prof-card { flex-direction: column; text-align: center; gap: 1rem; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .site-footer { padding: 2rem 1.5rem; }
     }
   </style>
 </head>
@@ -486,9 +434,9 @@
 <body>
   <!-- ══════════ Navbar ══════════ -->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-    <div class="container">
+    <div class="container" style="max-width:1100px;width:92%;">
       <a class="navbar-brand" href="#">
-        <strong>THU-IDM</strong>
+        THU-<span class="brand-accent">IDM</span>
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
@@ -506,48 +454,132 @@
     </div>
   </nav>
 
-  <!-- ══════════ Introduction ══════════ -->
-  <section id="about" class="container">
-    <h2 class="section-title">Introduction</h2>
-    <div class="ji_card">
-      <div class="card-body" style="display:flex; align-items:center; gap:2.5rem; flex-wrap:wrap;">
-        <!-- Left: Professor Info -->
-        <div style="text-align:center; flex:0 0 180px;">
-          <img src="resources/people_img/ji.jpg" alt="Prof. Xiangyang Ji"
-               style="width:140px; height:140px; object-fit:cover; border-radius:50%; border:3px solid var(--border); margin-bottom:0.8rem;">
-          <br>
-          <span class="badge" style="background:var(--primary);color:#fff;font-size:0.8rem;">Prof. Xiangyang Ji</span>
-          <p style="font-size:0.85rem; margin-top:0.6rem; color:var(--text-muted);">
-            <i class="fas fa-envelope" style="color:var(--accent);"></i> xyji@tsinghua.edu.cn<br>
-            <i class="fas fa-globe" style="color:var(--accent);"></i>
-            <a href="https://www.au.tsinghua.edu.cn/info/1111/1524.htm" target="_blank">Homepage</a>
-          </p>
+  <!-- ══════════ Hero ══════════ -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <i class="fas fa-university"></i> Tsinghua University · Department of Automation
+      </div>
+      <h1>
+        Intelligent<br>Decision-Making<br><span class="brand-accent">Team</span>
+      </h1>
+      <p class="hero-sub">
+        Advancing the frontiers of machine intelligence through reinforcement learning,
+        generative modeling, and foundation models — bridging theory and real-world impact.
+      </p>
+      <div class="hero-topics">
+        <span class="hero-topic">Reinforcement Learning</span>
+        <span class="hero-topic">Foundation Models</span>
+        <span class="hero-topic">Generative Modeling</span>
+        <span class="hero-topic">Multi-Agent Systems</span>
+        <span class="hero-topic">Robust Adaptation</span>
+        <span class="hero-topic">LLMs</span>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">45+</div>
+          <div class="hero-stat-label">Publications</div>
         </div>
-        <!-- Right: Lab Photo + Description -->
-        <div style="flex:1; min-width:280px; text-align:center;">
-          <img src="resources/people_img/main building.jpg" alt="Main Building"
-               style="width:60%; max-width:400px; object-fit:cover; border-radius:var(--radius); margin-bottom:1rem; box-shadow:var(--shadow-sm);">
-          <p style="font-size:0.95rem; color:var(--text-muted); max-width:550px; margin:0 auto;">
-            We are a close-knit and harmonious team! Under Professor Ji's insightful leadership and driven by a strong passion for academic exploration, we achieve significant research milestones. Our laboratory is at <strong>Room 825, Main Building, Tsinghua University</strong>.
-          </p>
+        <div>
+          <div class="hero-stat-num">14</div>
+          <div class="hero-stat-label">Current Members</div>
         </div>
       </div>
     </div>
-    <p style="margin-top:1rem; font-size:0.95rem;">
-      The <strong>Intelligent Decision-Making Team (THU-IDM)</strong> at Tsinghua University is directed by Professor Xiangyang Ji. Our research is centered on advancing decision-making intelligence, with a particular emphasis on generative modeling, reinforcement learning, and foundation models. The team comprises members with diverse interdisciplinary expertise in fields such as automation, mathematics, physics, and computer science. Additionally, we maintain strong collaborative ties with international scholars, fostering a global perspective in our research endeavors.
-    </p>
   </section>
 
-  <!-- ══════════ News ══════════ -->
-  <section id="news" class="container">
+  <!-- ══════════ Page Content ══════════ -->
+  <div class="page-inner">
+
+    <!-- ══════════ Introduction ══════════ -->
+    <section id="about" class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">Introduction</h2>
+      </div>
+
+      <div class="prof-card">
+        <img src="resources/people_img/ji.jpg" alt="Prof. Xiangyang Ji" class="prof-avatar">
+        <div>
+          <div class="prof-name">Prof. Xiangyang Ji &nbsp;<span style="font-size:.8rem;font-weight:500;color:var(--text-muted);">季向阳</span></div>
+          <p class="prof-meta"><i class="fas fa-university"></i> Department of Automation, Tsinghua University</p>
+          <p class="prof-meta"><i class="fas fa-map-marker-alt"></i> Room 825, Main Building, Beijing 100084</p>
+          <p class="prof-meta">
+            <i class="fas fa-envelope"></i> xyji@tsinghua.edu.cn &nbsp;·&nbsp;
+            <i class="fas fa-globe"></i> <a href="https://www.au.tsinghua.edu.cn/info/1111/1524.htm" target="_blank">Faculty Homepage</a>
+          </p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start;">
+        <div style="flex:1;min-width:280px;">
+          <p class="about-description">
+            The <strong>Intelligent Decision-Making Team (THU-IDM)</strong> at Tsinghua University
+            is directed by Professor Xiangyang Ji. Our research is centered on advancing decision-making
+            intelligence, with a particular emphasis on generative modeling, reinforcement learning, and
+            foundation models. The team comprises members with diverse interdisciplinary expertise spanning
+            automation, mathematics, physics, and computer science, and maintains strong collaborative ties
+            with international scholars.
+          </p>
+          <div class="research-tags">
+            <span class="research-tag">Reinforcement Learning</span>
+            <span class="research-tag">Offline RL</span>
+            <span class="research-tag">Meta-RL</span>
+            <span class="research-tag">MARL</span>
+            <span class="research-tag">LLM for RL</span>
+            <span class="research-tag">Robust Adaptation</span>
+            <span class="research-tag">Reasoning Models</span>
+            <span class="research-tag">Multi-Task Learning</span>
+          </div>
+        </div>
+        <div style="flex:0 0 auto;text-align:center;">
+          <img src="resources/people_img/main building.jpg" alt="Tsinghua Main Building"
+               style="width:260px;max-width:100%;border-radius:var(--radius);box-shadow:var(--shadow-md);object-fit:cover;">
+          <p style="font-size:.78rem;color:var(--text-light);margin-top:.5rem;">Main Building, Tsinghua University</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ News ══════════ -->
+    <section id="news" class="section-card">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
 
-    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom:2px solid #3498db">
-      <h2 class="wby-section-title" style="margin-bottom:1.5%;">News</h2>
-
-      <div class="tech-dropdown-container" style="margin-bottom:1.5%;">
-        <select id="newsYearFilterDropdown" class="tech-dropdown-select">
+    <div class="section-header">
+      <h2 class="section-title">News</h2>
+      <div class="section-filters">
+        
+      <select id="newsYearFilterDropdown" class="filter-select">
           <option value="">All Years</option>
           <option value="2025">2025</option>
           <option value="2024">2024</option>
@@ -555,101 +587,130 @@
       </div>
     </div>
 
-
     <div id="newsList">
 
-      <div class="news-item mb-3" style="display:none" data-year="2025">
-        <div class="news-item-body" style="display:flex;align-items:flex-start;">
-          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">Sep 18, 2025</div>
-          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;">Code for paper <strong>Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?</strong> is now publicly available! Visit the <a href='https://github.com/thu-rllab/MoPPS'>GitHub repository</a> to access it!</div>
+      <div class="news-item" style="display:none" data-year="2025">
+        <div class="news-item-body">
+          <div class="news-date">Sep 18, 2025</div>
+          <div class="news-text">Code for paper <strong>Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?</strong> is now publicly available! Visit the <a href='https://github.com/thu-rllab/MoPPS'>GitHub repository</a> to access it!</div>
         </div>
       </div>
 
-      <div class="news-item mb-3" style="display:none" data-year="2025">
-        <div class="news-item-body" style="display:flex;align-items:flex-start;">
-          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">Jul 9, 2025</div>
-          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;">Our paper <strong>Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?</strong> is made public! First trial to successfully predict the prompt difficulty online for RL finetuning of reasoning models, which can significantly accelerate the RL finetuning process. Check out the <a href='https://arxiv.org/abs/2507.04632'>full paper</a> for more details!</div>
+      <div class="news-item" style="display:none" data-year="2025">
+        <div class="news-item-body">
+          <div class="news-date">Jul 9, 2025</div>
+          <div class="news-text">Our paper <strong>Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?</strong> is made public! First trial to successfully predict the prompt difficulty online for RL finetuning of reasoning models, which can significantly accelerate the RL finetuning process. Check out the <a href='https://arxiv.org/abs/2507.04632'>full paper</a> for more details!</div>
         </div>
       </div>
 
-      <div class="news-item mb-3" style="display:none" data-year="2025">
-        <div class="news-item-body" style="display:flex;align-items:flex-start;">
-          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">May 1, 2025</div>
-          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;">Our paper <strong>Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments</strong> has been accepted to ICML2025 with high scores (5443)! This work introduces PDTS to accommodate fast and robust sequential decision-making, unlocking the power of robust active task sampling.</div>
+      <div class="news-item" style="display:none" data-year="2025">
+        <div class="news-item-body">
+          <div class="news-date">May 1, 2025</div>
+          <div class="news-text">Our paper <strong>Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments</strong> has been accepted to ICML2025 with high scores (5443)! This work introduces PDTS to accommodate fast and robust sequential decision-making, unlocking the power of robust active task sampling.</div>
         </div>
       </div>
 
-      <div class="news-item mb-3" style="display:none" data-year="2025">
-        <div class="news-item-body" style="display:flex;align-items:flex-start;">
-          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">Mar 26, 2025</div>
-          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;">THU-IDM team website was updated!</div>
+      <div class="news-item" style="display:none" data-year="2025">
+        <div class="news-item-body">
+          <div class="news-date">Mar 26, 2025</div>
+          <div class="news-text">THU-IDM team website was updated!</div>
         </div>
       </div>
 
-      <div class="news-item mb-3" style="display:none" data-year="2025">
-        <div class="news-item-body" style="display:flex;align-items:flex-start;">
-          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">Jan 19, 2025</div>
-          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;">Attention! Our paper <strong>Model Predictive Task Sampling for Efficient and Robust Adaptation</strong> is made public! First trial to successfully predict the optimization outcome after zero/few-shot adaptation given some tasks and model predictive task sampling (MPTS) significantly improves the adaptation robustness of multimodal foundation models and sequential decision-making with learning efficiency retained!</div>
+      <div class="news-item" style="display:none" data-year="2025">
+        <div class="news-item-body">
+          <div class="news-date">Jan 19, 2025</div>
+          <div class="news-text">Attention! Our paper <strong>Model Predictive Task Sampling for Efficient and Robust Adaptation</strong> is made public! First trial to successfully predict the optimization outcome after zero/few-shot adaptation given some tasks and model predictive task sampling (MPTS) significantly improves the adaptation robustness of multimodal foundation models and sequential decision-making with learning efficiency retained!</div>
         </div>
       </div>
 
-      <div class="news-item mb-3" style="display:none" data-year="2024">
-        <div class="news-item-body" style="display:flex;align-items:flex-start;">
-          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">Dec 10, 2024</div>
-          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;"><strong>Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning</strong> was accepted to AAAI2025. Congratulations to Yun Qu and Yuhang!</div>
+      <div class="news-item" style="display:none" data-year="2024">
+        <div class="news-item-body">
+          <div class="news-date">Dec 10, 2024</div>
+          <div class="news-text"><strong>Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning</strong> was accepted to AAAI2025. Congratulations to Yun Qu and Yuhang!</div>
         </div>
       </div>
 
-      <div class="news-item mb-3" style="display:none" data-year="2024">
-        <div class="news-item-body" style="display:flex;align-items:flex-start;">
-          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">Nov 17, 2024</div>
-          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;"><strong>Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation</strong> got accepted to KDD2025 Research Track, the literature work to generate task distributions for meta learning!</div>
+      <div class="news-item" style="display:none" data-year="2024">
+        <div class="news-item-body">
+          <div class="news-date">Nov 17, 2024</div>
+          <div class="news-text"><strong>Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation</strong> got accepted to KDD2025 Research Track, the literature work to generate task distributions for meta learning!</div>
         </div>
       </div>
 
-      <div class="news-item mb-3" style="display:none" data-year="2024">
-        <div class="news-item-body" style="display:flex;align-items:flex-start;">
-          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">Sep 26, 2024</div>
-          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;"><strong>Doubly Mild Generalization for Offline Reinforcement Learning</strong> and <strong>Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression</strong> got accepted to NeurIPS2024. Congratulations to Yixiu!</div>
+      <div class="news-item" style="display:none" data-year="2024">
+        <div class="news-item-body">
+          <div class="news-date">Sep 26, 2024</div>
+          <div class="news-text"><strong>Doubly Mild Generalization for Offline Reinforcement Learning</strong> and <strong>Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression</strong> got accepted to NeurIPS2024. Congratulations to Yixiu!</div>
         </div>
       </div>
 
-      <div class="news-item mb-3" style="display:none" data-year="2024">
-        <div class="news-item-body" style="display:flex;align-items:flex-start;">
-          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">Sep 26, 2024</div>
-          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;">The multi-task learning SOTA work <strong>GO4Align: Group Optimization for Multi-Task Alignment</strong> got accepted to NeurIPS2024. Congratulations to Jiayi!</div>
+      <div class="news-item" style="display:none" data-year="2024">
+        <div class="news-item-body">
+          <div class="news-date">Sep 26, 2024</div>
+          <div class="news-text">The multi-task learning SOTA work <strong>GO4Align: Group Optimization for Multi-Task Alignment</strong> got accepted to NeurIPS2024. Congratulations to Jiayi!</div>
         </div>
       </div>
 
-      <div class="news-item mb-3" style="display:none" data-year="2024">
-        <div class="news-item-body" style="display:flex;align-items:flex-start;">
-          <div class="news-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">May 1, 2024</div>
-          <div class="news-text" style="flex:1;color:#444;font-size:.95rem;"><strong>LLM-Empowered State Representation for Reinforcement Learning</strong> was accepted to ICML2024. Congratulations to Boyuan and Yun Qu!</div>
+      <div class="news-item" style="display:none" data-year="2024">
+        <div class="news-item-body">
+          <div class="news-date">May 1, 2024</div>
+          <div class="news-text"><strong>LLM-Empowered State Representation for Reinforcement Learning</strong> was accepted to ICML2024. Congratulations to Boyuan and Yun Qu!</div>
         </div>
       </div>
 
     </div>
 
     <div class="text-center mt-4">
-      <button id="showMoreNewsBtn" class="btn btn-primary showMoreBtn">Show More</button>
-      <div id="thatsAllNewsBtn" class="section-small-title" style="text-align:center;display:none">That's all news!</div>
-      <div id="noNews" class="section-small-title" style="text-align:center;display:none">No news matching current filter.</div>
-    </div>
+      <button id="showMoreNewsBtn" class="btn show-more-btn">Show More</button>
+      <div id="thatsAllNewsBtn" class="status-all" style="text-align:center;display:none">That's all news!</div>
+      <div id="noNews" class="status-none" style="text-align:center;display:none">No news matching current filter.</div>
     </div>
 <!-- wby: 注意，切勿删除，程序代码识别news结束部分 -->
-  </section>
+    </section>
 
-  <!-- ══════════ Publications ══════════ -->
-  <section id="publications" class="container">
+    <!-- ══════════ Publications ══════════ -->
+    <section id="publications" class="section-card">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
 
-    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom:2px solid #3498db">
-      <h2 class="wby-section-title" style="margin-bottom:1.5%;">Publications</h2>
-
-      <div class="tech-dropdown-container" style="margin-bottom:1.5%;">
-        <select id="yearFilterDropdown" class="tech-dropdown-select">
+    <div class="section-header">
+      <h2 class="section-title">Publications</h2>
+      <div class="section-filters">
+        
+      <select id="yearFilterDropdown" class="filter-select">
           <option value="">All Years</option>
+          <option value="2026">2026</option>
           <option value="2025">2025</option>
           <option value="2024">2024</option>
           <option value="2023">2023</option>
@@ -658,12 +719,10 @@
           <option value="2020">2020</option>
           <option value="2019">2019</option>
         </select>
-      </div>
-
-      <div class="tech-dropdown-container" style="margin-bottom:1.5%;">
-        <select id="authorFilterDropdown" class="tech-dropdown-select">
+      <select id="authorFilterDropdown" class="filter-select">
           <option value="">All Authors</option>
           <option value="Boyuan Wang">Boyuan Wang</option>
+          <option value="Heming Zou">Heming Zou</option>
           <option value="Hongchang Zhang">Hongchang Zhang</option>
           <option value="Jianzhun Shao">Jianzhun Shao</option>
           <option value="Jinghao Chen">Jinghao Chen</option>
@@ -672,17 +731,17 @@
           <option value="Shuncheng He">Shuncheng He</option>
           <option value="Wendong Huang">Wendong Huang</option>
           <option value="Wutong Xu">Wutong Xu</option>
+          <option value="Xiang Li">Xiang Li</option>
+          <option value="Xiangyang Ji">Xiangyang Ji</option>
           <option value="Yixiu Mao">Yixiu Mao</option>
           <option value="Yuhang Jiang">Yuhang Jiang</option>
           <option value="Yun Qu">Yun Qu</option>
+          <option value="Yuyi Guo">Yuyi Guo</option>
           <option value="Zhenchan Su">Zhenchan Su</option>
           <option value="Zihan Zhang">Zihan Zhang</option>
           <option value="Zixuan Zhang">Zixuan Zhang</option>
         </select>
-      </div>
-
-      <div class="tech-dropdown-container" style="margin-bottom:1.5%;">
-        <select id="tagFilterDropdown" class="tech-dropdown-select">
+      <select id="tagFilterDropdown" class="filter-select">
           <option value="">All Tags</option>
           <option value="LLM4RL">LLM4RL</option>
           <option value="MARL">MARL</option>
@@ -692,12 +751,10 @@
           <option value="RL Theory">RL Theory</option>
           <option value="Reasoning Models">Reasoning Models</option>
           <option value="Robust Adaptation">Robust Adaptation</option>
+          <option value="SFT">SFT</option>
           <option value="Unsupervised RL">Unsupervised RL</option>
         </select>
-      </div>
-
-      <div class="tech-dropdown-container" style="margin-bottom:1.5%;">
-        <select id="conferenceFilterDropdown" class="tech-dropdown-select">
+      <select id="conferenceFilterDropdown" class="filter-select">
           <option value="">All Conferences/Journals</option>
           <option value="AAAI">AAAI</option>
           <option value="COLT">COLT</option>
@@ -708,766 +765,746 @@
           <option value="NeurIPS">NeurIPS</option>
           <option value="The Innovation">The Innovation</option>
           <option value="arXiv">arXiv</option>
-          <option value="arxiv">arxiv</option>
         </select>
       </div>
     </div>
 
-
     <div id="publicationsList">
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
+           data-year="2026" data-authors="Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Vincent Tao Hu,  Xiangyang Ji" data-conference="KDD 2026" data-tag="Reasoning Models">
+        <div class="card-body">
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">KDD 2026</span>
+            <span class="tag-badge">Reasoning Models</span>
+          </div>
+          <div class="pub-title">Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?</div>
+          <div class="pub-authors">Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Vincent Tao Hu,  Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/abs/2507.04632" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/MoPPS" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3 pub-card" style="display:none"
+           data-year="2026" data-authors="Yun Qu, Qi Wang, Yixiu Mao, Heming Zou, Yuhang Jiang, Weijie Liu, Clive Bai, Kai Yang, Yangkun Chen, Saiyong Yang, Xiangyang Ji" data-conference="arXiv 2026" data-tag="Reasoning Models">
+        <div class="card-body">
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-arxiv">arXiv 2026</span>
+            <span class="tag-badge">Reasoning Models</span>
+          </div>
+          <div class="pub-title">Small Generalizable Prompt Predictive Models Can Steer Efficient RL Post-Training of Large Reasoning Models</div>
+          <div class="pub-authors">Yun Qu, Qi Wang, Yixiu Mao, Heming Zou, Yuhang Jiang, Weijie Liu, Clive Bai, Kai Yang, Yangkun Chen, Saiyong Yang, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/abs/2602.01970" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2025" data-authors="Yun Qu, Yuhang Jiang, Boyuan Wang, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji" data-conference="AAAI 2025" data-tag="LLM4RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">AAAI 2025</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">LLM4RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">AAAI 2025</span>
+            <span class="tag-badge">LLM4RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yun Qu, Yuhang Jiang, Boyuan Wang, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2412.11120" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/LaRe" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Latent Reward: LLM-Empowered Credit Assignment in Episodic Reinforcement Learning</div>
+          <div class="pub-authors">Yun Qu, Yuhang Jiang, Boyuan Wang, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2412.11120" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/LaRe" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2025" data-authors="Zehao Xiao, Shilin Yan, Jack Hong, Jiayin Cai, Xiaolong Jiang, Yao Hu, Jiayi Shen, Qi Wang, Cees G. M. Snoek" data-conference="ICLR 2025" data-tag="nan">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICLR 2025</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICLR 2025</span>
             
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>DynaPrompt: Dynamic Test-Time Prompt Tuning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Zehao Xiao, Shilin Yan, Jack Hong, Jiayin Cai, Xiaolong Jiang, Yao Hu, Jiayi Shen, Qi Wang, Cees G. M. Snoek
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2501.16404" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">DynaPrompt: Dynamic Test-Time Prompt Tuning</div>
+          <div class="pub-authors">Zehao Xiao, Shilin Yan, Jack Hong, Jiayin Cai, Xiaolong Jiang, Yao Hu, Jiayi Shen, Qi Wang, Cees G. M. Snoek</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2501.16404" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2025" data-authors="Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Yiqin Lv,  Xiangyang Ji" data-conference="ICML 2025" data-tag="Robust Adaptation">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICML 2025</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Robust Adaptation</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICML 2025</span>
+            <span class="tag-badge">Robust Adaptation</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Yiqin Lv,  Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2504.19139" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/PDTS" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
-<a href="https://thu-rllab.github.io/PDTS_project_page" class="btn btn-outline-info btn-sm" target="_blank">Demo</a>
+          <div class="pub-title">Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments</div>
+          <div class="pub-authors">Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Yiqin Lv,  Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2504.19139" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/PDTS" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
+<a href="https://thu-rllab.github.io/PDTS_project_page" class="pub-btn pub-btn-demo" target="_blank"><i class="fas fa-play"></i> Project</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2025" data-authors="Cheems Wang, Yiqin Lv, Yixiu Mao, Yun Qu, Yi Xu, Xiangyang Ji" data-conference="KDD 2025" data-tag="Robust Adaptation">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">KDD 2025</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Robust Adaptation</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">KDD 2025</span>
+            <span class="tag-badge">Robust Adaptation</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Cheems Wang, Yiqin Lv, Yixiu Mao, Yun Qu, Yi Xu, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2407.19523" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Robust Fast Adaptation from Adversarially Explicit Task Distribution Generation</div>
+          <div class="pub-authors">Cheems Wang, Yiqin Lv, Yixiu Mao, Yun Qu, Yi Xu, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2407.19523" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2025" data-authors="Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji" data-conference="arXiv 2025" data-tag="Robust Adaptation">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">arXiv 2025</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Robust Adaptation</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-arxiv">arXiv 2025</span>
+            <span class="tag-badge">Robust Adaptation</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Model Predictive Task Sampling for Efficient and Robust Adaptation</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2501.11039" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/MPTS" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Model Predictive Task Sampling for Efficient and Robust Adaptation</div>
+          <div class="pub-authors">Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2501.11039" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/MPTS" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
-           data-year="2025" data-authors="Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Vincent Tao Hu,  Xiangyang Ji" data-conference="arxiv 2025" data-tag="Reasoning Models">
+      <div class="card mb-3 pub-card" style="display:none"
+           data-year="2025" data-authors="Heming Zou, Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji" data-conference="arXiv 2025" data-tag="SFT">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">arxiv 2025</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Reasoning Models</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-arxiv">arXiv 2025</span>
+            <span class="tag-badge">SFT</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Vincent Tao Hu,  Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/abs/2507.04632" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/MoPPS" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Utility-Diversity Aware Online Batch Selection for LLM Supervised Fine-tuning</div>
+          <div class="pub-authors">Heming Zou, Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/abs/2510.16882" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
+           data-year="2025" data-authors="Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji" data-conference="arXiv 2025" data-tag="Offline RL">
+        <div class="card-body">
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-arxiv">arXiv 2025</span>
+            <span class="tag-badge">Offline RL</span>
+          </div>
+          <div class="pub-title">Adaptive Neighborhood-Constrained Q Learning for Offline Reinforcement Learning</div>
+          <div class="pub-authors">Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/abs/2511.02567" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3 pub-card" style="display:none"
+           data-year="2025" data-authors="Yiqin Lv, Zhiyu Mou, Miao Xu, Jinghao Chen, Qi Cheems Wang, Yixiu Mao, Yun Qu, Rongquan Bai, Chuan Yu, Jian Xu, Bo Zheng, Xiangyang Ji" data-conference="arXiv 2025" data-tag="Multi-Task Learning">
+        <div class="card-body">
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-arxiv">arXiv 2025</span>
+            <span class="tag-badge">Multi-Task Learning</span>
+          </div>
+          <div class="pub-title">VAO: Validation-Aligned Optimization for Cross-Task Generative Auto-Bidding</div>
+          <div class="pub-authors">Yiqin Lv, Zhiyu Mou, Miao Xu, Jinghao Chen, Qi Cheems Wang, Yixiu Mao, Yun Qu, Rongquan Bai, Chuan Yu, Jian Xu, Bo Zheng, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/abs/2510.07760" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2024" data-authors="Boyuan Wang, Yun Qu, Yuhang Jiang, Jianzhun Shao, Chang Liu, Wenming Yang, Xiangyang Ji" data-conference="ICML 2024" data-tag="LLM4RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICML 2024</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">LLM4RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICML 2024</span>
+            <span class="tag-badge">LLM4RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>LLM-Empowered State Representation for Reinforcement Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Boyuan Wang, Yun Qu, Yuhang Jiang, Jianzhun Shao, Chang Liu, Wenming Yang, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.mlr.press/v235/wang24bh.html" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/LESR" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
-<a href="./resources/poster_demo/poster-lesr.pdf" class="btn btn-outline-info btn-sm" target="_blank">Demo</a>
+          <div class="pub-title">LLM-Empowered State Representation for Reinforcement Learning</div>
+          <div class="pub-authors">Boyuan Wang, Yun Qu, Yuhang Jiang, Jianzhun Shao, Chang Liu, Wenming Yang, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.mlr.press/v235/wang24bh.html" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/LESR" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
+<a href="./resources/poster_demo/poster-lesr.pdf" class="pub-btn pub-btn-demo" target="_blank"><i class="fas fa-play"></i> Project</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2024" data-authors="Yuchen Yang, Yingdong Shi, Cheems Wang, Xiantong Zhen, Yuxuan Shi, Jun Xu" data-conference="ICML 2024" data-tag="nan">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICML 2024</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICML 2024</span>
             
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Reducing Fine-Tuning Memory Overhead by Approximate and Memory-Sharing Backpropagation</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yuchen Yang, Yingdong Shi, Cheems Wang, Xiantong Zhen, Yuxuan Shi, Jun Xu
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2406.16282" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/yyyyychen/LowMemoryBP" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Reducing Fine-Tuning Memory Overhead by Approximate and Memory-Sharing Backpropagation</div>
+          <div class="pub-authors">Yuchen Yang, Yingdong Shi, Cheems Wang, Xiantong Zhen, Yuxuan Shi, Jun Xu</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2406.16282" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/yyyyychen/LowMemoryBP" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2024" data-authors="Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji" data-conference="NeurIPS 2024" data-tag="Offline RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2024</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Offline RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2024</span>
+            <span class="tag-badge">Offline RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2024/file/a9f3457fa97f106f1756885237787789-Paper-Conference.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression</div>
+          <div class="pub-authors">Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2024/file/a9f3457fa97f106f1756885237787789-Paper-Conference.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2024" data-authors="Yiqin Lv, Qi Wang, Dong Liang, Zheng Xie" data-conference="NeurIPS 2024" data-tag="Robust Adaptation">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2024</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Robust Adaptation</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2024</span>
+            <span class="tag-badge">Robust Adaptation</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Theoretical Investigations and Practical Enhancements on Tail Task Risk Minimization in Meta Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yiqin Lv, Qi Wang, Dong Liang, Zheng Xie
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2410.22788" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Theoretical Investigations and Practical Enhancements on Tail Task Risk Minimization in Meta Learning</div>
+          <div class="pub-authors">Yiqin Lv, Qi Wang, Dong Liang, Zheng Xie</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2410.22788" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2024" data-authors="Jiayi Shen, Qi (Cheems) Wang, Zehao Xiao, Nanne Van Noord, Marcel Worring" data-conference="NeurIPS 2024" data-tag="Multi-Task Learning">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2024</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Multi-Task Learning</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2024</span>
+            <span class="tag-badge">Multi-Task Learning</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>GO4Align: Group Optimization for Multi-Task Alignment</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Jiayi Shen, Qi (Cheems) Wang, Zehao Xiao, Nanne Van Noord, Marcel Worring
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2404.06486" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/autumn9999/GO4Align" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">GO4Align: Group Optimization for Multi-Task Alignment</div>
+          <div class="pub-authors">Jiayi Shen, Qi (Cheems) Wang, Zehao Xiao, Nanne Van Noord, Marcel Worring</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2404.06486" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/autumn9999/GO4Align" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2024" data-authors="Yixiu Mao, Qi Wang, Yun Qu, Yuhang Jiang, Xiangyang Ji" data-conference="NeurIPS 2024" data-tag="Offline RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2024</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Offline RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2024</span>
+            <span class="tag-badge">Offline RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Doubly Mild Generalization for Offline Reinforcement Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yixiu Mao, Qi Wang, Yun Qu, Yuhang Jiang, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2411.07934" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/DMG" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Doubly Mild Generalization for Offline Reinforcement Learning</div>
+          <div class="pub-authors">Yixiu Mao, Qi Wang, Yun Qu, Yuhang Jiang, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2411.07934" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/DMG" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2024" data-authors="Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji" data-conference="arXiv 2024" data-tag="LLM4RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">arXiv 2024</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">LLM4RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-arxiv">arXiv 2024</span>
+            <span class="tag-badge">LLM4RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Choices are More Important than Efforts: LLM Enables Efficient Multi-Agent Exploration</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2410.02511" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Choices are More Important than Efforts: LLM Enables Efficient Multi-Agent Exploration</div>
+          <div class="pub-authors">Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2410.02511" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Hongchang Zhang, Jianzhun Shao, Shuncheng He, Yuhang Jiang, Xiangyang Ji" data-conference="AAAI 2023" data-tag="Offline RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">AAAI 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Offline RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">AAAI 2023</span>
+            <span class="tag-badge">Offline RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>DARL: distance-aware uncertainty estimation for offline reinforcement learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Hongchang Zhang, Jianzhun Shao, Shuncheng He, Yuhang Jiang, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://ojs.aaai.org/index.php/AAAI/article/view/26327" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">DARL: distance-aware uncertainty estimation for offline reinforcement learning</div>
+          <div class="pub-authors">Hongchang Zhang, Jianzhun Shao, Shuncheng He, Yuhang Jiang, Xiangyang Ji</div>
+          <div>
+            <a href="https://ojs.aaai.org/index.php/AAAI/article/view/26327" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Qi Wang, Marco Federici, Herke van Hoof" data-conference="ICLR 2023" data-tag="nan">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICLR 2023</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICLR 2023</span>
             
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Bridge the Inference Gaps of Neural Processes via Expectation Maximization</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Qi Wang, Marco Federici, Herke van Hoof
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2501.03264" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/hhq123gogogo/SI_NPs" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Bridge the Inference Gaps of Neural Processes via Expectation Maximization</div>
+          <div class="pub-authors">Qi Wang, Marco Federici, Herke van Hoof</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2501.03264" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/hhq123gogogo/SI_NPs" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Hongchang Zhang, Yixiu Mao, Boyuan Wang, Shuncheng He, Yi Xu, Xiangyang Ji" data-conference="ICLR 2023" data-tag="Offline RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICLR 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Offline RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICLR 2023</span>
+            <span class="tag-badge">Offline RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>In-sample Actor Critic for Offline Reinforcement Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Hongchang Zhang, Yixiu Mao, Boyuan Wang, Shuncheng He, Yi Xu, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://openreview.net/pdf?id=dfDv0WU853R" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">In-sample Actor Critic for Offline Reinforcement Learning</div>
+          <div class="pub-authors">Hongchang Zhang, Yixiu Mao, Boyuan Wang, Shuncheng He, Yi Xu, Xiangyang Ji</div>
+          <div>
+            <a href="https://openreview.net/pdf?id=dfDv0WU853R" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Hongchang Zhang, Boyuan Wang, Yixiu Mao, Jianzhun Shao, Yuhang Jiang, Yi Xu, Xiangyang Ji" data-conference="ICLR 2023" data-tag="Offline RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICLR 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Offline RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICLR 2023</span>
+            <span class="tag-badge">Offline RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Pessimistic Policy Iteration for Offline Reinforcement Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Hongchang Zhang, Boyuan Wang, Yixiu Mao, Jianzhun Shao, Yuhang Jiang, Yi Xu, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://openreview.net/pdf?id=TmJtBnIWkB" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Pessimistic Policy Iteration for Offline Reinforcement Learning</div>
+          <div class="pub-authors">Hongchang Zhang, Boyuan Wang, Yixiu Mao, Jianzhun Shao, Yuhang Jiang, Yi Xu, Xiangyang Ji</div>
+          <div>
+            <a href="https://openreview.net/pdf?id=TmJtBnIWkB" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji" data-conference="ICLR 2023" data-tag="MARL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICLR 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">MARL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICLR 2023</span>
+            <span class="tag-badge">MARL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Consciousness-Aware Multi-Agent Reinforcement Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://openreview.net/pdf?id=u0aNcjqhEJ" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/CAMA" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Consciousness-Aware Multi-Agent Reinforcement Learning</div>
+          <div class="pub-authors">Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji</div>
+          <div>
+            <a href="https://openreview.net/pdf?id=u0aNcjqhEJ" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/CAMA" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji" data-conference="ICML 2023" data-tag="Offline RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICML 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Offline RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICML 2023</span>
+            <span class="tag-badge">Offline RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Supported Trust Region Optimization for Offline Reinforcement Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.mlr.press/v202/mao23c/mao23c.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/STR" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Supported Trust Region Optimization for Offline Reinforcement Learning</div>
+          <div class="pub-authors">Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.mlr.press/v202/mao23c/mao23c.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/STR" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji" data-conference="ICML 2023" data-tag="MARL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICML 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">MARL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICML 2023</span>
+            <span class="tag-badge">MARL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Complementary Attention for Multi-Agent Reinforcement Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.mlr.press/v202/shao23b/shao23b.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/CAMA" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Complementary Attention for Multi-Agent Reinforcement Learning</div>
+          <div class="pub-authors">Jianzhun Shao, Hongchang Zhang, Yun Qu, Chang Liu, Shuncheng He, Yuhang Jiang, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.mlr.press/v202/shao23b/shao23b.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/CAMA" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Jiayi Shen, Xiantong Zhen, Qi Wang, Marcel Worring" data-conference="NeurIPS 2023" data-tag="Multi-Task Learning">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Multi-Task Learning</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2023</span>
+            <span class="tag-badge">Multi-Task Learning</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Episodic Multi-Task Learning with Heterogeneous Neural Processes</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Jiayi Shen, Xiantong Zhen, Qi Wang, Marcel Worring
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/ee1e549d6fb7c58ed06557bfc264335c-Paper-Conference.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Episodic Multi-Task Learning with Heterogeneous Neural Processes</div>
+          <div class="pub-authors">Jiayi Shen, Xiantong Zhen, Qi Wang, Marcel Worring</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/ee1e549d6fb7c58ed06557bfc264335c-Paper-Conference.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Qi Wang, Yiqin Lv, Yanghe Feng, Zheng Xie, Jincai Huang" data-conference="NeurIPS 2023" data-tag="Robust Adaptation">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Robust Adaptation</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2023</span>
+            <span class="tag-badge">Robust Adaptation</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>A Simple Yet Effective Strategy to Robustify the Meta Learning Paradigm</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Qi Wang, Yiqin Lv, Yanghe Feng, Zheng Xie, Jincai Huang
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/2a28bea6298d106eed091ac403d8c22b-Paper-Conference.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">A Simple Yet Effective Strategy to Robustify the Meta Learning Paradigm</div>
+          <div class="pub-authors">Qi Wang, Yiqin Lv, Yanghe Feng, Zheng Xie, Jincai Huang</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/2a28bea6298d106eed091ac403d8c22b-Paper-Conference.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji" data-conference="NeurIPS 2023" data-tag="Offline RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Offline RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2023</span>
+            <span class="tag-badge">Offline RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Supported Value Regularization for Offline Reinforcement Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/7fa46657df480226112d5be3faf096c4-Paper-Conference.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/SVR" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Supported Value Regularization for Offline Reinforcement Learning</div>
+          <div class="pub-authors">Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/7fa46657df480226112d5be3faf096c4-Paper-Conference.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/SVR" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Jianzhun Shao, Yun Qu, Chen Chen, Hongchang Zhang, Xiangyang Ji" data-conference="NeurIPS 2023" data-tag="Offline RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Offline RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2023</span>
+            <span class="tag-badge">Offline RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Counterfactual Conservative Q Learning for Offline Multi-agent Reinforcement Learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Jianzhun Shao, Yun Qu, Chen Chen, Hongchang Zhang, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f3f2ff9579ba6deeb89caa2fe1f0b99c-Paper-Conference.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/CFCQL" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Counterfactual Conservative Q Learning for Offline Multi-agent Reinforcement Learning</div>
+          <div class="pub-authors">Jianzhun Shao, Yun Qu, Chen Chen, Hongchang Zhang, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/f3f2ff9579ba6deeb89caa2fe1f0b99c-Paper-Conference.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/CFCQL" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Yun Qu, Boyuan Wang, Jianzhun Shao, Yuhang Jiang, Chen Chen, Zhenbin Ye, Lin Liu, Junfeng Yang, Lin Lai, Hongyang Qin, Minwen Deng, Juchao Zhuo, Deheng Ye, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Xiangyang Ji" data-conference="NeurIPS 2023" data-tag="Offline RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2023</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Offline RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2023</span>
+            <span class="tag-badge">Offline RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Hokoff: Real Game Dataset from Honor of Kings and its Offline Reinforcement Learning Benchmarks</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yun Qu, Boyuan Wang, Jianzhun Shao, Yuhang Jiang, Chen Chen, Zhenbin Ye, Lin Liu, Junfeng Yang, Lin Lai, Hongyang Qin, Minwen Deng, Juchao Zhuo, Deheng Ye, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/464fefa022aaefc85d901317bbf13f85-Paper-Datasets_and_Benchmarks.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/Hokoff" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Hokoff: Real Game Dataset from Honor of Kings and its Offline Reinforcement Learning Benchmarks</div>
+          <div class="pub-authors">Yun Qu, Boyuan Wang, Jianzhun Shao, Yuhang Jiang, Chen Chen, Zhenbin Ye, Lin Liu, Junfeng Yang, Lin Lai, Hongyang Qin, Minwen Deng, Juchao Zhuo, Deheng Ye, Qiang Fu, Wei Yang, Guang Yang, Lanxiao Huang, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/464fefa022aaefc85d901317bbf13f85-Paper-Datasets_and_Benchmarks.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/Hokoff" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2023" data-authors="Qi Wang, Yanghe Feng, Jincai Huang, Yiqin Lv, Zheng Xie, Xiaoshan Gao" data-conference="The Innovation 2023" data-tag="nan">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">The Innovation 2023</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-good">The Innovation 2023</span>
             
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Large-scale generative simulation artificial intelligence: The next hotspot</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Qi Wang, Yanghe Feng, Jincai Huang, Yiqin Lv, Zheng Xie, Xiaoshan Gao
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://www.cell.com/the-innovation/fulltext/S2666-6758(23)00144-3" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Large-scale generative simulation artificial intelligence: The next hotspot</div>
+          <div class="pub-authors">Qi Wang, Yanghe Feng, Jincai Huang, Yiqin Lv, Zheng Xie, Xiaoshan Gao</div>
+          <div>
+            <a href="https://www.cell.com/the-innovation/fulltext/S2666-6758(23)00144-3" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2022" data-authors="Hongchang Zhang, Jianzhun Shao, Yuhang Jiang, Shuncheng He, Guanwen Zhang, Xiangyang Ji" data-conference="AAAI 2022" data-tag="Offline RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">AAAI 2022</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Offline RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">AAAI 2022</span>
+            <span class="tag-badge">Offline RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>State deviation correction for offline reinforcement learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Hongchang Zhang, Jianzhun Shao, Yuhang Jiang, Shuncheng He, Guanwen Zhang, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://ojs.aaai.org/index.php/AAAI/article/view/20886" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">State deviation correction for offline reinforcement learning</div>
+          <div class="pub-authors">Hongchang Zhang, Jianzhun Shao, Yuhang Jiang, Shuncheng He, Guanwen Zhang, Xiangyang Ji</div>
+          <div>
+            <a href="https://ojs.aaai.org/index.php/AAAI/article/view/20886" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2022" data-authors="Shuncheng He, Yuhang Jiang, Hongchang Zhang, Jianzhun Shao, Xiangyang Ji" data-conference="AAAI 2022" data-tag="Unsupervised RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">AAAI 2022</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Unsupervised RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">AAAI 2022</span>
+            <span class="tag-badge">Unsupervised RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Wasserstein unsupervised reinforcement learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Shuncheng He, Yuhang Jiang, Hongchang Zhang, Jianzhun Shao, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://ojs.aaai.org/index.php/AAAI/article/view/20645" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Wasserstein unsupervised reinforcement learning</div>
+          <div class="pub-authors">Shuncheng He, Yuhang Jiang, Hongchang Zhang, Jianzhun Shao, Xiangyang Ji</div>
+          <div>
+            <a href="https://ojs.aaai.org/index.php/AAAI/article/view/20645" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2022" data-authors="Zihan Zhang, Xiangyang Ji, Simon Du" data-conference="COLT 2022" data-tag="RL Theory">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">COLT 2022</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">RL Theory</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">COLT 2022</span>
+            <span class="tag-badge">RL Theory</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Horizon-free reinforcement learning in polynomial time: the power of stationary policies</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Zihan Zhang, Xiangyang Ji, Simon Du
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.mlr.press/v178/zhang22a/zhang22a.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Horizon-free reinforcement learning in polynomial time: the power of stationary policies</div>
+          <div class="pub-authors">Zihan Zhang, Xiangyang Ji, Simon Du</div>
+          <div>
+            <a href="https://proceedings.mlr.press/v178/zhang22a/zhang22a.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2022" data-authors="Qi Wang, Herke van Hoof" data-conference="ICML 2022" data-tag="Meta-RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICML 2022</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Meta-RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICML 2022</span>
+            <span class="tag-badge">Meta-RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Model-based Meta Reinforcement Learning using Graph Structured Surrogate Models and Amortized Policy Search</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Qi Wang, Herke van Hoof
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.mlr.press/v162/wang22z/wang22z.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Model-based Meta Reinforcement Learning using Graph Structured Surrogate Models and Amortized Policy Search</div>
+          <div class="pub-authors">Qi Wang, Herke van Hoof</div>
+          <div>
+            <a href="https://proceedings.mlr.press/v162/wang22z/wang22z.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2022" data-authors="Qi Wang, Herke van Hoof" data-conference="NeurIPS 2022" data-tag="nan">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2022</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2022</span>
             
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Learning Expressive Meta-Representations with Mixture of Expert Neural Processes</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Qi Wang, Herke van Hoof
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/a815fe7cad6af20a6c118f2072a881d2-Paper-Conference.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Learning Expressive Meta-Representations with Mixture of Expert Neural Processes</div>
+          <div class="pub-authors">Qi Wang, Herke van Hoof</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/a815fe7cad6af20a6c118f2072a881d2-Paper-Conference.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2022" data-authors="Yuhang Jiang, Jianzhun Shao, Shuncheng He, Hongchang Zhang, Xiangyang Ji" data-conference="NeurIPS 2022" data-tag="Unsupervised RL">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2022</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">Unsupervised RL</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2022</span>
+            <span class="tag-badge">Unsupervised RL</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Spd: Synergy pattern diversifying oriented unsupervised multi-agent reinforcement learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Yuhang Jiang, Jianzhun Shao, Shuncheng He, Hongchang Zhang, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/825341ab91db01bf063add41ac022702-Paper-Conference.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/thu-rllab/SPD" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Spd: Synergy pattern diversifying oriented unsupervised multi-agent reinforcement learning</div>
+          <div class="pub-authors">Yuhang Jiang, Jianzhun Shao, Shuncheng He, Hongchang Zhang, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/825341ab91db01bf063add41ac022702-Paper-Conference.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/SPD" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2022" data-authors="Zihan Zhang, Yuhang Jiang, Yuan Zhou, Xiangyang Ji" data-conference="NeurIPS 2022" data-tag="RL Theory">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2022</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">RL Theory</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2022</span>
+            <span class="tag-badge">RL Theory</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Near-optimal regret bounds for multi-batch reinforcement learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Zihan Zhang, Yuhang Jiang, Yuan Zhou, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/9bcd1fa0c05e5f25ba7a1261f1852e82-Paper-Conference.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Near-optimal regret bounds for multi-batch reinforcement learning</div>
+          <div class="pub-authors">Zihan Zhang, Yuhang Jiang, Yuan Zhou, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/9bcd1fa0c05e5f25ba7a1261f1852e82-Paper-Conference.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2021" data-authors="Zihan Zhang, Xiangyang Ji, Simon Du" data-conference="COLT 2021" data-tag="RL Theory">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">COLT 2021</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">RL Theory</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">COLT 2021</span>
+            <span class="tag-badge">RL Theory</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Is reinforcement learning more difficult than bandits? a near-optimal algorithm escaping the curse of horizon</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Zihan Zhang, Xiangyang Ji, Simon Du
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="http://proceedings.mlr.press/v134/zhang21b/zhang21b.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Is reinforcement learning more difficult than bandits? a near-optimal algorithm escaping the curse of horizon</div>
+          <div class="pub-authors">Zihan Zhang, Xiangyang Ji, Simon Du</div>
+          <div>
+            <a href="http://proceedings.mlr.press/v134/zhang21b/zhang21b.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2021" data-authors="Zihan Zhang, Simon Du, Xiangyang Ji" data-conference="ICML 2021" data-tag="RL Theory">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICML 2021</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">RL Theory</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICML 2021</span>
+            <span class="tag-badge">RL Theory</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Near optimal reward-free reinforcement learning</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Zihan Zhang, Simon Du, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="http://proceedings.mlr.press/v139/zhang21e/zhang21e.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Near optimal reward-free reinforcement learning</div>
+          <div class="pub-authors">Zihan Zhang, Simon Du, Xiangyang Ji</div>
+          <div>
+            <a href="http://proceedings.mlr.press/v139/zhang21e/zhang21e.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2021" data-authors="Zihan Zhang, Yuan Zhou, Xiangyang Ji" data-conference="ICML 2021" data-tag="RL Theory">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICML 2021</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">RL Theory</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICML 2021</span>
+            <span class="tag-badge">RL Theory</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Model-free reinforcement learning: from clipped pseudo-regret to sample complexity</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Zihan Zhang, Yuan Zhou, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="http://proceedings.mlr.press/v139/zhang21ab/zhang21ab.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Model-free reinforcement learning: from clipped pseudo-regret to sample complexity</div>
+          <div class="pub-authors">Zihan Zhang, Yuan Zhou, Xiangyang Ji</div>
+          <div>
+            <a href="http://proceedings.mlr.press/v139/zhang21ab/zhang21ab.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2021" data-authors="Zihan Zhang, Jiaqi Yang, Xiangyang Ji, Simon S Du" data-conference="NeurIPS 2021" data-tag="RL Theory">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2021</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">RL Theory</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2021</span>
+            <span class="tag-badge">RL Theory</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Improved variance-aware confidence sets for linear bandits and linear mixture mdp</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Zihan Zhang, Jiaqi Yang, Xiangyang Ji, Simon S Du
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper/2021/file/228bbc2f87caeb21bb7f6949fddcb91d-Paper.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Improved variance-aware confidence sets for linear bandits and linear mixture mdp</div>
+          <div class="pub-authors">Zihan Zhang, Jiaqi Yang, Xiangyang Ji, Simon S Du</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper/2021/file/228bbc2f87caeb21bb7f6949fddcb91d-Paper.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2020" data-authors="Jianzhun Shao, Yuhang Jiang, Gu Wang, Zhigang Li, Xiangyang Ji" data-conference="CVPR 2020" data-tag="nan">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">CVPR 2020</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">CVPR 2020</span>
             
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Pfrl: Pose-free reinforcement learning for 6d pose estimation</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Jianzhun Shao, Yuhang Jiang, Gu Wang, Zhigang Li, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://openaccess.thecvf.com/content_CVPR_2020/papers/Shao_PFRL_Pose-Free_Reinforcement_Learning_for_6D_Pose_Estimation_CVPR_2020_paper.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Pfrl: Pose-free reinforcement learning for 6d pose estimation</div>
+          <div class="pub-authors">Jianzhun Shao, Yuhang Jiang, Gu Wang, Zhigang Li, Xiangyang Ji</div>
+          <div>
+            <a href="https://openaccess.thecvf.com/content_CVPR_2020/papers/Shao_PFRL_Pose-Free_Reinforcement_Learning_for_6D_Pose_Estimation_CVPR_2020_paper.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2020" data-authors="Qi Wang, Herke van Hoof" data-conference="ICML 2020" data-tag="nan">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">ICML 2020</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICML 2020</span>
             
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Doubly Stochastic Variational Inference for Neural Processes with Hierarchical Latent Variables</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Qi Wang, Herke van Hoof
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://arxiv.org/pdf/2008.09469" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
-<a href="https://github.com/hhq123gogogo/SI_NPs" class="btn btn-outline-success btn-sm" target="_blank">Code</a>
+          <div class="pub-title">Doubly Stochastic Variational Inference for Neural Processes with Hierarchical Latent Variables</div>
+          <div class="pub-authors">Qi Wang, Herke van Hoof</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2008.09469" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/hhq123gogogo/SI_NPs" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2020" data-authors="Zihan Zhang, Yuan Zhou, Xiangyang Ji" data-conference="NeurIPS 2020" data-tag="RL Theory">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2020</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">RL Theory</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2020</span>
+            <span class="tag-badge">RL Theory</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Almost optimal model-free reinforcement learningvia reference-advantage decomposition</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Zihan Zhang, Yuan Zhou, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2020/file/ad71c82b22f4f65b9398f76d8be4c615-Paper.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Almost optimal model-free reinforcement learningvia reference-advantage decomposition</div>
+          <div class="pub-authors">Zihan Zhang, Yuan Zhou, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2020/file/ad71c82b22f4f65b9398f76d8be4c615-Paper.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
       </div>
 
-      <div class="card mb-3 pub-card" style="display:none;border-left:4px solid #3498db;"
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2019" data-authors="Zihan Zhang, Xiangyang Ji" data-conference="NeurIPS 2019" data-tag="RL Theory">
         <div class="card-body">
-          <div style="margin-bottom:.6em;">
-            <span class="badge" style="background-color:#2c3e50;color:#fff;">NeurIPS 2019</span>
-            <span class="badge badge-pill" style="background-color:#17a2b8;color:#fff;margin-left:.5em;vertical-align:middle;">RL Theory</span>
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2019</span>
+            <span class="tag-badge">RL Theory</span>
           </div>
-          <h5 class="card-title" style="color:#2c3e50;font-size:1.05rem;"><strong>Regret minimization for reinforcement learning by evaluating the optimal bias function</strong></h5>
-          <p class="card-text" style="color:#555;font-size:.9rem;">
-            Zihan Zhang, Xiangyang Ji
-          </p>
-          <div class="btn-group" role="group" style="margin-top:.5em;">
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2019/file/9e984c108157cea74c894b5cf34efc44-Paper.pdf" class="btn btn-outline-primary btn-sm" target="_blank">Paper</a>
+          <div class="pub-title">Regret minimization for reinforcement learning by evaluating the optimal bias function</div>
+          <div class="pub-authors">Zihan Zhang, Xiangyang Ji</div>
+          <div>
+            <a href="https://proceedings.neurips.cc/paper_files/paper/2019/file/9e984c108157cea74c894b5cf34efc44-Paper.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
@@ -1476,68 +1513,97 @@
     </div>
 <!-- wby: 注意，切勿删除，程序代码识别publications结束部分 -->
 
-    <div class="mt-3" style="text-align: center">
-      <button id="showMoreBtn" class="showMoreBtn btn-secondary" style="display: none">Show All</button>
-    </div>
-    <div id="thatsAllBtn" class="section-small-title" style="text-align: center; display: none">That's all publications under current filter conditions.</div>
-    <div id="noPapers" class="section-small-title" style="text-align: center; display: none">No publications under current filter conditions.</div>
-  </section>
+      <div class="mt-3" style="text-align:center;">
+        <button id="showMoreBtn" class="btn show-more-btn" style="display:none">Show All</button>
+      </div>
+      <div id="thatsAllBtn" class="status-all" style="text-align:center;display:none"></div>
+      <div id="noPapers" class="status-none" style="text-align:center;display:none">No publications under current filter conditions.</div>
+    </section>
 
-  <!-- ══════════ Blogs ══════════ -->
-  <section id="blog" class="container">
+    <!-- ══════════ Blogs ══════════ -->
+    <section id="blog" class="section-card">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->
 
-    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom:2px solid #3498db">
-      <h2 class="wby-section-title" style="margin-bottom:1.5%;">Blogs</h2>
-
-      <div class="tech-dropdown-container" style="margin-bottom:1.5%;">
-        <select id="blogYearFilterDropdown" class="tech-dropdown-select">
+    <div class="section-header">
+      <h2 class="section-title">Blogs</h2>
+      <div class="section-filters">
+        
+      <select id="blogYearFilterDropdown" class="filter-select">
           <option value="">All Years</option>
           <option value="2025">2025</option>
         </select>
       </div>
     </div>
 
-
     <div id="blogList">
 
-      <div class="blog-item mb-3" style="display:none" data-year="2025">
-        <div class="blog-item-body" style="display:flex;align-items:flex-start;">
-          <div class="blog-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">Jul 9, 2025</div>
+      <div class="blog-item" style="display:none" data-year="2025">
+        <div class="blog-item-body">
+          <div class="blog-date">Jul 9, 2025</div>
           <div style="flex:1;">
-            <div class="blog-text" style="color:#444;font-size:.95rem;">Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?</div>
-            <div class="blog-links" style="margin-top:.5em;">
-              <a href="https://mp.weixin.qq.com/s/pYTTCaG-NUGQaBzNImyhIg" class="btn btn-outline-secondary btn-sm" target="_blank">中文</a>
-<a href="resources/blogs/html/MoPPS_en_2025-07-09.html" class="btn btn-outline-secondary btn-sm" target="_blank">English</a>
+            <div class="blog-text">Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?</div>
+            <div class="blog-links">
+              <a href="https://mp.weixin.qq.com/s/pYTTCaG-NUGQaBzNImyhIg" class="btn btn-sm" target="_blank">中文</a>
+<a href="resources/blogs/html/MoPPS_en_2025-07-09.html" class="btn btn-sm" target="_blank">English</a>
 
             </div>
           </div>
         </div>
       </div>
 
-      <div class="blog-item mb-3" style="display:none" data-year="2025">
-        <div class="blog-item-body" style="display:flex;align-items:flex-start;">
-          <div class="blog-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">May 20, 2025</div>
+      <div class="blog-item" style="display:none" data-year="2025">
+        <div class="blog-item-body">
+          <div class="blog-date">May 20, 2025</div>
           <div style="flex:1;">
-            <div class="blog-text" style="color:#444;font-size:.95rem;">Model Predictive Task Sampling: Enhancing Robustness and Efficiency in Adaptive Learning</div>
-            <div class="blog-links" style="margin-top:.5em;">
-              <a href="https://zhuanlan.zhihu.com/p/19813707921" class="btn btn-outline-secondary btn-sm" target="_blank">中文</a>
-<a href="resources/blogs/html/mpts_blog_final.html" class="btn btn-outline-secondary btn-sm" target="_blank">English</a>
+            <div class="blog-text">Model Predictive Task Sampling: Enhancing Robustness and Efficiency in Adaptive Learning</div>
+            <div class="blog-links">
+              <a href="https://zhuanlan.zhihu.com/p/19813707921" class="btn btn-sm" target="_blank">中文</a>
+<a href="resources/blogs/html/mpts_blog_final.html" class="btn btn-sm" target="_blank">English</a>
 
             </div>
           </div>
         </div>
       </div>
 
-      <div class="blog-item mb-3" style="display:none" data-year="2025">
-        <div class="blog-item-body" style="display:flex;align-items:flex-start;">
-          <div class="blog-date" style="min-width:100px;font-weight:600;color:#3498db;font-size:.9rem;">May 5, 2025</div>
+      <div class="blog-item" style="display:none" data-year="2025">
+        <div class="blog-item-body">
+          <div class="blog-date">May 5, 2025</div>
           <div style="flex:1;">
-            <div class="blog-text" style="color:#444;font-size:.95rem;">Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments (ICML2025)</div>
-            <div class="blog-links" style="margin-top:.5em;">
-              <a href="https://zhuanlan.zhihu.com/p/1901391961841210704" class="btn btn-outline-secondary btn-sm" target="_blank">中文</a>
-<a href="resources/blogs/html/PDTS_2025-05-05.html" class="btn btn-outline-secondary btn-sm" target="_blank">English</a>
+            <div class="blog-text">Fast and Robust: Task Sampling with Posterior and Diversity Synergies for Adaptive Decision-Makers in Randomized Environments (ICML2025)</div>
+            <div class="blog-links">
+              <a href="https://zhuanlan.zhihu.com/p/1901391961841210704" class="btn btn-sm" target="_blank">中文</a>
+<a href="resources/blogs/html/PDTS_2025-05-05.html" class="btn btn-sm" target="_blank">English</a>
 
             </div>
           </div>
@@ -1547,278 +1613,367 @@
     </div>
 
     <div class="text-center mt-4">
-      <button id="showMoreBlogsBtn" class="btn btn-primary showMoreBtn">Show More</button>
-      <div id="thatsAllBlogsBtn" class="section-small-title" style="text-align:center;display:none">That's all blogs!</div>
-      <div id="noBlogs" class="section-small-title" style="text-align:center;display:none">No blogs matching current filter.</div>
-    </div>
+      <button id="showMoreBlogsBtn" class="btn show-more-btn">Show More</button>
+      <div id="thatsAllBlogsBtn" class="status-all" style="text-align:center;display:none">That's all blogs!</div>
+      <div id="noBlogs" class="status-none" style="text-align:center;display:none">No blogs matching current filter.</div>
     </div>
 <!-- wby: 注意，切勿删除，程序代码识别blog结束部分 -->
-  </section>
+    </section>
 
-  <!-- ══════════ Team Members ══════════ -->
-  <section id="team" class="container">
+    <!-- ══════════ Team Members ══════════ -->
+    <section id="team" class="section-card">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- wby: 注意，切勿删除，程序代码识别team开始部分 -->
 
-    <div class="d-flex justify-content-between align-items-center mb-4" style="border-bottom:2px solid #3498db">
-      <h2 class="wby-section-title" style="margin-bottom:1.5%;">Team Members</h2>
-
-      <div class="tech-dropdown-container" style="margin-bottom:1.5%;">
-        <select id="degreeFilterDropdown" class="tech-dropdown-select">
-          <option value="">All Positions</option>
-          <option value="Associate Professor">Associate Professor</option>
-          <option value="Postdoctoral Fellow">Postdoctoral Fellow</option>
-          <option value="Ph.D. Student">Ph.D. Student</option>
-          <option value="Master Student">Master Student</option>
-          <option value="Undergraduate Student">Undergraduate Student</option>
-        </select>
-      </div>
+    <div class="section-header">
+      <h2 class="section-title">Team Members</h2>
     </div>
 
+    <div id="teamList" class="row" style="margin-left:-.5rem;margin-right:-.5rem;">
 
-    <div id="teamList" class="row">
-
-      <div class="col-12 member-section-header" data-position="Associate Professor / Postdoctoral Fellow">
-        <h4 style="color:#2c3e50;border-bottom:1px solid #e0e0e0;padding-bottom:.4em;margin-top:1.5em;margin-bottom:.8em;font-weight:600;">
-          Graduate Students
-        </h4>
+      <div class="col-12 member-section-header">
+        <h4>Faculty</h4>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Associate Professor / Postdoctoral Fellow">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Professor">
+        <div class="card h-100 member-card">
+          <div class="card-body">
+            <img src="resources/people_img/ji.jpg" alt="Xiangyang Ji"
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Xiangyang Ji</div>
+            <span class="member-badge badge-faculty">Professor</span>
+            
+            <div class="member-links">
+              <a href="https://www.au.tsinghua.edu.cn/info/1111/1524.htm" target="_blank" title="Homepage"><i class="fas fa-globe"></i></a>
+              <a href="https://scholar.google.com/citations?user=r4F-0HYAAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+              <a href="mailto:xyji@tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Associate Professor / Postdoctoral Fellow">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Qi (Cheems) Wang.jpg" alt="Qi (Cheems) Wang"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Qi (Cheems) Wang</h6>
-            <span class="badge badge-secondary" style="font-size:.75rem;">Associate Professor / Postdoctoral Fellow</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Qi (Cheems) Wang</div>
+            <span class="member-badge badge-faculty">Associate Professor / Postdoctoral Fellow</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://sites.google.com/view/albert-q-wang-at-ai-community/home" target="_blank" title="Homepage"><i class="fas fa-globe"></i></a> &nbsp; <a href="https://github.com/hhq123gogogo" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> &nbsp; <a href="https://scholar.google.com/citations?user=Mvbvv3IAAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a> &nbsp; <a href="mailto:cheemswang@mail.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
+            <div class="member-links">
+              <a href="https://sites.google.com/view/albert-q-wang-at-ai-community/home" target="_blank" title="Homepage"><i class="fas fa-globe"></i></a>
+              <a href="https://github.com/hhq123gogogo" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://scholar.google.com/citations?user=Mvbvv3IAAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+              <a href="mailto:cheemswang@mail.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Postdoctoral Fellow">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Postdoctoral Fellow">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Zixuan Zhang.jpg" alt="Zixuan Zhang"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Zixuan Zhang</h6>
-            <span class="badge badge-info" style="font-size:.75rem;">Postdoctoral Fellow</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Zixuan Zhang</div>
+            <span class="member-badge badge-postdoc">Postdoctoral Fellow</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://scholar.google.com/citations?hl=zh-CN&user=9OgmoxIAAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a> &nbsp; <a href="mailto:zixzhang@tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
+            <div class="member-links">
+              <a href="https://scholar.google.com/citations?hl=zh-CN&user=9OgmoxIAAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+              <a href="mailto:zixzhang@tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Master Student">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
-            <img src="resources/people_img/Boyuan Wang.jpg" alt="Boyuan Wang"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Boyuan Wang</h6>
-            <span class="badge badge-success" style="font-size:.75rem;">Master Student</span>
-            
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://github.com/BoyuanWang-hub" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> &nbsp; <a href="https://scholar.google.com/citations?user=BQyuCvwAAAAJ&hl=zh-CN&oi=sra" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a> &nbsp; <a href="mailto:wangby22@mail.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
-            </div>
-          </div>
-        </div>
+      <div class="col-12 member-section-header">
+        <h4>Students</h4>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Ph.D. Student">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Ph.D. Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Yun Qu.jpg" alt="Yun Qu"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Yun Qu</h6>
-            <span class="badge badge-primary" style="background-color:background-color:#007bff;font-size:.75rem;">Ph.D. Student</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Yun Qu</div>
+            <span class="member-badge badge-phd">Ph.D. Student</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://cloud-qu.github.io/" target="_blank" title="Homepage"><i class="fas fa-globe"></i></a> &nbsp; <a href="https://github.com/cloud-qu" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> &nbsp; <a href="https://scholar.google.com/citations?user=l9Ky9goAAAAJ&hl=zh-CN&oi=sra" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a> &nbsp; <a href="mailto:qy22@mail.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
+            <div class="member-links">
+              <a href="https://cloud-qu.github.io/" target="_blank" title="Homepage"><i class="fas fa-globe"></i></a>
+              <a href="https://github.com/cloud-qu" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://scholar.google.com/citations?user=l9Ky9goAAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+              <a href="mailto:qy22@mail.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Ph.D. Student">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Ph.D. Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Yixiu Mao.jpg" alt="Yixiu Mao"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Yixiu Mao</h6>
-            <span class="badge badge-primary" style="background-color:background-color:#007bff;font-size:.75rem;">Ph.D. Student</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Yixiu Mao</div>
+            <span class="member-badge badge-phd">Ph.D. Student</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://github.com/maoyixiu" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> &nbsp; <a href="https://scholar.google.com/citations?user=gNcb5LUAAAAJ&hl=zh-CN&oi=sra" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a> &nbsp; <a href="mailto:myx21@mails.tsinghua.edu" title="Email"><i class="fas fa-envelope"></i></a>
+            <div class="member-links">
+              <a href="https://github.com/maoyixiu" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://scholar.google.com/citations?user=gNcb5LUAAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+              <a href="mailto:myx21@mails.tsinghua.edu" title="Email"><i class="fas fa-envelope"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Ph.D. Student">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Ph.D. Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Yuhang Jiang.jpg" alt="Yuhang Jiang"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Yuhang Jiang</h6>
-            <span class="badge badge-primary" style="background-color:background-color:#007bff;font-size:.75rem;">Ph.D. Student</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Yuhang Jiang</div>
+            <span class="member-badge badge-phd">Ph.D. Student</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://github.com/Joy1112u" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> &nbsp; <a href="https://scholar.google.com/citations?user=hBuJU48AAAAJ&hl=zh-CN&oi=sra" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a> &nbsp; <a href="mailto:jiangyh19@mails.tsinghua.edu" title="Email"><i class="fas fa-envelope"></i></a>
+            <div class="member-links">
+              <a href="https://github.com/Joy1112u" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://scholar.google.com/citations?user=hBuJU48AAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+              <a href="mailto:jiangyh19@mails.tsinghua.edu" title="Email"><i class="fas fa-envelope"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Ph.D. Student">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Ph.D. Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Mengge Liu.jpg" alt="Mengge Liu"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Mengge Liu</h6>
-            <span class="badge badge-primary" style="background-color:background-color:#007bff;font-size:.75rem;">Ph.D. Student</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Mengge Liu</div>
+            <span class="member-badge badge-phd">Ph.D. Student</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://github.com/pigeonmg" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> &nbsp; <a href="mailto:lmg22@mails.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
+            <div class="member-links">
+              <a href="https://github.com/pigeonmg" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="mailto:lmg22@mails.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Master Student">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Ph.D. Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
+            <img src="resources/people_img/Heming Zou.jpg" alt="Heming Zou"
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Heming Zou</div>
+            <span class="member-badge badge-phd">Ph.D. Student</span>
+            
+            <div class="member-links">
+              <a href="https://scholar.google.com/citations?user=QI1LOoYAAAAJ" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="mailto:" title="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Master Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Jinghao Chen.jpg" alt="Jinghao Chen"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Jinghao Chen</h6>
-            <span class="badge badge-success" style="font-size:.75rem;">Master Student</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Jinghao Chen</div>
+            <span class="member-badge badge-master">Master Student</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://github.com/Joseph-Chen-Jh" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> &nbsp; <a href="mailto:chen-jh22@mails.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
+            <div class="member-links">
+              <a href="https://github.com/Joseph-Chen-Jh" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="mailto:chen-jh22@mails.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Master Student">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Master Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Wendong Huang.jpg" alt="Wendong Huang"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Wendong Huang</h6>
-            <span class="badge badge-success" style="font-size:.75rem;">Master Student</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Wendong Huang</div>
+            <span class="member-badge badge-master">Master Student</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://github.com/xbahqps" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> &nbsp; <a href="mailto:h18156731272@163.com" title="Email"><i class="fas fa-envelope"></i></a>
+            <div class="member-links">
+              <a href="https://github.com/xbahqps" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="mailto:h18156731272@163.com" title="Email"><i class="fas fa-envelope"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Undergraduate Student">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Undergraduate Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Wutong Xu.jpg" alt="Wutong Xu"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Wutong Xu</h6>
-            <span class="badge badge-secondary" style="font-size:.75rem;">Undergraduate Student</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Wutong Xu</div>
+            <span class="member-badge badge-undergrad">Undergraduate Student</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
+            <div class="member-links">
               
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Undergraduate Student">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Undergraduate Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
+            <img src="resources/people_img/Xiang Li.jpg" alt="Xiang Li"
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Xiang Li</div>
+            <span class="member-badge badge-undergrad">Undergraduate Student</span>
+            
+            <div class="member-links">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Undergraduate Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
+            <img src="resources/people_img/Yuyi Guo.jpg" alt="Yuyi Guo"
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Yuyi Guo</div>
+            <span class="member-badge badge-undergrad">Undergraduate Student</span>
+            
+            <div class="member-links">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Undergraduate Student">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Zhenchan Su.jpg" alt="Zhenchan Su"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Zhenchan Su</h6>
-            <span class="badge badge-secondary" style="font-size:.75rem;">Undergraduate Student</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Zhenchan Su</div>
+            <span class="member-badge badge-undergrad">Undergraduate Student</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
+            <div class="member-links">
               
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Ph.D. Student (Graduated)">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-12 member-section-header">
+        <h4>Alumni</h4>
+      </div>
+
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Ph.D. Student (Graduated)">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Jianzhun Shao.jpg" alt="Jianzhun Shao"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Jianzhun Shao</h6>
-            <span class="badge badge-light" style="background-color:background-color:#adb5bd; color:#fff;font-size:.75rem;">Ph.D. Student (Graduated)</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Jianzhun Shao</div>
+            <span class="member-badge badge-alumni">Ph.D. Student (Graduated)</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://github.com/qyz55" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> &nbsp; <a href="https://scholar.google.com/citations?user=uCLTRH8AAAAJ&hl=zh-CN&oi=sra" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+            <div class="member-links">
+              <a href="https://github.com/qyz55" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://scholar.google.com/citations?user=uCLTRH8AAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Ph.D. Student (Graduated)">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Ph.D. Student (Graduated)">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Hongchang Zhang.jpg" alt="Hongchang Zhang"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Hongchang Zhang</h6>
-            <span class="badge badge-light" style="background-color:background-color:#adb5bd; color:#fff;font-size:.75rem;">Ph.D. Student (Graduated)</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Hongchang Zhang</div>
+            <span class="member-badge badge-alumni">Ph.D. Student (Graduated)</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
+            <div class="member-links">
               
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Ph.D. Student (Graduated)">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Ph.D. Student (Graduated)">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Zihan Zhang.jpg" alt="Zihan Zhang"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Zihan Zhang</h6>
-            <span class="badge badge-light" style="background-color:background-color:#adb5bd; color:#fff;font-size:.75rem;">Ph.D. Student (Graduated)</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Zihan Zhang</div>
+            <span class="member-badge badge-alumni">Ph.D. Student (Graduated)</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
-              <a href="https://github.com/Zsubfunc" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> &nbsp; <a href="https://scholar.google.com/citations?user=un0eGzEAAAAJ&hl=zh-CN&oi=sra" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+            <div class="member-links">
+              <a href="https://github.com/Zsubfunc" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://scholar.google.com/citations?user=un0eGzEAAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-4 mb-4" style="display:none" data-position="Ph.D. Student (Graduated)">
-        <div class="card h-100 member-card" style="border:none;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:box-shadow .3s;">
-          <div class="card-body text-center" style="padding:1.8rem 1.2rem;">
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Ph.D. Student (Graduated)">
+        <div class="card h-100 member-card">
+          <div class="card-body">
             <img src="resources/people_img/Shuncheng He.jpg" alt="Shuncheng He"
-                 style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-bottom:1rem;border:3px solid #f0f0f0;"
-                 onerror="this.src='resources/people_img/default.jpg'">
-            <h6 style="color:#2c3e50;font-weight:600;margin-bottom:.3em;">Shuncheng He</h6>
-            <span class="badge badge-light" style="background-color:background-color:#adb5bd; color:#fff;font-size:.75rem;">Ph.D. Student (Graduated)</span>
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Shuncheng He</div>
+            <span class="member-badge badge-alumni">Ph.D. Student (Graduated)</span>
             
-            <div style="margin-top:.8em;font-size:1.1rem;" class="member-links">
+            <div class="member-links">
               <a href="https://github.com/Steven-Ho" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Master Student (Graduated)">
+        <div class="card h-100 member-card">
+          <div class="card-body">
+            <img src="resources/people_img/Boyuan Wang.jpg" alt="Boyuan Wang"
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">Boyuan Wang</div>
+            <span class="member-badge badge-alumni">Master Student (Graduated)</span>
+            
+            <div class="member-links">
+              <a href="https://github.com/BoyuanWang-hub" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://scholar.google.com/citations?user=BQyuCvwAAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+              <a href="mailto:wangby22@mail.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
             </div>
           </div>
         </div>
@@ -1826,26 +1981,38 @@
 
     </div>
 <!-- wby: 注意，切勿删除，程序代码识别team结束部分 -->
+    </section>
 
-  </section>
+    <!-- ══════════ Footer / Contact ══════════ -->
+    <footer class="site-footer" id="contact">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand-name">THU-<span class="brand-accent">IDM</span></div>
+          <p class="footer-tagline">Intelligent Decision-Making Team<br>Tsinghua University</p>
+        </div>
+        <div class="footer-info">
+          <p>
+            <i class="fas fa-map-marker-alt" style="color:#60a5fa;width:1.2em;"></i>
+            Room 825, Main Building, Tsinghua University, Beijing 100084<br>
+            <i class="fas fa-envelope" style="color:#60a5fa;width:1.2em;"></i>
+            <a href="mailto:cheemswang@mail.tsinghua.edu.cn">cheemswang@mail.tsinghua.edu.cn</a><br>
+            <i class="fab fa-github" style="color:#60a5fa;width:1.2em;"></i>
+            <a href="https://github.com/thu-rllab" target="_blank">github.com/thu-rllab</a><br>
+            <i class="fab fa-weixin" style="color:#60a5fa;width:1.2em;"></i>
+            WeChat Official Account: <strong style="color:rgba(255,255,255,.7);">SIG-IDM</strong>
+          </p>
+        </div>
+      </div>
+      <hr class="footer-divider">
+      <div class="footer-credits">
+        Web Contributors: Boyuan Wang &middot; Yun Qu &middot; Qi (Cheems) Wang
+      </div>
+    </footer>
 
-  <footer class="container" id="contact">
-    <h4>Contact Us</h4>
-    <p>
-      <strong>Address:</strong> 825, The Main Building, Tsinghua University, Beijing, China<br>
-      <strong>Email:</strong> cheemswang@mail.tsinghua.edu.cn<br>
-      <strong>Github:</strong> <a href="https://github.com/thu-rllab"> https://github.com/thu-rllab</a><br>
-      <strong>WeChat Official Account:</strong> SIG-IDM
-    </p>
-    <h6 style="margin-top: 1em; margin-bottom: -1em;">Web Contributors: Boyuan Wang, Yun Qu, Qi (Cheems) Wang</h6>
-  </footer>
+  </div><!-- /.page-inner -->
 
-  <!-- 将JavaScript文件放在底部 -->
   <script src="function.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
- <!-- 持续性工作：调整季老师显示位置的美观度，季老师越来越年轻越来越帅 -->
