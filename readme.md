@@ -1,4 +1,4 @@
-# About This Website 
+# About This Website
 
 ### 关于html中的publications格式
 - 所有论文统一保存在div id = publicationsList中
