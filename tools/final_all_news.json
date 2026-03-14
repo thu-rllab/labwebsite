@@ -1,5 +1,13 @@
 [
     {
+        "date": "20260126",
+        "content": "Our paper <strong>Dynamics-Predictive Sampling for Active RL Finetuning of Large Reasoning Models</strong> has been accepted to ICLR2026! Check out the <a href='https://arxiv.org/pdf/2603.10887'>full paper</a> for more details!"
+    },
+    {
+        "date": "20250920",
+        "content": "Our paper <strong>Adaptive Neighborhood-Constrained Q Learning for Offline Reinforcement Learning</strong> has been accepted to NeurIPS2025 as Spotlight! Check out the <a href='https://arxiv.org/pdf/2511.02567'>full paper</a> for more details!"
+    },
+    {
         "date": "20250918",
         "content": "Code for paper <strong>Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?</strong> is now publicly available! Visit the <a href='https://github.com/thu-rllab/MoPPS'>GitHub repository</a> to access it!"
     },

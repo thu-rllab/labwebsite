@@ -1,4 +1,13 @@
 {
+    "Dynamics-Predictive Sampling for Active RL Finetuning of Large Reasoning Models": [
+        "2026",
+        "ICLR 2026",
+        "Yixiu Mao, Yun Qu, Qi Wang, Heming Zou, Xiangyang Ji",
+        "https://arxiv.org/pdf/2603.10887",
+        "https://github.com/maoyixiu/DPS",
+        "nan",
+        "Reasoning Models"
+    ],
     "Can Prompt Difficulty be Online Predicted for Accelerating RL Finetuning of Reasoning Models?": [
         "2026",
         "KDD 2026",
@@ -102,8 +111,8 @@
         "2024",
         "NeurIPS 2024",
         "Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji",
-        "https://proceedings.neurips.cc/paper_files/paper/2024/file/a9f3457fa97f106f1756885237787789-Paper-Conference.pdf",
-        "nan",
+        "https://arxiv.org/pdf/2410.19400",
+        "https://github.com/maoyixiu/SCAS",
         "nan",
         "Offline RL"
     ],
@@ -156,8 +165,8 @@
         "2023",
         "ICML 2023",
         "Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji",
-        "https://proceedings.mlr.press/v202/mao23c/mao23c.pdf",
-        "https://github.com/thu-rllab/STR",
+        "https://arxiv.org/pdf/2311.08935",
+        "nan",
         "nan",
         "Offline RL"
     ],
@@ -388,10 +397,10 @@
     ],
     "Adaptive Neighborhood-Constrained Q Learning for Offline Reinforcement Learning": [
         "2025",
-        "arXiv 2025",
+        "NeurIPS 2025",
         "Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji",
-        "https://arxiv.org/abs/2511.02567",
-        "nan",
+        "https://arxiv.org/pdf/2511.02567",
+        "https://github.com/thu-rllab/ANQ",
         "nan",
         "Offline RL"
     ],

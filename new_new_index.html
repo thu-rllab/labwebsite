@@ -573,6 +573,8 @@
 
 
 
+
+
 <!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
 
     <div class="section-header">
@@ -581,6 +583,7 @@
         
       <select id="newsYearFilterDropdown" class="filter-select">
           <option value="">All Years</option>
+          <option value="2026">2026</option>
           <option value="2025">2025</option>
           <option value="2024">2024</option>
         </select>
@@ -588,6 +591,20 @@
     </div>
 
     <div id="newsList">
+
+      <div class="news-item" style="display:none" data-year="2026">
+        <div class="news-item-body">
+          <div class="news-date">Jan 26, 2026</div>
+          <div class="news-text">Our paper <strong>Dynamics-Predictive Sampling for Active RL Finetuning of Large Reasoning Models</strong> has been accepted to ICLR2026! Check out the <a href='https://arxiv.org/pdf/2603.10887'>full paper</a> for more details!</div>
+        </div>
+      </div>
+
+      <div class="news-item" style="display:none" data-year="2025">
+        <div class="news-item-body">
+          <div class="news-date">Sep 20, 2025</div>
+          <div class="news-text">Our paper <strong>Adaptive Neighborhood-Constrained Q Learning for Offline Reinforcement Learning</strong> has been accepted to NeurIPS2025 as Spotlight! Check out the <a href='https://arxiv.org/pdf/2511.02567'>full paper</a> for more details!</div>
+        </div>
+      </div>
 
       <div class="news-item" style="display:none" data-year="2025">
         <div class="news-item-body">
@@ -702,6 +719,8 @@
 
 
 
+
+
 <!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
 
     <div class="section-header">
@@ -770,6 +789,23 @@
     </div>
 
     <div id="publicationsList">
+
+      <div class="card mb-3 pub-card" style="display:none"
+           data-year="2026" data-authors="Yixiu Mao, Yun Qu, Qi Wang, Heming Zou, Xiangyang Ji" data-conference="ICLR 2026" data-tag="Reasoning Models">
+        <div class="card-body">
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">ICLR 2026</span>
+            <span class="tag-badge">Reasoning Models</span>
+          </div>
+          <div class="pub-title">Dynamics-Predictive Sampling for Active RL Finetuning of Large Reasoning Models</div>
+          <div class="pub-authors">Yixiu Mao, Yun Qu, Qi Wang, Heming Zou, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2603.10887" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/maoyixiu/DPS" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
+
+          </div>
+        </div>
+      </div>
 
       <div class="card mb-3 pub-card" style="display:none"
            data-year="2026" data-authors="Yun Qu, Qi (Cheems) Wang, Yixiu Mao, Vincent Tao Hu,  Xiangyang Ji" data-conference="KDD 2026" data-tag="Reasoning Models">
@@ -872,6 +908,23 @@
       </div>
 
       <div class="card mb-3 pub-card" style="display:none"
+           data-year="2025" data-authors="Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji" data-conference="NeurIPS 2025" data-tag="Offline RL">
+        <div class="card-body">
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">NeurIPS 2025</span>
+            <span class="tag-badge">Offline RL</span>
+          </div>
+          <div class="pub-title">Adaptive Neighborhood-Constrained Q Learning for Offline Reinforcement Learning</div>
+          <div class="pub-authors">Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2511.02567" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/ANQ" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2025" data-authors="Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji" data-conference="arXiv 2025" data-tag="Robust Adaptation">
         <div class="card-body">
           <div class="pub-venue-row">
@@ -899,22 +952,6 @@
           <div class="pub-authors">Heming Zou, Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji</div>
           <div>
             <a href="https://arxiv.org/abs/2510.16882" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="card mb-3 pub-card" style="display:none"
-           data-year="2025" data-authors="Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji" data-conference="arXiv 2025" data-tag="Offline RL">
-        <div class="card-body">
-          <div class="pub-venue-row">
-            <span class="venue-badge venue-arxiv">arXiv 2025</span>
-            <span class="tag-badge">Offline RL</span>
-          </div>
-          <div class="pub-title">Adaptive Neighborhood-Constrained Q Learning for Offline Reinforcement Learning</div>
-          <div class="pub-authors">Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji</div>
-          <div>
-            <a href="https://arxiv.org/abs/2511.02567" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
@@ -981,7 +1018,8 @@
           <div class="pub-title">Offline Reinforcement Learning with OOD State Correction and OOD Action Suppression</div>
           <div class="pub-authors">Yixiu Mao, Qi Wang, Chen Chen, Yun Qu, Xiangyang Ji</div>
           <div>
-            <a href="https://proceedings.neurips.cc/paper_files/paper/2024/file/a9f3457fa97f106f1756885237787789-Paper-Conference.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+            <a href="https://arxiv.org/pdf/2410.19400" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/maoyixiu/SCAS" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
@@ -1145,8 +1183,7 @@
           <div class="pub-title">Supported Trust Region Optimization for Offline Reinforcement Learning</div>
           <div class="pub-authors">Yixiu Mao, Hongchang Zhang, Chen Chen, Yi Xu, Xiangyang Ji</div>
           <div>
-            <a href="https://proceedings.mlr.press/v202/mao23c/mao23c.pdf" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
-<a href="https://github.com/thu-rllab/STR" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
+            <a href="https://arxiv.org/pdf/2311.08935" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
@@ -1553,6 +1590,8 @@
 
 
 
+
+
 <!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->
 
     <div class="section-header">
@@ -1622,6 +1661,8 @@
 
     <!-- ══════════ Team Members ══════════ -->
     <section id="team" class="section-card">
+
+
 
 
 
@@ -1747,9 +1788,10 @@
             <span class="member-badge badge-phd">Ph.D. Student</span>
             
             <div class="member-links">
+              <a href="https://maoyixiu.github.io/" target="_blank" title="Homepage"><i class="fas fa-globe"></i></a>
               <a href="https://github.com/maoyixiu" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
               <a href="https://scholar.google.com/citations?user=gNcb5LUAAAAJ" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
-              <a href="mailto:myx21@mails.tsinghua.edu" title="Email"><i class="fas fa-envelope"></i></a>
+              <a href="mailto:myx21@mails.tsinghua.edu.cn" title="Email"><i class="fas fa-envelope"></i></a>
             </div>
           </div>
         </div>
