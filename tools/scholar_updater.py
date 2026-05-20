@@ -31,6 +31,8 @@ Notes
   and gets the wrong match, add a "semantic_scholar_id" field to their entry
   in final_all_members.json with their numeric Semantic Scholar author ID.
   Example: "semantic_scholar_id": "2262347"
+- Xiang Li(2026-5-20): Scholar backend seems to be better. 
+  Semantic Scholar backend fails to find all new papers and sometimes returns invalid names.
 """
 
 import argparse
@@ -376,10 +378,18 @@ def main() -> None:
         if args.author and args.author.lower() not in name.lower():
             continue
 
-        # Skip postdoctoral fellows
+        # Skip postdoctoral fellows, professor and graduated student
         degree = info.get("degree", "")
         if "postdoc" in degree.lower():
             print(f"  Skipping {name} — postdoctoral fellow")
+            skipped += 1
+            continue
+        if "professor" in degree.lower():
+            print(f"  Skipping {name} — professor")
+            skipped += 1
+            continue
+        if "graduated" in degree.lower():
+            print(f"  Skipping {name} — graduated student")
             skipped += 1
             continue
 
