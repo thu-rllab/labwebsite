@@ -379,7 +379,7 @@
     ],
     "Small Generalizable Prompt Predictive Models Can Steer Efficient RL Post-Training of Large Reasoning Models": [
         "2026",
-        "arXiv 2026",
+        "ICML 2026",
         "Yun Qu, Qi Wang, Yixiu Mao, Heming Zou, Yuhang Jiang, Weijie Liu, Clive Bai, Kai Yang, Yangkun Chen, Saiyong Yang, Xiangyang Ji",
         "https://arxiv.org/abs/2602.01970",
         "nan",
@@ -387,8 +387,8 @@
         "Reasoning Models"
     ],
     "Utility-Diversity Aware Online Batch Selection for LLM Supervised Fine-tuning": [
-        "2025",
-        "arXiv 2025",
+        "2026",
+        "ICML 2026",
         "Heming Zou, Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji",
         "https://arxiv.org/abs/2510.16882",
         "nan",
@@ -412,5 +412,32 @@
         "nan",
         "nan",
         "Multi-Task Learning"
+    ],
+    "Listwise Policy Optimization: Group-based RLVR as Target-Projection on the LLM Response Simplex": [
+        "2026",
+        "arXiv 2026",
+        "Yun Qu, Qi Wang, Yixiu Mao, Heming Zou, Yuhang Jiang, Yingyue Li, Wutong Xu, Lizhou Cai, Weijie Liu, Clive Bai, Kai Yang, Yangkun Chen, Saiyong Yang, Xiangyang Ji",
+        "https://arxiv.org/abs/2605.06139",
+        "nan",
+        "nan",
+        "RL Post-training"
+    ],
+    "FlyloRA: Boosting task decoupling and parameter efficiency via implicit rank-wise mixture-of-experts": [
+        "2026",
+        "NeurIPS 2026",
+        "Heming Zou, Yunliang Zang, Wutong Xu, Yao Zhu, Xiangyang Ji",
+        "https://proceedings.neurips.cc/paper_files/paper/2025/hash/0f234479d4be0102b6a9ec5ebf75e881-Abstract-Conference.html",
+        "https://github.com/gfyddha/FlyLoRA",
+        "nan",
+        "nan"
+    ],
+    "Fly-cl: A fly-inspired framework for enhancing efficient decorrelation and reduced training time in pre-trained model-based continual representation learning": [
+        "2026",
+        "ICLR 2026",
+        "Heming Zou, Yunliang Zang, Wutong Xu, Xiangyang Ji",
+        "https://arxiv.org/abs/2510.16877",
+        "https://github.com/gfyddha/Fly-CL",
+        "nan",
+        "nan"
     ]
 }
