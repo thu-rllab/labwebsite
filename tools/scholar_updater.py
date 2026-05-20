@@ -31,7 +31,7 @@ Notes
   and gets the wrong match, add a "semantic_scholar_id" field to their entry
   in final_all_members.json with their numeric Semantic Scholar author ID.
   Example: "semantic_scholar_id": "2262347"
-- Xiang Li(2026-5-20): Scholar backend seems to be better. 
+- Xiang Li(2026-5-20): Scholar backend seems to be better.  
   Semantic Scholar backend fails to find all new papers and sometimes returns invalid names.
 """
 
