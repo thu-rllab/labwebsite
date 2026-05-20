@@ -103,10 +103,12 @@ class Pub2HTML:
     def _member_group(self, info):
         """Derive one of three display groups from a member's degree field."""
         degree = info.get("degree", "").lower()
-        if "professor" in degree or "postdoc" in degree:
+        if "professor" in degree:
             return "Faculty"
-        elif "graduated" in degree:
+        elif "graduated" in degree or "completed" in degree:
             return "Alumni"
+        elif "postdoc" in degree:
+            return "Faculty"
         else:
             return "Students"
 
