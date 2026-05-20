@@ -1,11 +1,27 @@
 [
     {
+        "date": "20260501",
+        "content": "Our paper <strong>Utility-Diversity Aware Online Batch Selection for LLM Supervised Fine-tuning</strong> has been accepted to ICML2026! Check out the <a href='https://arxiv.org/abs/2510.16882'>full paper</a> for more details!"
+    },
+    {
+        "date": "20260501",
+        "content": "Our paper <strong>Small Generalizable Prompt Predictive Models Can Steer Efficient RL Post-Training of Large Reasoning Models</strong> has been accepted to ICML2026! Check out the <a href='https://arxiv.org/abs/2602.01970'>full paper</a> for more details!"
+    },
+    {
         "date": "20260126",
         "content": "Our paper <strong>Dynamics-Predictive Sampling for Active RL Finetuning of Large Reasoning Models</strong> has been accepted to ICLR2026! Check out the <a href='https://arxiv.org/pdf/2603.10887'>full paper</a> for more details!"
     },
     {
+        "date": "20260126",
+        "content": "Our paper <strong>Fly-CL: A Fly-Inspired Framework for Enhancing Efficient Decorrelation and Reduced Training Time in Pre-trained Model-based Continual Representation Learning</strong> has been accepted to ICLR2026! Check out the <a href='https://arxiv.org/abs/2510.16877'>full paper</a> for more details!"
+    },
+    {
         "date": "20250920",
         "content": "Our paper <strong>Adaptive Neighborhood-Constrained Q Learning for Offline Reinforcement Learning</strong> has been accepted to NeurIPS2025 as Spotlight! Check out the <a href='https://arxiv.org/pdf/2511.02567'>full paper</a> for more details!"
+    },
+    {
+        "date": "20250920",
+        "content": "Our paper <strong>FlyLoRA: Boosting Task Decoupling and Parameter Efficiency via Implicit Rank-Wise Mixture-of-Experts</strong> has been accepted to NeurIPS2025! Check out the <a href='https://arxiv.org/abs/2510.08396'>full paper</a> for more details!"
     },
     {
         "date": "20250918",

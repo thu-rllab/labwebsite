@@ -423,8 +423,8 @@
         "RL Post-training"
     ],
     "FlyloRA: Boosting task decoupling and parameter efficiency via implicit rank-wise mixture-of-experts": [
-        "2026",
-        "NeurIPS 2026",
+        "2025",
+        "NeurIPS 2025",
         "Heming Zou, Yunliang Zang, Wutong Xu, Yao Zhu, Xiangyang Ji",
         "https://proceedings.neurips.cc/paper_files/paper/2025/hash/0f234479d4be0102b6a9ec5ebf75e881-Abstract-Conference.html",
         "https://github.com/gfyddha/FlyLoRA",
