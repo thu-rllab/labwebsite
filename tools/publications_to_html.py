@@ -359,7 +359,48 @@ class Pub2HTML:
             <img src="{img_path}" alt="{name}"
                  class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
             <div class="member-name">{name}</div>
-            <span class="member-badge {badge_cls}">{degree}</span>
+            <span class="member-badge {badge_cls}">{re.sub(r',?\s*website administrator', '', degree, flags=re.IGNORECASE).strip()}</span>
+            {bio_html}
+            <div class="member-links">
+              {links_html}
+            </div>
+          </div>
+        </div>
+      </div>
+""")
+            # ── Website Administrators section (non-exclusive, may overlap with primary group) ──
+        webadmins = [
+            (name, info) for name, info in self.all_members.items()
+            if "website administrator" in info.get("degree", "").lower()
+        ]
+        if webadmins:
+            member_cards.append("""
+      <div class="col-12 member-section-header">
+        <h4>Website Administrators</h4>
+      </div>
+""")
+            for name, info in webadmins:
+                img_path = "resources/people_img/ji.jpg" if "xiangyang" in name.lower() \
+                           else f"resources/people_img/{name}.jpg"
+                links = []
+                if info.get("website", "nan") != "nan":
+                    links.append(f'<a href="{info["website"]}" target="_blank" title="Homepage"><i class="fas fa-globe"></i></a>')
+                if info.get("github", "nan") != "nan":
+                    links.append(f'<a href="{info["github"]}" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>')
+                if info.get("scholar", "nan") != "nan":
+                    links.append(f'<a href="{info["scholar"]}" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>')
+                if info.get("email", "nan") != "nan":
+                    links.append(f'<a href="mailto:{info["email"]}" title="Email"><i class="fas fa-envelope"></i></a>')
+                links_html = "\n              ".join(links)
+                bio_html = f'<div class="member-bio">{info["bio"]}</div>' if info.get("bio") else ""
+                member_cards.append(f"""
+      <div class="col-md-6 col-lg-4 mb-3" style="display:none;padding:.5rem;" data-position="Website Administrator">
+        <div class="card h-100 member-card">
+          <div class="card-body">
+            <img src="{img_path}" alt="{name}"
+                 class="member-avatar" onerror="this.onerror=null;this.src='resources/people_img/default.svg'">
+            <div class="member-name">{name}</div>
+            <span class="member-badge badge-webadmin">Website Administrator</span>
             {bio_html}
             <div class="member-links">
               {links_html}
