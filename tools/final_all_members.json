@@ -100,9 +100,9 @@
     },
     "Wutong Xu":{
         "degree": "Undergraduate Student",
-        "github": "nan",
+        "github": "https://github.com/xwtMarch",
         "website": "nan",
-        "email": "nan",
+        "email": "xwt22@mails.tsinghua.edu.cn",
         "scholar": "nan",
         "semantic": "",
         "wechat": "nan"
@@ -111,21 +111,12 @@
         "degree": "Undergraduate Student",
         "github": "nan",
         "website": "nan",
-        "email": "nan",
+        "email": "tomfortomas@gmail.com",
         "scholar": "nan",
         "semantic": "",
         "wechat": "nan"
     },
     "Yuyi Guo":{
-        "degree": "Undergraduate Student",
-        "github": "nan",
-        "website": "nan",
-        "email": "nan",
-        "scholar": "nan",
-        "semantic": "",
-        "wechat": "nan"
-    },
-    "Zhenchan Su":{
         "degree": "Undergraduate Student",
         "github": "nan",
         "website": "nan",
@@ -169,5 +160,41 @@
         "scholar": "nan",
         "semantic": "",
         "wechat": "thudahsc"
+    },
+    "Mengyu Ge": {
+        "degree": "Undergraduate Student",
+        "github": "nan",
+        "website": "nan",
+        "email": "gemy23@mails.tsinghua.edu.cn",
+        "scholar": "nan",
+        "semantic": "",
+        "wechat": "nan"
+    },
+    "Haiyan Feng": {
+        "degree": "Undergraduate Student",
+        "github": "https://github.com/Petrel05",
+        "website": "nan",
+        "email": "fenghy23@mails.tsinghua.edu.cn",
+        "scholar": "nan",
+        "semantic": "",
+        "wechat": "nan"
+    },
+    "Yingyue Li": {
+        "degree": "Master Student",
+        "github": "https://github.com/liyingyue4586",
+        "website": "nan",
+        "email": "yingyue-21@mails.tsinghua.edu.cn",
+        "scholar": "https://scholar.google.com/citations?user=4BT3lrwAAAAJ",
+        "semantic": "",
+        "wechat": "nan"
+    },
+    "Yize Geng": {
+        "degree": "Undergraduate Student",
+        "github": "https://github.com/cheneen",
+        "website": "nan",
+        "email": "gengyz23@mails.tsinghua.edu.cn",
+        "scholar": "nan",
+        "semantic": "",
+        "wechat": "nan"
     }
 }
