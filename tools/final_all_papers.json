@@ -439,5 +439,23 @@
         "https://github.com/gfyddha/Fly-CL",
         "nan",
         "Reasoning Models"
+    ],
+    "DiverseGRPO: Mitigating Mode Collapse in Image Generation via Diversity-Aware GRPO": [
+        "2025",
+        "arXiv 2025",
+        "Henglin Liu, Huijuan Huang, Jing Wang, Chang Liu, Xiu Li, Xiangyang Ji",
+        "https://arxiv.org/abs/2512.21514",
+        "https://henglin-liu.github.io/DiverseGRPO/",
+        "nan",
+        "nan"
+    ],
+    "Stochastic Weakly Convex Optimization Under Heavy-Tailed Noises": [
+        "2025",
+        "arXiv 2025",
+        "Tianxi Zhu, Yi Xu, Xiangyang Ji",
+        "https://arxiv.org/abs/2507.13283",
+        "nan",
+        "nan",
+        "nan"
     ]
 }

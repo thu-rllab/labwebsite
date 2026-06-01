@@ -1,5 +1,9 @@
 [
     {
+        "date": "20260601",
+        "content": "Our paper <strong>Model Predictive Task Sampling for Efficient and Robust Adaptation</strong> has been accepted to <strong>Nature Communications</strong>! Check out the <a href='https://arxiv.org/pdf/2501.11039'>full paper</a> for more details!"
+    },
+    {
         "date": "20260501",
         "content": "Our paper <strong>Utility-Diversity Aware Online Batch Selection for LLM Supervised Fine-tuning</strong> has been accepted to ICML2026! Check out the <a href='https://arxiv.org/abs/2510.16882'>full paper</a> for more details!"
     },
