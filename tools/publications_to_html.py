@@ -109,6 +109,8 @@ class Pub2HTML:
             return "Alumni"
         elif "postdoc" in degree:
             return "Faculty"
+        elif "research team manager" in degree: # For now only yuhang jiang
+            return "Faculty"
         else:
             return "Students"
 
