@@ -457,5 +457,50 @@
         "nan",
         "nan",
         "nan"
+    ],
+    "TRACE: A Unified Rollout Budget Allocation Framework for Efficient Agentic Reinforcement Learning": [
+        "2026",
+        "arXiv 2026",
+        "Heming Zou, Qi Wang, Yun Qu, Yuhang Jiang, Lizhou Cai, Yixiu Mao, Runsi Peng, Xingzhong Xu, Weijie Liu, Kaixuan Yang, Saiyong Yang, Xiangyang Ji",
+        "https://arxiv.org/abs/2606.11119",
+        "nan",
+        "nan",
+        "Reasoning Models"
+    ],
+    "RLVR without Ineffective Samples: Group Prioritized Off-Policy Optimization for LLM Reasoning": [
+        "2026",
+        "arXiv 2026",
+        "Yixiu Mao, Yun Qu, Qi Wang, Heming Zou, Xiangyang Ji",
+        "https://arxiv.org/abs/2606.01281",
+        "nan",
+        "nan",
+        "Reasoning Models"
+    ],
+    "HINT: Hierarchical Interaction Modeling for Autoregressive Multi-Human Motion Generation": [
+        "2026",
+        "arXiv 2026",
+        "Mengge Liu, Yan Di, Gu Wang, Yun Qu, Dekai Zhu, Yanyan Li, Xiangyang Ji",
+        "https://arxiv.org/abs/2601.20383",
+        "nan",
+        "nan",
+        "nan"
+    ],
+    "A Unified Multi-Task Learning Framework for Generative Auto-Bidding with Validation-Aligned Optimization": [
+        "2025",
+        "arXiv 2025",
+        "Yiqin Lv, Zhiyu Mou, Miao Xu, Jinghao Chen, Qi Wang, Yixiu Mao, Yun Qu, Rongquan Bai, Chuan Yu, Jian Xu, Bo Zheng, Xiangyang Ji",
+        "https://www.semanticscholar.org/paper/8b39f0a8ee33b12c71518f5f9fa10a7d48b501e0",
+        "nan",
+        "nan",
+        "Multi-Task Learning"
+    ],
+    "Stop Wandering, Find the Keys: LLMs Discriminate Key States for Efficient Multi-Agent Exploration": [
+        "2024",
+        "arXiv 2024",
+        "Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji",
+        "https://arxiv.org/abs/2410.02511",
+        "nan",
+        "nan",
+        "MARL"
     ]
 }
