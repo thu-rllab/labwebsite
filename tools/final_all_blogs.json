@@ -1,7 +1,32 @@
 [
     {
+        "date": "20261004",
+        "content": "You Only Edit Once",
+        "cn_link": "resources/blogs/html/jev-lde-blog-zh.html",
+        "en_link": "resources/blogs/html/jev-lde-blog.html"
+    },
+    {
+        "date": "20261004",
+        "content": "NIPS26 LPO: Listwise Policy Optimization",
+        "cn_link": "resources/blogs/html/lpo_blog_zh.html",
+        "en_link": "resources/blogs/html/lpo_blog.html"
+    },
+    {
+        "date": "20261004",
+        "content": "POPO: RLVR Without Wasted Rollouts",
+        "cn_link": "resources/blogs/html/popo-blog-zh.html",
+        "en_link": "resources/blogs/html/popo-blog.html"
+    },
+    {
+        "date": "20261004",
+        "content": "EMNLP26 TRACE: Branch Where It Counts",
+        "cn_link": "resources/blogs/html/trace-blog-zh.html",
+        "en_link": "resources/blogs/html/trace-blog.html"
+    },
+    {
         "date": "20260608",
         "content": "<strong>[Nature Communications]</strong> Helping LLMs and Robots \"Interact Smartly\" \u2014 A Systematic Research Exploration from Xiangyang Ji's Group at Tsinghua University",
+        "cn_link": "resources/blogs/html/MPTS_article_zh.html",
         "en_link": "resources/blogs/html/mpts_article_en_5.html"
     },
     {

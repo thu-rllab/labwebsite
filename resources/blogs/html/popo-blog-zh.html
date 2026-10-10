@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>POPO：不再浪费 Rollout 的 RLVR</title>
+<meta name="description" content="通俗讲解组优先离策略优化（POPO）：无需额外 rollout，让 RLVR 的每个训练批次都充满有效数据。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf7f1; --surface:#ffffff; --surface-2:#f2ede3; --ink:#1c1a17; --muted:#6b645a; --line:#e3dccd;
+  --on:#2f6fdf; --on-soft:#dce7fb; --replay:#e08a12; --replay-soft:#fbe8cb;
+  --dead:#b9b2a6; --dead-soft:#ece8e0; --good:#1f9d6b; --bad:#d64545; --dapo:#c2410c;
+  --code-bg:#1f1d1a; --code-ink:#efe9dc;
+  --sans:Inter,"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --serif:Fraunces,"Noto Serif SC","Songti SC",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15130f; --surface:#1f1c17; --surface-2:#29251f; --ink:#f1ece2; --muted:#a79f92; --line:#3a352d;
+    --on:#6b9cff; --on-soft:#1f2c47; --replay:#f2a93b; --replay-soft:#3d2d14;
+    --dead:#6e675c; --dead-soft:#2b2822; --good:#3ecf94; --bad:#f07070; --dapo:#fb8a4c;
+    --code-bg:#0e0d0b; --code-ink:#efe9dc;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15130f; --surface:#1f1c17; --surface-2:#29251f; --ink:#f1ece2; --muted:#a79f92; --line:#3a352d;
+  --on:#6b9cff; --on-soft:#1f2c47; --replay:#f2a93b; --replay-soft:#3d2d14;
+  --dead:#6e675c; --dead-soft:#2b2822; --good:#3ecf94; --bad:#f07070; --dapo:#fb8a4c;
+  --code-bg:#0e0d0b; --code-ink:#efe9dc;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.85 var(--sans)}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:var(--serif);line-height:1.3;letter-spacing:0}
+h2{font-size:clamp(1.5rem,4vw,1.95rem);margin:3.2rem 0 .8rem}
+h3{font-size:1.2rem;margin:1.8rem 0 .4rem}
+p{margin:.9rem 0}
+em{font-style:normal;font-weight:600}
+a{color:var(--on)}
+code,.mono{font-family:"JetBrains Mono",monospace;font-size:.88em}
+.kicker{font:600 .8rem/1 var(--sans);letter-spacing:.12em;color:var(--replay)}
+
+header.hero{padding:4.5rem 0 2.5rem;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(2.1rem,6.5vw,3.2rem);font-weight:900;margin:.8rem 0 1rem}
+.hero h1 em{font-weight:900;background:linear-gradient(transparent 62%,var(--replay-soft) 62%)}
+.hero .dek{font-size:1.15rem;color:var(--muted);max-width:32em}
+.byline{margin-top:1.6rem;font-size:.92rem;color:var(--muted)}
+.byline strong{color:var(--ink);font-weight:600}
+.pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.pill{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:.25rem .8rem;font-size:.82rem;color:var(--muted)}
+
+.tldr{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--replay);border-radius:14px;padding:1.2rem 1.4rem;margin:2.2rem 0}
+.tldr ul{margin:.4rem 0 0;padding-left:1.1rem}
+.tldr li{margin:.35rem 0}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:2rem 0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1rem;text-align:center}
+.stat b{display:block;font:800 2rem/1.1 Fraunces,serif;color:var(--replay)}
+.stat span{font-size:.84rem;color:var(--muted);line-height:1.5;display:block;margin-top:.35rem}
+@media (max-width:520px){.stats{grid-template-columns:1fr}}
+
+.widget{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:1.3rem;margin:1.6rem 0}
+.widget .wtitle{font:600 .85rem/1 var(--sans);letter-spacing:.06em;color:var(--muted);margin-bottom:.9rem}
+.btn{font:600 .88rem var(--sans);border:1px solid var(--line);background:var(--surface-2);color:var(--ink);padding:.5rem .9rem;border-radius:10px;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+
+.chips{display:grid;grid-template-columns:repeat(8,1fr);gap:.4rem;margin-bottom:1rem}
+.chip{aspect-ratio:1;border-radius:10px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;cursor:pointer;user-select:none;transition:transform .12s}
+.chip:hover{transform:translateY(-2px)}
+.chip.ok{background:color-mix(in srgb,var(--good) 16%,transparent);border-color:var(--good);color:var(--good)}
+.chip.no{background:color-mix(in srgb,var(--bad) 13%,transparent);border-color:var(--bad);color:var(--bad)}
+.advs{display:grid;grid-template-columns:repeat(8,1fr);gap:.4rem;height:110px;align-items:center;position:relative;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line)}
+.advs::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid var(--line)}
+.adv{position:relative;height:100%}
+.adv i{position:absolute;left:18%;right:18%;border-radius:4px;transition:all .25s}
+.adv small{position:absolute;left:0;right:0;text-align:center;font:500 .7rem "JetBrains Mono";color:var(--muted)}
+.verdict{margin-top:.9rem;padding:.7rem .9rem;border-radius:10px;font-weight:500;font-size:.95rem}
+.verdict.dead{background:var(--dead-soft);color:var(--muted)}
+.verdict.live{background:var(--on-soft);color:var(--ink)}
+
+.lane-label{font-size:.82rem;color:var(--muted);margin:.8rem 0 .35rem;display:flex;justify-content:space-between;gap:.6rem}
+.lane{display:grid;grid-template-columns:repeat(12,1fr);gap:.3rem}
+.slot{aspect-ratio:1;border-radius:7px;display:flex;align-items:center;justify-content:center;font:600 .66rem "JetBrains Mono";transition:background .3s}
+.slot.on{background:var(--on);color:#fff}
+.slot.dead{background:var(--dead-soft);color:var(--dead);border:1.5px dashed var(--dead)}
+.slot.rep{background:var(--replay);color:#1c1a17}
+.slot.empty{background:transparent;border:1.5px dashed var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-size:.82rem;color:var(--muted);margin-top:.9rem}
+.legend span::before{content:"";display:inline-block;width:.8rem;height:.8rem;border-radius:3px;margin-right:.35rem;vertical-align:-1px;background:var(--c)}
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:1rem}
+.meter{background:var(--surface-2);border-radius:10px;padding:.6rem .8rem;font-size:.85rem}
+.meter b{font:800 1.4rem Fraunces,serif;display:block}
+input[type=range]{accent-color:var(--replay);width:140px}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:1.4rem 0}
+@media (max-width:640px){.cards{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1rem}
+.card h4{margin:0 0 .3rem;font:600 1rem var(--sans)}
+.card .tag{font-size:.76rem;font-weight:600;letter-spacing:.04em}
+.card p{font-size:.9rem;margin:.4rem 0 0;color:var(--muted)}
+.card .cost{color:var(--bad)}
+
+.eq{background:var(--surface-2);border-radius:12px;padding:1rem 1.1rem;font-family:"JetBrains Mono","Noto Sans SC",monospace;font-size:.86rem;overflow-x:auto;white-space:nowrap;line-height:1.9}
+.eq .w{color:var(--replay);font-weight:600}
+.eq .r{color:var(--on);font-weight:600}
+.compare{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:1.2rem 0}
+@media (max-width:640px){.compare{grid-template-columns:1fr}}
+.cmp{border:1px solid var(--line);border-radius:12px;padding:.9rem;background:var(--surface)}
+.cmp.win{border:2px solid var(--replay)}
+.cmp h4{margin:0 0 .3rem;font:600 .95rem var(--sans)}
+.cmp .mono{display:block;color:var(--muted);margin-bottom:.4rem}
+.cmp p{font-size:.86rem;margin:.2rem 0;color:var(--muted)}
+
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+.tab{font:600 .82rem var(--sans);padding:.4rem .8rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.tab.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.bars{display:grid;gap:.45rem}
+.bar{display:grid;grid-template-columns:70px 1fr 64px;gap:.6rem;align-items:center;font-size:.85rem}
+.bar .track{background:var(--surface-2);border-radius:6px;height:22px;overflow:hidden}
+.bar .fill{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.bar .val{font:600 .82rem "JetBrains Mono";text-align:right}
+.bar.popo .name{font-weight:700}
+.metric-h{font-size:.84rem;color:var(--muted);margin:1.1rem 0 .5rem;letter-spacing:.04em;font-weight:600}
+.note{font-size:.84rem;color:var(--muted)}
+
+.abl{display:grid;gap:.6rem;margin:1.2rem 0}
+.ab{display:grid;grid-template-columns:auto 1fr;gap:.8rem;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem}
+.ab .icon{font-size:1.3rem;line-height:1.4}
+.ab b{font-family:"JetBrains Mono",monospace;font-size:.86rem}
+.ab p{margin:.15rem 0 0;font-size:.9rem;color:var(--muted)}
+
+pre{background:var(--code-bg);color:var(--code-ink);border-radius:14px;padding:1.1rem 1.2rem;overflow-x:auto;font:400 .82rem/1.65 "JetBrains Mono","Noto Sans SC",monospace}
+pre .c{color:#8f887b}
+pre .k{color:#f2a93b}
+pre .h{background:rgba(242,169,59,.16);display:inline-block;width:100%}
+
+blockquote{margin:1.5rem 0;padding:.2rem 0 .2rem 1.1rem;border-left:3px solid var(--on);font-family:var(--serif);font-size:1.15rem;color:var(--ink)}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 4rem;font-size:.88rem;color:var(--muted)}
+footer pre{font-size:.76rem}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="hero">
+  <div class="kicker">研究博客 · 大模型推理中的强化学习</div>
+  <h1>别再为<em>学不到东西</em>的 rollout 买单</h1>
+  <p class="dek">介绍 POPO：一个即插即用的简单方法，无需额外生成任何样本，就能让 RLVR 的每个训练批次都装满有效数据。</p>
+  <div class="byline"><strong>Yixiu Mao, Yun Qu, Qi Wang, Heming Zou, Xiangyang Ji</strong> · 清华大学自动化系</div>
+  <div class="pills">
+    <span class="pill">arXiv:2606.01281</span>
+    <span class="pill">兼容 GRPO · RLOO · PPO</span>
+    <span class="pill">数学 · 规划 · 视觉几何</span>
+  </div>
+</header>
+
+<div class="tldr">
+  <strong>一句话总结</strong>
+  <ul>
+    <li>在 RLVR 训练中，GRPO 每个批次里常常有<strong>一半甚至更多</strong>是“死数据”：模型对这些题目要么全对、要么全错，梯度为零。</li>
+    <li>DAPO 的做法是<em>多采样</em>一些题目，再把无效的丢掉。有效，但代价高昂。</li>
+    <li><strong>POPO</strong> 用一个小型回放缓冲区里<em>最近</em>的有效组，替换掉每个无效组。随后，它对这些数据轻微的离策略偏差进行校正，同时保留对当前策略的 PPO 式约束。</li>
+    <li>结果：<strong>只用 DAPO 约 30% 的 rollout、约一半的训练时间，就达到与 DAPO 相当的准确率。</strong></li>
+  </ul>
+</div>
+
+<div class="stats">
+  <div class="stat"><b>100%</b><span>每个训练批次都是有效数据；原始 GRPO 通常不到 50%</span></div>
+  <div class="stat"><b>~30%</b><span>只需 DAPO 约三成的 rollout 预算即可达到相当准确率</span></div>
+  <div class="stat"><b>0</b><span>无额外 rollout，也无额外似然计算；缓冲区仅存一个批次</span></div>
+</div>
+
+<!-- ───────────── 第 1 节 ───────────── -->
+<h2>GRPO 里悄无声息的浪费</h2>
+<p>可验证奖励强化学习（RLVR）就像一位极有耐心的家教。给模型一道题，让它尝试 <em>k</em> 次，逐一判对错，再引导它向“比平均水平更好”的回答靠拢。GRPO 把这件事写成<strong>优势函数</strong>：每个回答的奖励减去组内均值，再除以组内标准差。</p>
+<p>现在设想一道模型每次都能做对的题，或者一道它从来做不对的题。每次尝试得分都一样，这组回答里不存在“比平均更好”，所有优势值都是零。模型花了大量 GPU 时间写出八条长长的思维链，却什么也没学到。</p>
+<p>亲手试试：点击下面的回答，在对错之间切换。</p>
+
+<div class="widget" id="demo1">
+  <div class="wtitle">演示 · 一道题，八次尝试</div>
+  <div class="chips" id="chips"></div>
+  <div class="advs" id="advs"></div>
+  <div class="verdict" id="verdict"></div>
+  <div class="row" style="margin-top:.9rem">
+    <button class="btn" data-preset="all1">全对</button>
+    <button class="btn" data-preset="all0">全错</button>
+    <button class="btn" data-preset="mix">有对有错</button>
+    <button class="btn" data-preset="rand">随机</button>
+  </div>
+</div>
+
+<p>这并不是个别现象。论文实验显示，原始 GRPO 训练批次中<strong>有效组的比例通常不到一半</strong>。无论是数学（DeepScaleR）、算术规划（Countdown）还是视觉几何都是如此。而且随着模型变强，更多题目会变成“全对”的简单组，问题会越来越严重。</p>
+
+<!-- ───────────── 第 2 节 ───────────── -->
+<h2>现有的三种解法，各有各的代价</h2>
+<div class="cards">
+  <div class="card">
+    <span class="tag" style="color:var(--dapo)">过采样 + 过滤</span>
+    <h4>DAPO</h4>
+    <p>多 rollout 一些题目，丢掉零方差的，不断重复直到凑满一个批次。</p>
+    <p class="cost">代价：额外 rollout 的开销可能比 RL 更新本身还大。</p>
+  </div>
+  <div class="card">
+    <span class="tag" style="color:var(--good)">先预测</span>
+    <h4>预测式采样</h4>
+    <p>在 rollout 前预测哪些题目是“中等难度”，例如 MoPPS、GRESO。</p>
+    <p class="cost">代价：模型在不断变化、每道题历史数据又少，预测很难做准。</p>
+  </div>
+  <div class="card">
+    <span class="tag" style="color:var(--on)">回放答案</span>
+    <h4>轨迹回放</h4>
+    <p>往全错的组里塞一个历史上的正确答案，例如 ARPO。</p>
+    <p class="cost">代价：全对的组依然无效；组内混入不同策略的回答，会让优势估计失真。</p>
+  </div>
+</div>
+
+<!-- ───────────── 第 3 节 ───────────── -->
+<h2>POPO 的思路：回放整组，而不是单条回答</h2>
+<p>想象一位足球教练，他有一条铁律：场上<em>每个</em>位置都必须由真正能踢的人来填。首发球员临场受伤时，他不会去街上现拉一个陌生人，那相当于 DAPO 的额外 rollout。他也不会硬塞一个半伤不愈的球员凑数，那相当于轨迹回放。他会换上<strong>上一场刚踢得不错的替补</strong>。</p>
+<p>这就是<strong>优先组回放</strong>，它遵循两条规则：</p>
+<ul>
+  <li><strong>质量决定谁能上替补席。</strong>只有有效组，也就是有对有错的组，才会进入缓冲区。</li>
+  <li><strong>新鲜度决定谁被派上场。</strong>缓冲区是一个先进先出（FIFO）队列，POPO 总是取<em>最新</em>的组。最近的组来自与当前策略非常接近的策略。</li>
+</ul>
+<p>为什么“新”能代表“接近当前策略”？PPO 式裁剪让每一步更新都很小。因此两个策略之间的差距，按总变差距离衡量，最多随间隔步数<em>线性</em>增长：相隔 n 步时不超过 εn/2。所以新鲜度就是一个免费的相似度代理，完全不用计算 KL 散度。</p>
+
+<div class="widget" id="demo2">
+  <div class="wtitle">演示 · 看 POPO 如何填满一个批次（每步 12 道题）</div>
+  <div class="row" style="justify-content:space-between">
+    <div class="row">
+      <button class="btn primary" id="stepBtn">▶ 下一训练步</button>
+      <button class="btn" id="autoBtn">自动播放</button>
+      <button class="btn" id="resetBtn">重置</button>
+    </div>
+    <label class="note">题目有效的概率：<strong id="pLabel">40%</strong><br><input type="range" id="pSlider" min="10" max="90" value="40"></label>
+  </div>
+  <div class="lane-label"><span>新鲜 rollout（GRPO 实际训练的数据）</span><span id="stepLabel">第 0 步</span></div>
+  <div class="lane" id="laneOnline"></div>
+  <div class="lane-label"><span>POPO 的训练批次（无效组被替换为最近的回放组；数字为相隔步数）</span></div>
+  <div class="lane" id="lanePopo"></div>
+  <div class="lane-label"><span>回放缓冲区（FIFO，容量 = 批次大小；最新的在右侧）</span></div>
+  <div class="lane" id="laneBuf"></div>
+  <div class="legend">
+    <span style="--c:var(--on)">新鲜且有效</span>
+    <span style="--c:var(--dead)">新鲜但无效（零方差）</span>
+    <span style="--c:var(--replay)">从缓冲区回放</span>
+  </div>
+  <div class="meters">
+    <div class="meter">GRPO 有效样本比例<b id="mGrpo">–</b></div>
+    <div class="meter">POPO 有效样本比例<b id="mPopo">–</b></div>
+  </div>
+</div>
+
+<p>两个细节让它既便宜又干净。第一，缓冲区最多只存<strong>一个批次</strong>的组，内存开销几乎可以忽略。第二，由于是整组回放，组内每条回答都来自<em>同一个</em>策略。这样组内优势依然定义良好，生成数据的行为策略也是确定的，而这一点对下一步至关重要。</p>
+
+<!-- ───────────── 第 4 节 ───────────── -->
+<h2>用“稍旧”的数据，却不被它拖累</h2>
+<p>回放组是由一个较旧的策略生成的，记作 π<sub>β</sub>。如果直接假装它是新数据，梯度就会有偏差。已有工作有两种处理方式，POPO 采取了第三种。</p>
+
+<div class="compare">
+  <div class="cmp">
+    <h4>当作在策略数据</h4>
+    <span class="mono">clip(π<sub>θ</sub>/π<sub>old</sub>)</span>
+    <p>✗ 只要 π<sub>β</sub> ≠ π<sub>old</sub> 就有偏</p>
+    <p>消融实验中<strong>直接崩溃</strong>。</p>
+  </div>
+  <div class="cmp">
+    <h4>向旧策略裁剪</h4>
+    <span class="mono">clip(π<sub>θ</sub>/π<sub>β</sub>)</span>
+    <p>✓ 无偏</p>
+    <p>✗ 把模型拴在一个<em>更差</em>的策略上，而且每个回放样本拴的位置还不一样。裁剪触发过于频繁。</p>
+  </div>
+  <div class="cmp win">
+    <h4>POPO：把两件事解耦</h4>
+    <span class="mono">(π<sub>old</sub>/π<sub>β</sub>) · clip(π<sub>θ</sub>/π<sub>old</sub>)</span>
+    <p>✓ 无偏：第一个因子负责校正分布</p>
+    <p>✓ 与在策略数据同一根“缰绳”：裁剪始终锚定 π<sub>old</sub></p>
+  </div>
+</div>
+
+<p>关键技巧在于：完整的重要性比率 π<sub>θ</sub>/π<sub>β</sub> 可以拆成两个因子，各司其职：</p>
+<div class="eq">
+  π<sub>θ</sub>/π<sub>β</sub> &nbsp;=&nbsp; <span class="r">π<sub>θ</sub>/π<sub>old</sub></span> &nbsp;×&nbsp; <span class="w">π<sub>old</sub>/π<sub>β</sub></span><br>
+  loss<sub>replay</sub> &nbsp;=&nbsp; <span class="w">w</span> · min( <span class="r">r</span>·Â , clip(<span class="r">r</span>, 1±ε)·Â ) &nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">// w 为常数，不回传梯度</span>
+</div>
+<p><span style="color:var(--replay);font-weight:600">橙色因子</span>校正<em>数据从哪里来</em>。<span style="color:var(--on);font-weight:600">蓝色比率</span>决定<em>这一步最多能走多远</em>，它使用的信任域与新鲜数据完全相同。</p>
+<p>论文证明：在两个比率都未被裁剪的位置，该目标与完整校正的 π<sub>β</sub> 版本给出完全相同的值和梯度。唯一的区别是<em>缰绳拴在哪个策略上</em>。这就像一个导航仪：它会考虑地图是在哪里绘制的，但下一次转弯永远从你此刻所站的位置算起。</p>
+<blockquote>校正过去，锚定当下。</blockquote>
+
+<!-- ───────────── 第 5 节 ───────────── -->
+<h2>整个算法写在一张餐巾纸上就够了</h2>
+<p>落到代码上，POPO 只多了一个过滤、一个小队列和一次乘法：</p>
+<pre><span class="k">buffer</span> = FIFO(capacity=B)          <span class="c"># 存储组及其 rollout 时的对数概率</span>
+
+<span class="k">for</span> step <span class="k">in</span> range(T):
+    groups  = rollout(policy, sample_prompts(B), k)          <span class="c"># 与 GRPO 成本相同</span>
+    on_eff  = [g <span class="k">for</span> g <span class="k">in</span> groups <span class="k">if</span> std(g.rewards) &gt; 0]      <span class="c"># 丢弃无效组</span>
+    off_eff = buffer.newest(B - len(on_eff))                  <span class="c"># 用最新的组补满</span>
+
+    loss = grpo_loss(on_eff)
+<span class="h">    w    = exp(logp_old(off_eff) - off_eff.logp_beta).clamp(max=2.0).detach()</span>
+<span class="h">    loss += (w * grpo_token_loss(off_eff)).aggregate()       # 解耦校正</span>
+    optimize(policy, loss)
+
+    buffer.push(on_eff)                                       <span class="c"># 存入本步的有效组</span></pre>
+<p class="note">实际实现中，论文还将重要性权重 w 截断在 2.0 以内，以抑制罕见的离群值。论文未观察到由方差引起的不稳定。</p>
+
+<!-- ───────────── 第 6 节 ───────────── -->
+<h2>效果如何？选一个基准看看</h2>
+<p>POPO 的对比对象包括 GRPO、DAPO（昂贵的“金标准”）、MoPPS（预测式采样）和 ARPO（轨迹回放）。实验覆盖四种设置：Countdown 上的 Qwen2.5-3B、Geometry3k 上的 Qwen2.5-VL-3B，以及 DeepScaleR 数学数据上的 DeepSeek-R1-Distill-Qwen 1.5B 与 7B。</p>
+
+<div class="widget">
+  <div class="wtitle">交互式结果 · 最终准确率与开销</div>
+  <div class="tabs" id="tabs"></div>
+  <div class="metric-h" id="accH">准确率（%）</div>
+  <div class="bars" id="accBars"></div>
+  <div class="metric-h">训练耗时（小时）</div>
+  <div class="bars" id="rtBars"></div>
+  <div id="roWrap">
+    <div class="metric-h">生成的 rollout 总数（千条）</div>
+    <div class="bars" id="roBars"></div>
+  </div>
+  <p class="note" id="resNote" style="margin-top:.9rem"></p>
+</div>
+
+<p>规律在所有设置中都成立：POPO <strong>与 DAPO 持平或非常接近</strong>，并明显领先 GRPO、ARPO 和 MoPPS，而开销却与原始 GRPO 相近。相比 GRPO 略多的训练时间其实是个好信号：POPO 训练出的模型会写出更长的推理链，趋势与 DAPO 一致，而更长的推理被认为与更强的推理能力相关。</p>
+<p>几个值得细看的亮点：</p>
+<ul>
+  <li>在 1.5B 数学模型上，POPO 在 <strong>AIME25 上达到 29.9</strong>，GRPO 为 26.9，DAPO 为 27.5。</li>
+  <li>收益能迁移到分布外的<strong>通用推理</strong>任务：在 GPQA-diamond 上，POPO 达到 30.3，GRPO 为 27.5。</li>
+  <li>POPO 只需 <strong>40%–70% 的训练步数</strong>就能达到 GRPO 的<em>最终</em>准确率。</li>
+</ul>
+
+<!-- ───────────── 第 7 节 ───────────── -->
+<h2>故意拆掉零件：消融实验告诉我们什么</h2>
+<p>POPO 的每个部件都不可或缺。下面是在 Countdown 上去掉或替换各个部件后的结果：</p>
+<div class="abl">
+  <div class="ab"><div class="icon">🐢</div><div><b>POPO-KL</b> — 从 5 倍大的缓冲区中按 KL 距离挑选回放组
+    <p>准确率相当，但更慢：4.8 小时对比 3.2 小时。新鲜度是免费且有效的距离替代指标。</p></div></div>
+  <div class="ab"><div class="icon">📉</div><div><b>GRPO-filter</b> — 丢弃无效组，用更小的批次训练
+    <p>只比 GRPO 略好。批次变小会让梯度更嘈杂，所以关键在于<em>补满</em>批次。</p></div></div>
+  <div class="ab"><div class="icon">🗑️</div><div><b>POPO-ineff</b> — 回放最近的组，不管是否有效
+    <p>性能明显下降，说明质量过滤很重要。</p></div></div>
+  <div class="ab"><div class="icon">🧟</div><div><b>POPO-stale(10)</b> — 从 10 倍大的缓冲区中随机回放有效组
+    <p>直接崩溃。而 1 倍随机缓冲区只是略差，说明新鲜度很重要，但 POPO 对新鲜度的小幅变化并不脆弱。</p></div></div>
+  <div class="ab"><div class="icon">⚓</div><div><b>POPO-π<sub>β</sub></b> — 改为向行为策略裁剪
+    <p>学习变慢，这正是“缰绳拴在过去”问题的体现。</p></div></div>
+  <div class="ab"><div class="icon">💥</div><div><b>POPO-π<sub>old</sub></b> — 把回放数据当作在策略数据
+    <p>由于偏差未被校正，性能崩溃。</p></div></div>
+</div>
+
+<!-- ───────────── 第 8 节 ───────────── -->
+<h2>与其他方法和谐共处</h2>
+<p>POPO 是一个插件，而不是一套全新的算法，论文也正是这样测试它的：</p>
+<ul>
+  <li><strong>其他基础算法：</strong>把 POPO 加到 RLOO 或 PPO 上，在 Countdown 上都能加快训练并提升最终准确率。</li>
+  <li><strong>组大小从 4 到 32：</strong>POPO 始终优于 GRPO，并与 DAPO 保持相当。</li>
+  <li><strong>预测式采样：</strong>POPO + MoPPS 保持 100% 有效批次，<em>同时</em>提高了新鲜在策略组的占比，学得比两者单独使用都快。MoPPS 负责找到更多好题目，POPO 负责兜底。</li>
+  <li><strong>补充比例：</strong>补充的比例越高，准确率越高。在整个范围内，POPO 都能与 DAPO 持平，而 rollout 成本保持不变。</li>
+</ul>
+
+<!-- ───────────── 第 9 节 ───────────── -->
+<h2>坦诚面对局限</h2>
+<p>只记住最近一个批次的缓冲区是刻意“健忘”的。它放弃复用更早但可能有价值的组，换取更小的离策略差距，也不会刻意挑选<em>最</em>有信息量的组。作者提出了一个未来方向：短期缓冲区加上一个小型长期“蓄水池”，用来保存特别有价值的组。他们还建议每步生成更少的新 rollout，更多地依赖回放。此外，零方差判定假设奖励是二值（或近似二值）的。对于连续奖励，可以改用低方差阈值。</p>
+
+<h2>结语</h2>
+<p>生成是 RLVR 中最昂贵的环节，而其中相当大一部分却因零梯度组被白白浪费。POPO 的解法小巧得令人耳目一新：保留上一批次的有效组，替换掉今天的无效组，再乘上一个重要性权重，让数学保持严谨。回报是：以 GRPO 量级的 rollout 预算，得到 DAPO 级别的结果。</p>
+<blockquote>批次里的每一个位置都应该教会模型一点东西，而做到这一点不应再多花一次 rollout。</blockquote>
+
+<footer>
+  <p><strong>论文：</strong>Yixiu Mao, Yun Qu, Qi Wang, Heming Zou, Xiangyang Ji. <em>RLVR without Ineffective Samples: Group Prioritized Off-Policy Optimization for LLM Reasoning.</em> arXiv:2606.01281, 2026.</p>
+<pre>@article{mao2026popo,
+  title   = {RLVR without Ineffective Samples: Group Prioritized
+             Off-Policy Optimization for LLM Reasoning},
+  author  = {Mao, Yixiu and Qu, Yun and Wang, Qi and Zou, Heming and Ji, Xiangyang},
+  journal = {arXiv preprint arXiv:2606.01281},
+  year    = {2026}
+}</pre>
+</footer>
+</div>
+
+<script>
+/* ---------- 演示 1：零方差优势 ---------- */
+(function(){
+  let r=[1,0,1,1,0,0,1,0];
+  const chips=document.getElementById('chips'), advs=document.getElementById('advs'), verdict=document.getElementById('verdict');
+  function render(){
+    const k=r.length, mean=r.reduce((a,b)=>a+b,0)/k;
+    const std=Math.sqrt(r.reduce((a,b)=>a+(b-mean)**2,0)/k);
+    chips.innerHTML=''; advs.innerHTML='';
+    r.forEach((v,i)=>{
+      const c=document.createElement('div');
+      c.className='chip '+(v?'ok':'no'); c.textContent=v?'✓':'✗';
+      c.title='点击切换'; c.onclick=()=>{r[i]=1-r[i];render();};
+      chips.appendChild(c);
+      const a=std>0?(v-mean)/std:0;
+      const cell=document.createElement('div'); cell.className='adv';
+      const bar=document.createElement('i');
+      const h=Math.min(Math.abs(a)/2.7,1)*50;
+      bar.style.height=(h||1)+'%';
+      if(a>=0){bar.style.bottom='50%';bar.style.background='var(--good)';}
+      else{bar.style.top='50%';bar.style.background='var(--bad)';}
+      if(std===0){bar.style.background='var(--dead)';bar.style.top='calc(50% - 1px)';bar.style.bottom='';bar.style.height='2px';}
+      const lab=document.createElement('small'); lab.textContent=(a>=0?'+':'')+a.toFixed(2);
+      lab.style[a>=0?'top':'bottom']='2px';
+      cell.appendChild(bar); cell.appendChild(lab); advs.appendChild(cell);
+    });
+    if(std===0){
+      verdict.className='verdict dead';
+      verdict.innerHTML='🪦 <strong>无效组。</strong>所有奖励都是 '+r[0]+'，标准差为 0，所有优势都是 0。八次完整的 rollout，梯度为零。';
+    }else{
+      verdict.className='verdict live';
+      verdict.innerHTML='⚡ <strong>有效组。</strong>平均奖励 '+mean.toFixed(2)+'，标准差 '+std.toFixed(2)+'。正确回答被强化，错误回答被抑制。';
+    }
+  }
+  document.querySelectorAll('#demo1 [data-preset]').forEach(b=>b.onclick=()=>{
+    const p=b.dataset.preset;
+    if(p==='all1') r=r.map(()=>1);
+    else if(p==='all0') r=r.map(()=>0);
+    else if(p==='mix') r=[1,0,1,1,0,0,1,0];
+    else r=r.map(()=>Math.random()<.5?1:0);
+    render();
+  });
+  render();
+})();
+
+/* ---------- 演示 2：优先组回放 ---------- */
+(function(){
+  const B=12;
+  let step=0, buffer=[], online=[], popo=[], p=.4, timer=null, sumG=0, sumP=0;
+  const $=id=>document.getElementById(id);
+  function drawLane(el,items){
+    el.innerHTML='';
+    for(let i=0;i<B;i++){
+      const it=items[i]; const s=document.createElement('div');
+      if(!it){s.className='slot empty';}
+      else{s.className='slot '+it.kind; s.textContent=it.label||'';}
+      el.appendChild(s);
+    }
+  }
+  function render(){
+    drawLane($('laneOnline'),online.map(o=>({kind:o.eff?'on':'dead',label:o.eff?'':'∅'})));
+    drawLane($('lanePopo'),popo);
+    const padded=Array(Math.max(0,B-buffer.length)).fill(null).concat(buffer.map(g=>({kind:'rep',label:'t'+g.t})));
+    drawLane($('laneBuf'),padded);
+    $('stepLabel').textContent='第 '+step+' 步';
+    $('mGrpo').textContent=step?Math.round(sumG/step*100)+'%':'–';
+    $('mPopo').textContent=step?Math.round(sumP/step*100)+'%':'–';
+  }
+  function doStep(){
+    step++;
+    online=Array.from({length:B},()=>({eff:Math.random()<p}));
+    const eff=online.filter(o=>o.eff);
+    const need=B-eff.length;
+    const replay=buffer.slice(-need).reverse();
+    popo=eff.map(()=>({kind:'on',label:''}));
+    replay.forEach(g=>popo.push({kind:'rep',label:'−'+(step-g.t)}));
+    eff.forEach(()=>buffer.push({t:step}));
+    if(buffer.length>B) buffer=buffer.slice(buffer.length-B);
+    sumG+=eff.length/B; sumP+=(eff.length+replay.length)/B;
+    render();
+  }
+  function reset(){step=0;buffer=[];online=[];popo=[];sumG=0;sumP=0;stopAuto();render();}
+  function stopAuto(){if(timer){clearInterval(timer);timer=null;$('autoBtn').textContent='自动播放';}}
+  $('stepBtn').onclick=doStep;
+  $('resetBtn').onclick=reset;
+  $('autoBtn').onclick=()=>{ if(timer){stopAuto();} else {doStep(); timer=setInterval(doStep,900); $('autoBtn').textContent='暂停';} };
+  $('pSlider').oninput=e=>{p=e.target.value/100;$('pLabel').textContent=e.target.value+'%';};
+  render();
+})();
+
+/* ---------- 结果浏览器 ---------- */
+(function(){
+  const M=['GRPO','ARPO','MoPPS','DAPO','POPO'];
+  const color={GRPO:'var(--dead)',ARPO:'var(--dead)',MoPPS:'var(--dead)',DAPO:'var(--dapo)',POPO:'var(--replay)'};
+  const D={
+    'Countdown · 3B':{acc:[51.6,52.3,53.5,61.5,60.4],accName:'CD-4 与 CD-34 平均',rt:[2.8,2.9,3.4,5.6,3.2],ro:[205,205,205,877,205],
+      note:'基座 Qwen2.5-3B 仅 1.5%。POPO 与 DAPO 相差约 1 个点，只用了其 23% 的 rollout 和 57% 的训练时间。'},
+    'Geometry3k · VL-3B':{acc:[44.9,45.7,48.9,50.6,50.0],accName:'测试集准确率',rt:[6.8,6.5,7.4,11.2,6.8],ro:[492,492,492,1438,492],
+      note:'基座 Qwen2.5-VL-3B 为 24.6%。POPO 与 DAPO 相差仅 0.6 个点，rollout 只用了 34%，训练时间与 GRPO 相同。'},
+    '数学 · 1.5B':{acc:[53.8,53.3,54.3,55.1,55.1],accName:'分布内数学平均（AIME25、AMC23、Minerva、MATH500、Olympiad）',rt:[16,16,17,30,16],ro:null,
+      note:'基座 DeepSeek-R1-Distill-Qwen-1.5B 平均为 43.2。POPO 以约一半的训练时间与 DAPO 并列 55.1。'},
+    '数学 · 7B':{acc:[61.7,62.2,61.9,63.2,63.3],accName:'分布内数学平均（AIME25、AMC23、Minerva、MATH500、Olympiad）',rt:[31,31,32,55,34],ro:null,
+      note:'基座 DeepSeek-R1-Distill-Qwen-7B 平均为 55.4。POPO 以 DAPO 62% 的训练时间略胜一筹（63.3 对 63.2）。'}
+  };
+  const tabs=document.getElementById('tabs');
+  function bars(el,vals,fmt,lo,hi){
+    el.innerHTML='';
+    M.forEach((m,i)=>{
+      const w=Math.max(3,(vals[i]-lo)/(hi-lo)*100);
+      el.insertAdjacentHTML('beforeend',
+        `<div class="bar ${m==='POPO'?'popo':''}"><span class="name">${m}</span><div class="track"><div class="fill" style="width:0;background:${color[m]}" data-w="${w}"></div></div><span class="val">${fmt(vals[i])}</span></div>`);
+    });
+    requestAnimationFrame(()=>el.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+  }
+  function show(key){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.k===key));
+    const d=D[key];
+    document.getElementById('accH').textContent='准确率（%）— '+d.accName;
+    const lo=Math.floor(Math.min(...d.acc)-4), hi=Math.max(...d.acc)+1;
+    bars(document.getElementById('accBars'),d.acc,v=>v.toFixed(1),lo,hi);
+    bars(document.getElementById('rtBars'),d.rt,v=>v+'h',0,Math.max(...d.rt));
+    const wrap=document.getElementById('roWrap');
+    if(d.ro){wrap.style.display='';bars(document.getElementById('roBars'),d.ro,v=>v+'k',0,Math.max(...d.ro));}
+    else wrap.style.display='none';
+    document.getElementById('resNote').textContent=d.note+' 准确率柱状图经过局部放大，以便显示差异。';
+  }
+  Object.keys(D).forEach(k=>{
+    const b=document.createElement('button'); b.className='tab'; b.textContent=k; b.dataset.k=k;
+    b.onclick=()=>show(k); tabs.appendChild(b);
+  });
+  show('Countdown · 3B');
+})();
+</script>
+</body>
+</html>

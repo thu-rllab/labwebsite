@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NIPS26 LPO: 列表式策略优化</title>
+<meta name="description" content="基于组的 RLVR 方法（GRPO、Dr.GRPO、MaxRL）其实在响应单纯形上悄悄追逐一个目标分布。LPO 把这个目标显式化，并精确地投影到它上面。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;600;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+:root{
+  --bg:#fbf8f3; --paper:#ffffff; --fg:#1d1b19; --muted:#6b645c; --line:#e6dfd4;
+  --card:#f4efe6; --code:#f1ebe0;
+  --pg:#8d8d8d; --fwd:#9b1c2c; --rev:#e0a93b; --accent:#9b1c2c; --ink2:#2f5d8a;
+  --good:#2e7d4f; --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(60,40,20,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15130f; --paper:#1d1a16; --fg:#efe9df; --muted:#a79e92; --line:#3a342c;
+    --card:#241f1a; --code:#2a241d; --pg:#9a9a9a; --fwd:#e0566a; --rev:#f0bf5c; --accent:#e0566a; --ink2:#7fb0e0;
+    --good:#5fc28a; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15130f; --paper:#1d1a16; --fg:#efe9df; --muted:#a79e92; --line:#3a342c;
+  --card:#241f1a; --code:#2a241d; --pg:#9a9a9a; --fwd:#e0566a; --rev:#f0bf5c; --accent:#e0566a; --ink2:#7fb0e0;
+  --good:#5fc28a; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.85 "Source Sans 3","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+.wide{max-width:980px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:Fraunces,"Noto Serif SC","Songti SC",Georgia,serif;line-height:1.2;letter-spacing:-.01em}
+h1{font-size:clamp(2rem,5.5vw,3.3rem);margin:.3em 0 .3em}
+h2{font-size:clamp(1.5rem,3.6vw,2.05rem);margin:2.4em 0 .5em}
+h3{font-size:1.2rem;margin:1.6em 0 .4em}
+p{margin:.8em 0}
+a{color:var(--accent)}
+code,.mono{font-family:"JetBrains Mono",monospace;font-size:.86em}
+.kicker{font:600 .8rem/1 "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+.katex{font-size:1.04em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0;position:relative}
+.katex{position:relative}
+
+/* hero */
+header.hero{padding:56px 0 28px;border-bottom:1px solid var(--line);background:
+  radial-gradient(1000px 400px at 85% -10%, color-mix(in srgb,var(--rev) 22%,transparent), transparent 60%),
+  radial-gradient(800px 380px at 0% 0%, color-mix(in srgb,var(--fwd) 12%,transparent), transparent 60%);}
+.dek{font-size:1.2rem;color:var(--muted);max-width:640px}
+.authors{font-size:.95rem;margin-top:22px;color:var(--fg)}
+.authors .aff{color:var(--muted);font-size:.88rem}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid var(--line);
+  background:var(--paper);color:var(--fg);text-decoration:none;font-weight:600;font-size:.95rem;box-shadow:var(--shadow)}
+.btn.primary{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn.ghost{opacity:.7}
+
+.tldr{margin:36px 0 8px;padding:22px 24px;background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--accent);
+  border-radius:14px;box-shadow:var(--shadow)}
+.tldr b{color:var(--accent)}
+.tldr ul{margin:.4em 0 0;padding-left:1.2em}
+
+.callout{background:var(--card);border-radius:14px;padding:16px 20px;margin:1.4em 0;font-size:.97rem}
+.callout.big{font-family:Fraunces,"Noto Serif SC","Songti SC",Georgia,serif;font-size:1.25rem;line-height:1.45;text-align:center;padding:26px 22px}
+
+/* two-step */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:1.4em 0}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.step .n{font:700 .75rem "JetBrains Mono",monospace;color:var(--accent);letter-spacing:.1em}
+.step h4{margin:.3em 0 .2em;font-family:Fraunces,"Noto Serif SC",serif;font-size:1.15rem}
+@media (max-width:640px){.steps{grid-template-columns:1fr}}
+
+table.t{width:100%;border-collapse:collapse;font-size:.95rem;margin:1em 0}
+table.t th,table.t td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-weight:700;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+.tablewrap{overflow-x:auto}
+
+/* demo cards */
+.demo{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px;margin:1.6em 0;box-shadow:var(--shadow)}
+.demo .title{font:700 .78rem "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
+.demo .hint{font-size:.9rem;color:var(--muted);margin:0 0 14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:6px 10px;cursor:pointer;
+  font:600 .9rem "JetBrains Mono",monospace;color:var(--fg);min-width:52px;text-align:center;user-select:none;transition:.15s}
+.chip.on{background:color-mix(in srgb,var(--good) 18%,var(--paper));border-color:var(--good);color:var(--good)}
+.chip:hover{transform:translateY(-1px)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--paper);color:var(--fg);padding:7px 12px;font:600 .88rem "Source Sans 3","Noto Sans SC",system-ui,sans-serif;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--fg);color:var(--bg)}
+label.sl{display:flex;align-items:center;gap:10px;font-size:.92rem;color:var(--muted)}
+input[type=range]{accent-color:var(--accent);width:150px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:190px;margin:18px 0 6px;position:relative;border-bottom:1px solid var(--line)}
+.bar{flex:1;background:var(--pg);border-radius:6px 6px 0 0;position:relative;transition:height .35s ease,background .2s}
+.bar.win{background:var(--fwd)}
+.bar span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font:600 .72rem "JetBrains Mono",monospace;color:var(--muted);white-space:nowrap}
+.uline{position:absolute;left:0;right:0;border-top:2px dashed var(--muted);opacity:.6;pointer-events:none}
+.uline i{position:absolute;right:0;top:-18px;font:normal .7rem "JetBrains Mono";color:var(--muted)}
+.xl{display:flex;gap:8px}.xl div{flex:1;text-align:center;font:.75rem "JetBrains Mono",monospace;color:var(--muted)}
+.readout{font-size:.95rem;margin-top:12px;padding:12px 14px;background:var(--card);border-radius:10px}
+
+.simplex-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:720px){.simplex-grid{grid-template-columns:1fr}}
+svg.sx{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.88rem;margin:8px 0}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.ctl{display:flex;flex-direction:column;gap:12px}
+.act{display:flex;gap:8px;flex-wrap:wrap}
+.act button{border:1px solid var(--line);background:var(--paper);color:var(--fg);border-radius:10px;padding:8px 13px;font:600 .9rem "Source Sans 3","Noto Sans SC",system-ui,sans-serif;cursor:pointer}
+.act button.go{background:var(--accent);color:#fff;border-color:var(--accent)}
+.act button:disabled{opacity:.5;cursor:default}
+table.mini{width:100%;border-collapse:collapse;font:.8rem "JetBrains Mono",monospace}
+table.mini td,table.mini th{padding:5px 4px;border-bottom:1px solid var(--line);text-align:right}
+table.mini td:first-child,table.mini th:first-child{text-align:left}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+
+/* props */
+.props{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:1.3em 0}
+.prop{background:var(--card);border-radius:14px;padding:16px}
+.prop .ic{font-size:1.5rem}
+.prop h4{margin:.3em 0;font-family:Fraunces,"Noto Serif SC",serif;font-size:1.08rem}
+.prop p{font-size:.92rem;margin:.2em 0;color:var(--muted)}
+@media (max-width:640px){.props{grid-template-columns:1fr}}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:1.4em 0}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.stat .v{font:700 1.9rem/1.1 Fraunces,serif;color:var(--accent)}
+.stat .l{font-size:.85rem;color:var(--muted);margin-top:6px;line-height:1.4}
+@media (max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+
+/* results chart */
+.rchart .grp{margin:14px 0}
+.rchart .gname{font-weight:700;font-size:.92rem;margin-bottom:4px}
+.rbar{display:flex;align-items:center;gap:8px;margin:3px 0;font:.8rem "JetBrains Mono",monospace}
+.rbar .lab{width:86px;color:var(--muted);flex:none}
+.rbar .trk{flex:1;height:18px;background:var(--card);border-radius:5px;overflow:hidden}
+.rbar .fill{height:100%;border-radius:5px;transition:width .45s ease}
+.rbar .val{width:44px;text-align:right;flex:none}
+
+.findings{padding-left:0;list-style:none}
+.findings li{padding:12px 0 12px 34px;border-bottom:1px solid var(--line);position:relative}
+.findings li::before{content:attr(data-i);position:absolute;left:0;top:12px;font:700 1rem Fraunces,serif;color:var(--accent)}
+
+pre.bib{background:var(--code);border-radius:12px;padding:16px;overflow-x:auto;font:.8rem/1.55 "JetBrains Mono",monospace;white-space:pre}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 50px;color:var(--muted);font-size:.9rem}
+.theme-t{position:fixed;right:14px;bottom:14px;border:1px solid var(--line);background:var(--paper);color:var(--fg);border-radius:999px;
+  width:40px;height:40px;cursor:pointer;box-shadow:var(--shadow);font-size:1.1rem}
+</style>
+</head>
+<body>
+<button class="theme-t" id="themeT" aria-label="切换主题">◐</button>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">研究博客 · 面向大模型推理的强化学习</div>
+    <h1><span style="color:var(--accent)">NIPS26 LPO:</span> 你的 GRPO 更新，其实一直在悄悄追逐一个目标。<br>LPO 直接瞄准它。</h1>
+    <p class="dek">基于组的 RLVR 方法（GRPO、Dr.GRPO、MaxRL 等）看起来只是在优势归一化上做文章。但在底层，它们共享同一个几何动作：在采样得到的一组响应上构造一个目标分布，再朝它迈出一阶近似的一步。<b>列表式策略优化（Listwise Policy Optimization, LPO）</b>把这个动作变得显式而精确。</p>
+    <div class="authors">
+      Yun Qu, Qi Wang, Yixiu Mao, Heming Zou, Yuhang Jiang, Yingyue Li, Wutong Xu, Lizhou Cai, Weijie Liu, Clive Bai, Kai Yang, Yangkun Chen, Saiyong Yang, Xiangyang Ji<br>
+      <span class="aff">清华大学自动化系 · 腾讯大模型部 · arXiv，2026 年 5 月</span>
+    </div>
+    <div class="btns">
+      <a class="btn primary" href="https://arxiv.org/abs/2605.06139">📄 论文（arXiv 2605.06139）</a>
+      <a class="btn ghost" href="#" title="请替换为代码仓库链接">💻 代码（即将开源）</a>
+      <a class="btn" href="#cite">❝ 引用</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<div class="tldr">
+  <b>一句话总结</b>
+  <ul>
+    <li>对一个提示采样 $K$ 个响应，它们就构成了一个小小的概率单纯形。在这个单纯形上，<b>所有基于组的策略梯度都在隐式地瞄准</b>一个奖励加权的 softmax 分布 $w^* = \mathrm{softmax}(R/\tau)$，其中“温度” $\tau$ 就是优势归一化时所除的那个量。</li>
+    <li>常规的策略梯度更新只是朝该目标做反向 KL 投影的<b>一阶近似</b>，一旦更新进入异策略（off-policy）状态就会产生偏差。</li>
+    <li><b>LPO</b> 把每次更新拆成两个干净的步骤：先以闭式解<b>计算目标</b>，再用任意选定的散度<b>精确投影</b>到目标上。由此得到的梯度有界、零和且能自我校正，并且<b>不增加任何计算开销</b>。</li>
+    <li>在逻辑、数学、代码和多模态几何任务上（1.5B–14B 模型，4 个大模型家族），LPO 在绝大多数设置中都超过了与之匹配的策略梯度基线，同时保持更高的熵和更低的梯度范数。</li>
+  </ul>
+</div>
+
+<h2>1 · 一组答案，就是一个小宇宙</h2>
+<p>标准的 RLVR 流程是这样的：给模型一道数学题，采样 $K=8$ 次作答，由验证器判定每个答案的对错，再把模型往好答案的方向推一推。GRPO 用<b>组内相对优势</b>来完成这一推：减去组内平均奖励，再除以组内标准差。</p>
+<p>现在换个视角。不再孤立地看每个响应，而是问：<b>在这八个响应之中</b>，当前策略相对于采样它们的那个策略，更偏好哪一个？这就给出了组上的一个分布：</p>
+$$P_{\theta,k} \;=\; \mathrm{softmax}(s_\theta)_k,\qquad s_{\theta,k} = \log\frac{\pi_\theta(y_k\mid x)}{\pi_b(y_k\mid x)}.$$
+<p>在任何更新之前，$\pi_\theta=\pi_b$，这个分布就是均匀分布，每个响应各占 $1/K$。随着训练推动策略变化，$P_\theta$ 在一个 $(K-1)$ 维单纯形上移动，这就是<b>响应单纯形</b>。整个故事都发生在这个有限的小空间里。</p>
+
+<h2>2 · 那个从没被写下来的目标</h2>
+<p>第一个结论：任取一个零均值的优势向量 $A$，定义 $w^* = \mathrm{softmax}(A)$。那么在同策略（on-policy）点上，</p>
+$$\underbrace{\tfrac{1}{K}\textstyle\sum_k A_k\,\nabla_\theta \log\pi_\theta(y_k\mid x)}_{\text{你一直在用的策略梯度}} \;=\; -\nabla_\theta\, D_{\mathrm{KL}}\!\left(P_\theta \,\|\, w^*\right).$$
+<div class="callout big">一步策略梯度，<b>就是</b>朝一个隐藏目标做反向 KL 的一步梯度下降。<br><span class="muted" style="font-size:.95rem">……但只在同策略点上严格成立。误差会随异策略漂移而增大。</span></div>
+<p>由于优势的形式都是 $(R_k-\mu)/\tau$，而 softmax 对平移 $\mu$ 不敏感，所以隐藏目标总是 $\mathrm{softmax}(R/\tau)$。纸面上看似不同的方法，其实瞄准的是<b>同一族目标</b>，区别仅在于目标有多“尖锐”：</p>
+<div class="tablewrap">
+<table class="t">
+<tr><th>方法</th><th>优势</th><th>隐式目标</th><th>温度 τ</th></tr>
+<tr><td>GRPO / DAPO</td><td>$(R_k-\mu_G)/\sigma_G$</td><td>$\mathrm{softmax}(R/\sigma_G)$</td><td>组内标准差 $\sigma_G$</td></tr>
+<tr><td>Dr.GRPO / RLOO</td><td>$R_k-\mu_G$</td><td>$\mathrm{softmax}(R)$</td><td>≈ 1</td></tr>
+<tr><td>MaxRL</td><td>$(R_k-\mu_G)/\mu_G$</td><td>$\mathrm{softmax}(R/\mu_G)$</td><td>成功率 $\mu_G$</td></tr>
+</table>
+</div>
+
+<div class="demo" id="demo1">
+  <div class="title">▶ 动手试试：认识隐藏目标</div>
+  <p class="hint">点击响应，将其标记为正确 ✓ 或错误 ✗，再切换归一化方式。柱状图显示每种方法的隐藏目标在各个响应上分配了多少概率。</p>
+  <div class="row" id="chips8"></div>
+  <div class="row" style="margin-top:12px">
+    <div class="seg" id="normSeg">
+      <button data-m="grpo" class="on">GRPO (τ=σ)</button><button data-m="dr">Dr.GRPO (τ=1)</button><button data-m="max">MaxRL (τ=μ)</button>
+    </div>
+  </div>
+  <div class="bars" id="bars8"><div class="uline" id="uline"><i>均匀 1/K</i></div></div>
+  <div class="xl" id="xl8"></div>
+  <div class="readout" id="read8"></div>
+</div>
+
+<p>玩一玩就会发现一个有趣的现象。<b>MaxRL 的目标在难题上会变得极其尖锐</b>：八次里只侥幸成功一次时，τ = 1/8，这个成功响应的权重约是每个失败响应的 3000 倍；而在简单题上，这个倍数会降到约 3 倍。GRPO 则是对称的：它的目标在正确率五五开时<b>最平缓</b>（此时 σ 最大），越往两端越尖锐。归一化方式不只是一个降方差的技巧，它决定了你<b>瞄准哪里</b>。</p>
+
+<h2>3 · 从“大致瞄准”到“精确命中”：LPO</h2>
+<p>经典的“强化学习即推断”方法（REPS、MPO、AWR）同样会构造一个奖励加权的目标，再把策略推向它；但在连续动作空间里，它们处处都得做近似。大模型的 RLVR 恰好有一份结构上的“礼物”：采样得到的响应构成一个<b>有限</b>单纯形，目标和投影都可以用闭式解求出。LPO 正是这样做的，分为两个解耦的步骤：</p>
+
+<div class="steps">
+  <div class="step">
+    <div class="n">第一步 · 目标</div>
+    <h4>瞄准什么</h4>
+    <p style="font-size:.95rem;margin:.3em 0">在单纯形上最大化期望奖励，并用围绕当前策略的 KL 信赖域加以约束：</p>
+    $$\max_{w\in\Delta^{K-1}} \textstyle\sum_k w_k R_k - \tau\, D_{\mathrm{KL}}(w\|P_t)$$
+    <p style="font-size:.95rem;margin:.3em 0">它有唯一的闭式解，即列表式 Gibbs 目标：</p>
+    $$w^*_k = \mathrm{softmax}\!\left(\tfrac{R_k}{\tau} + s_{t,k}\right)$$
+  </div>
+  <div class="step">
+    <div class="n">第二步 · 投影</div>
+    <h4>如何抵达</h4>
+    <p style="font-size:.95rem;margin:.3em 0">最小化目标与列表式策略之间的某种散度。无论选哪种散度，梯度都形如 $\nabla = \sum_k c_k \nabla_\theta\log\pi_\theta(y_k|x)$：</p>
+    <p style="font-size:.95rem;margin:.5em 0"><b style="color:var(--fwd)">LPO<sub>fwd</sub></b> · $D_{\mathrm{KL}}(w^*\|P_\theta)$<br>$c_k = P_{\theta,k} - w^*_k$</p>
+    <p style="font-size:.95rem;margin:.5em 0"><b style="color:var(--rev)">LPO<sub>rev</sub></b> · $D_{\mathrm{KL}}(P_\theta\|w^*)$<br>$c_k = P_{\theta,k}(d_k-\bar d),\ \ d_k = s_{\theta,k}-\phi_k$</p>
+  </div>
+</div>
+
+<p>由此立刻得到两点好处。在同策略点上，第一步恰好复现了上表中的隐藏目标，只不过现在 $\tau$ 有了真实的含义（信赖域的强度），而不再是归一化的副产品。另外，由于目标和投影被分开，<b>散度本身成了一个设计旋钮</b>，这是策略梯度从未提供过的。</p>
+
+<div class="demo" id="demo2">
+  <div class="title">▶ 动手试试：在三响应单纯形上奔向目标</div>
+  <p class="hint">三个采样响应。每个顶点代表“全部概率都在该响应上”，中心代表尚未更新的策略。我们在同一批样本上做多次内部更新（类似 PPO 的多个 epoch），这正是异策略漂移出现的地方。玩具模型：每个响应的对数概率都是自由参数；策略梯度使用不裁剪的重要性比率。</p>
+  <div class="simplex-grid">
+    <div>
+      <svg class="sx" id="sx" viewBox="0 0 400 350" role="img" aria-label="响应单纯形上的优化轨迹"></svg>
+      <div class="legend">
+        <span><i style="background:var(--pg)"></i>策略梯度</span>
+        <span><i style="background:var(--fwd)"></i>LPO<sub>fwd</sub></span>
+        <span><i style="background:var(--rev)"></i>LPO<sub>rev</sub></span>
+        <span>★ 目标 $w^*$</span>
+      </div>
+    </div>
+    <div class="ctl">
+      <div><div class="muted" style="font-size:.88rem;margin-bottom:6px">奖励（点击循环切换 0 → 0.5 → 1）</div><div class="row" id="chips3"></div></div>
+      <label class="sl">τ <input type="range" id="tau3" min="0.3" max="2" step="0.05" value="0.6"><b id="tau3v" class="mono">0.60</b></label>
+      <label class="sl">内部更新次数 <input type="range" id="ep3" min="2" max="20" step="1" value="8"><b id="ep3v" class="mono">8</b></label>
+      <div class="act">
+        <button class="go" id="run3">运行一轮迭代</button>
+        <button id="reset3">重置</button>
+      </div>
+      <div class="mono muted" style="font-size:.8rem" id="iter3">第 0 轮迭代</div>
+      <table class="mini" id="tab3"></table>
+    </div>
+  </div>
+  <div class="readout" id="read3">点击<b>运行一轮迭代</b>。注意灰色路径的第一步恰好落在黄色路径的第一步上：在同策略点上，策略梯度<b>就是</b>反向 KL 投影。此后策略梯度的步长从不缩小（重要性比率甚至会放大它），于是它直接冲过星标，一路冲进顶点。策略梯度的 E[R] = 1.00 看起来很漂亮，但它是靠把全部概率押在三个响应中的一个上、无视信赖域换来的。在真实的大模型里，这正是裁剪机制需要对抗的那种过度自信、导致熵坍缩的更新。LPO 的路径则会逐渐减速，并恰好停在目标<b>上</b>。多运行几轮，就能看到 LPO 一步一个脚印、稳稳地爬向最优响应。</div>
+</div>
+
+<h3>为什么精确投影表现这么好</h3>
+<div class="props">
+  <div class="prop"><div class="ic">⚖️</div><h4>零和</h4><p>系数之和为 0：推高一个响应，就会自动压低其他响应。无论选择哪种散度，都自带一个控制变量。</p></div>
+  <div class="prop"><div class="ic">📏</div><h4>有界</h4><p>对 LPO<sub>fwd</sub> 而言，$|c_k|\le 1$ 且 $\sum_k|c_k|\le 2$，与奖励尺度无关。一边倒的组也不会引发爆炸式更新。</p></div>
+  <div class="prop"><div class="ic">🎯</div><h4>自校正</h4><p>当 $P_\theta\to w^*$ 时系数趋于零。更新自己知道何时已经到达，而不必依赖裁剪来刹车。</p></div>
+</div>
+<p>此外，反复执行“先定目标、再做投影”可以带来<b>单调改进保证</b>：每轮迭代中，列表式奖励至少提升 $\tau$ 乘以旧策略与目标之间的 Jeffreys 散度，再减去一项不完美投影带来的误差。两种 KL 也各有个性。前向 KL 具有<b>模式覆盖</b>特性：目标所看重的任何响应都能获得有保证的概率下界，相当于一道防止坍缩的对数屏障。反向 KL 则暗含一个<b>熵奖励</b>：它可以分解为目标 logit 的期望加上 $H(P_\theta)$。</p>
+
+<div class="callout"><b>“列表式”真的是关键吗？</b>作者做了消融：保持目标不变，但改用加权对数似然逐点拟合（MPO/AWR 的做法）。结果性能大幅下降，优化变得不稳定。在逐点损失中，每个响应都被往上推，只是力度不同，而且这种推力永远不会停止：响应之间没有竞争，也没有内置的控制变量。只有把精确的目标拟合与列表式归一化结合起来，才能真正带来收益。</div>
+
+<h2>4 · 效果如何？</h2>
+<p>比较设置刻意做得很严格。对每个基线（GRPO、Dr.GRPO、MaxRL），LPO 都使用与该基线隐式目标<b>完全相同的温度</b>。唯一变化的是投影方式，因此任何差异都只能归因于精确的列表式投影，而非调参。任务包括 Countdown（逻辑）、MATH（数学）、PRIME（代码）和 Geometry3k（视觉-语言），模型包括 Qwen3 1.7B/4B/8B/14B、Qwen2.5-VL-3B，并在 DeepSeek-R1-Distill、Llama-3.1 和 Mistral 上做了跨家族验证。</p>
+
+<div class="stats">
+  <div class="stat"><div class="v">13/15</div><div class="l">两个 LPO 变体各自在 Pass@1 训练曲线上超过匹配基线的设置数</div></div>
+  <div class="stat"><div class="v">15/15</div><div class="l">LPO<sub>fwd</sub> 在 Pass@k 上超过策略梯度基线的设置数（LPO<sub>rev</sub>：11/15）</div></div>
+  <div class="stat"><div class="v">~70</div><div class="l">LPO<sub>fwd</sub> 追平 GRPO 200 步峰值所需的步数（Qwen3-14B，Polaris）</div></div>
+  <div class="stat"><div class="v">0</div><div class="l">额外计算开销：相同的采样、相同的流程，只改变损失系数</div></div>
+</div>
+
+<div class="demo">
+  <div class="title">数学基准最终得分</div>
+  <p class="hint">Pass@1 为全部六个基准（AIME24/25、AMC23、MATH500、Minerva、OlympiadBench）的平均；Pass@k 为其中 k&gt;1 的四个基准的平均。每组比较一个策略梯度基线及与其温度匹配的 LPO 变体。坐标轴经过截断以便看清差异。并非每一格都是 LPO 胜出：在 Qwen3-8B 上，Dr.GRPO 自身的 Pass@k 仍然最高。</p>
+  <div class="row" style="gap:14px">
+    <div class="seg" id="mSeg"><button data-v="8b" class="on">Qwen3-8B</button><button data-v="17b">Qwen3-1.7B</button></div>
+    <div class="seg" id="kSeg"><button data-v="p1" class="on">Pass@1</button><button data-v="pk">Pass@k</button></div>
+  </div>
+  <div class="rchart" id="rchart"></div>
+</div>
+
+<ul class="findings">
+  <li data-i="①"><b>多样性得以保留。</b>在整个训练过程中，两个 LPO 变体的响应熵都高于策略梯度基线。这正是对 RLVR 中常见的熵坍缩问题的直接解药，也是 Pass@k 提升如此稳健的原因。</li>
+  <li data-i="②"><b>训练更平稳。</b>梯度范数比策略梯度更低、更稳定，这与有界、自校正系数的理论预测完全一致。</li>
+  <li data-i="③"><b>前向与反向 KL 各有个性。</b>两者正面对比时，LPO<sub>fwd</sub> 在 13/15 的设置中的 Pass@k 高于 LPO<sub>rev</sub>，这得益于其模式覆盖特性，能让更多有效的解题路径保持活跃。LPO 的响应也比策略梯度更长，其中 LPO<sub>fwd</sub> 的响应最长。</li>
+  <li data-i="④"><b>小组收益最大。</b>在 $K\in\{2,4,8,16,32\}$ 范围内，组越小，提升越明显，因为此时噪声较大的优势估计对策略梯度的伤害最大。</li>
+  <li data-i="⑤"><b>理论得到验证。</b>在严格同策略的设置下（每批数据只更新一次），LPO<sub>rev</sub> 与 GRPO 的训练曲线几乎完全重合，正如等价性结论所预测的那样。差距在更新进入异策略状态后才会拉开；即便在这个同策略设置中，LPO<sub>fwd</sub> 在训练早期的样本效率也更高，最终 Pass@k 也更好。</li>
+</ul>
+
+<h2>5 · 更大的图景</h2>
+<p>用这个视角重新审视，许多 RLVR 的设计争论都会被重新梳理。关于如何归一化优势的争论，变成了关于<b>瞄准哪个目标</b>的讨论；裁剪与信赖域，则变成了<b>如何投影</b>的问题。把两者分开，就打开了一片此前被隐藏的设计空间：</p>
+<ul>
+  <li><b>任意散度。</b>零和梯度对单纯形上<b>任何</b>可微散度都成立，因此 Jensen–Shannon 散度等其他 f-散度都可以一试，也可以做调度（早期用前向 KL 鼓励探索、后期切换到反向 KL 稳定利用，或逐步退火 τ）。</li>
+  <li><b>DPO 是 K=2 的特例。</b>只有两个响应时，LPO<sub>fwd</sub> 退化为带有软标签（由 τ 控制）的二元交叉熵，相当于 DPO 的一个在线、带信赖域的“近亲”。而当 $K\to\infty$ 时，则恢复为经典的 KL 正则化强化学习。</li>
+  <li><b>即插即用。</b>DAPO 的动态采样、非对称裁剪等工程技巧与 LPO 相互正交，可以直接叠加使用。论文有意采用最精简的共享流程，以便把收益清楚地归因于投影本身。</li>
+  <li><b>下一步。</b>面向多轮智能体和过程奖励的步级列表式投影，以及异策略经验回放（此时列表式归一化相当于自归一化重要性采样）。</li>
+</ul>
+<div class="callout big">基于组的强化学习，本来就是“先定目标、再做投影”。<br>LPO 只是不再近似。</div>
+
+<h2 id="cite">引用</h2>
+<pre class="bib">@article{qu2026lpo,
+  title   = {Listwise Policy Optimization: Group-based RLVR as
+             Target-Projection on the LLM Response Simplex},
+  author  = {Qu, Yun and Wang, Qi and Mao, Yixiu and Zou, Heming and
+             Jiang, Yuhang and Li, Yingyue and Xu, Wutong and Cai, Lizhou and
+             Liu, Weijie and Bai, Clive and Yang, Kai and Chen, Yangkun and
+             Yang, Saiyong and Ji, Xiangyang},
+  journal = {arXiv preprint arXiv:2605.06139},
+  year    = {2026}
+}</pre>
+</main>
+
+<footer><div class="wrap">清华大学 · 腾讯。交互演示是对论文思想的简化示意，并非实际训练代码。</div></footer>
+
+<script>
+(function(){
+  // theme toggle
+  const root=document.documentElement;
+  document.getElementById('themeT').onclick=()=>{
+    const dark = root.dataset.theme ? root.dataset.theme==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    drawSimplex();
+  };
+
+  const softmax=v=>{const m=Math.max(...v);const e=v.map(x=>Math.exp(x-m));const z=e.reduce((a,b)=>a+b,0);return e.map(x=>x/z);};
+  const mean=v=>v.reduce((a,b)=>a+b,0)/v.length;
+  const css=n=>getComputedStyle(root).getPropertyValue(n).trim();
+
+  /* ---------- Demo 1: hidden target over K=8 ---------- */
+  const K=8; let R8=[1,0,0,1,0,0,0,0]; let norm='grpo';
+  const chips8=document.getElementById('chips8'), bars8=document.getElementById('bars8'), xl8=document.getElementById('xl8');
+  for(let k=0;k<K;k++){
+    const c=document.createElement('div'); c.className='chip'; c.onclick=()=>{R8[k]=1-R8[k];render8();}; chips8.appendChild(c);
+    const b=document.createElement('div'); b.className='bar'; b.innerHTML='<span></span>'; bars8.appendChild(b);
+    const l=document.createElement('div'); l.textContent='y'+(k+1); xl8.appendChild(l);
+  }
+  document.querySelectorAll('#normSeg button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#normSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');norm=b.dataset.m;render8();});
+  function render8(){
+    const mu=mean(R8), sd=Math.sqrt(mu*(1-mu)); let tau, note='';
+    if(norm==='grpo') tau=sd; else if(norm==='dr') tau=1; else tau=mu;
+    const degenerate = mu===0||mu===1;
+    let w;
+    if(degenerate){ w=Array(K).fill(1/K); }
+    else w=softmax(R8.map(r=>r/tau));
+    const maxW=Math.max(...w,0.2); const H=165;
+    [...chips8.children].forEach((c,k)=>{c.classList.toggle('on',!!R8[k]);c.textContent=(R8[k]?'✓':'✗')+' y'+(k+1);});
+    const barsEls=[...bars8.querySelectorAll('.bar')];
+    barsEls.forEach((b,k)=>{b.style.height=(w[k]/maxW*H)+'px';b.classList.toggle('win',!!R8[k]&&!degenerate);b.querySelector('span').textContent=(w[k]*100).toFixed(1)+'%';});
+    document.getElementById('uline').style.bottom=((1/K)/maxW*H)+'px';
+    const n=R8.reduce((a,b)=>a+b,0);
+    const rd=document.getElementById('read8');
+    if(degenerate){
+      rd.innerHTML=`${K} 个响应的奖励全部相同，因此目标是<b>均匀分布</b>：策略已经在那里了，梯度为零。这个提示不提供任何学习信号。`;
+    } else {
+      const ratio=Math.exp(1/tau);
+      const fmt=ratio>=1000?ratio.toExponential(1):ratio.toFixed(ratio<10?2:0);
+      rd.innerHTML=`${K} 个中答对 ${n} 个 → τ = <b class="mono">${tau.toFixed(3)}</b>。每个正确响应的权重是错误响应的 <b>${fmt} 倍</b>；所有正确答案合计占目标的 <b>${(w.reduce((a,x,k)=>a+(R8[k]?x:0),0)*100).toFixed(1)}%</b>。`;
+    }
+  }
+  render8();
+
+  /* ---------- Demo 2: simplex race ---------- */
+  let R3=[1,0.5,0], tau3=0.6, E3=8; const eta=1.2;
+  const V=[[200,28],[34,318],[366,318]];
+  let M, iter=0, running=false;
+  const colors=()=>({pg:css('--pg'),fwd:css('--fwd'),rev:css('--rev')});
+  function initM(){
+    M={};
+    ['pg','fwd','rev'].forEach(k=>{M[k]={s:[0,0,0],sb:[0,0,0],path:[[1/3,1/3,1/3]]};});
+    iter=0;
+  }
+  const target=m=>softmax(R3.map((r,k)=>r/tau3+m.sb[k]));
+  function step(name){
+    const m=M[name], P=softmax(m.s);
+    if(name==='pg'){
+      const mu=mean(R3); const A=R3.map(r=>(r-mu)/tau3);
+      for(let k=0;k<3;k++){ const r=Math.exp(Math.min(m.s[k]-m.sb[k],12)); m.s[k]+=eta*1.6*r*A[k]/3; }
+    } else if(name==='fwd'){
+      const w=target(m); for(let k=0;k<3;k++) m.s[k]-=eta*(P[k]-w[k]);
+    } else {
+      const phi=R3.map((r,k)=>r/tau3+m.sb[k]); const d=m.s.map((s,k)=>s-phi[k]);
+      const db=P.reduce((a,p,k)=>a+p*d[k],0); for(let k=0;k<3;k++) m.s[k]-=eta*1.6*P[k]*(d[k]-db);
+    }
+    for(let k=0;k<3;k++) m.s[k]=Math.max(-30,Math.min(30,m.s[k]));
+    m.path.push(softmax(m.s));
+  }
+  const xy=p=>[p[0]*V[0][0]+p[1]*V[1][0]+p[2]*V[2][0], p[0]*V[0][1]+p[1]*V[1][1]+p[2]*V[2][1]];
+  function star(cx,cy,r,fill,stroke){
+    let pts=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5, rr=i%2?r*0.45:r;pts.push((cx+rr*Math.cos(a)).toFixed(1)+','+(cy+rr*Math.sin(a)).toFixed(1));}
+    return `<polygon points="${pts.join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>`;
+  }
+  function drawSimplex(){
+    if(!M) return;
+    const c=colors(), fg=css('--fg'), line=css('--line'), muted=css('--muted'), card=css('--card'), good=css('--good');
+    let s=`<polygon points="${V.map(v=>v.join(',')).join(' ')}" fill="${card}" stroke="${line}" stroke-width="2"/>`;
+    // grid lines
+    for(let t=1;t<4;t++){const f=t/4;
+      const a=xy([f,1-f,0]),b=xy([f,0,1-f]); s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${line}" stroke-dasharray="3 4"/>`;}
+    const [cx,cy]=xy([1/3,1/3,1/3]); s+=`<circle cx="${cx}" cy="${cy}" r="4" fill="${muted}"/>`;
+    const lab=[[200,14,'middle'],[18,338,'start'],[382,338,'end']];
+    lab.forEach((l,k)=>{s+=`<text x="${l[0]}" y="${l[1]}" text-anchor="${l[2]}" font-family="JetBrains Mono" font-size="12" fill="${R3[k]===1?good:muted}" font-weight="600">y${k+1} · R=${R3[k]}</text>`;});
+    ['pg','fwd','rev'].forEach(n=>{
+      const pts=M[n].path.map(xy);
+      s+=`<polyline points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="${c[n]}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".95"/>`;
+      pts.forEach((p,i)=>{ if(i) s+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.6" fill="${c[n]}"/>`; });
+    });
+    // targets
+    const tg=['fwd','rev','pg'].map(n=>[n,xy(target(M[n]))]);
+    tg.forEach(([n,p])=>{ s+=star(p[0],p[1],10,c[n],fg); });
+    // current heads
+    ['pg','fwd','rev'].forEach(n=>{const p=xy(M[n].path[M[n].path.length-1]); s+=`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${c[n]}" stroke="${css('--paper')}" stroke-width="2"/>`;});
+    document.getElementById('sx').innerHTML=s;
+    // table
+    let t=`<tr><th>方法</th><th>P(y1)</th><th>P(y2)</th><th>P(y3)</th><th>E[R]</th><th>KL(w*‖P)</th></tr>`;
+    const names={pg:'PG',fwd:'LPO-fwd',rev:'LPO-rev'};
+    ['pg','fwd','rev'].forEach(n=>{
+      const P=M[n].path[M[n].path.length-1], w=target(M[n]);
+      const kl=w.reduce((a,wk,k)=>a+wk*Math.log(wk/Math.max(P[k],1e-12)),0);
+      const er=P.reduce((a,p,k)=>a+p*R3[k],0);
+      t+=`<tr><td><span class="dot" style="background:${c[n]}"></span>${names[n]}</td><td>${P[0].toFixed(2)}</td><td>${P[1].toFixed(2)}</td><td>${P[2].toFixed(2)}</td><td>${er.toFixed(2)}</td><td>${kl.toFixed(3)}</td></tr>`;
+    });
+    document.getElementById('tab3').innerHTML=t;
+    document.getElementById('iter3').textContent='第 '+iter+' 轮迭代';
+  }
+  function renderChips3(){
+    const box=document.getElementById('chips3'); box.innerHTML='';
+    R3.forEach((r,k)=>{const c=document.createElement('div');c.className='chip'+(r===1?' on':'');c.textContent='y'+(k+1)+' · R='+r;
+      c.onclick=()=>{ if(running) return; R3[k]=r===0?0.5:(r===0.5?1:0); renderChips3(); initM(); drawSimplex(); }; box.appendChild(c);});
+  }
+  function runIter(){
+    if(running) return;
+    if(R3.every(r=>r===R3[0])){document.getElementById('read3').innerHTML='三个奖励完全相同，因此目标就是当前策略，什么都不会移动。切换某个奖励来制造学习信号吧。';return;}
+    running=true; document.getElementById('run3').disabled=true;
+    if(iter>0) ['pg','fwd','rev'].forEach(n=>{M[n].sb=M[n].s.slice();});
+    iter++;
+    let e=0;
+    const tick=()=>{ ['pg','fwd','rev'].forEach(step); e++; drawSimplex();
+      if(e<E3) setTimeout(tick,70); else {running=false;document.getElementById('run3').disabled=false;} };
+    tick();
+  }
+  document.getElementById('run3').onclick=runIter;
+  document.getElementById('reset3').onclick=()=>{ if(running) return; initM(); drawSimplex(); };
+  const tauEl=document.getElementById('tau3'), epEl=document.getElementById('ep3');
+  tauEl.oninput=()=>{ if(running){tauEl.value=tau3;return;} tau3=+tauEl.value; document.getElementById('tau3v').textContent=tau3.toFixed(2); initM(); drawSimplex(); };
+  epEl.oninput=()=>{ E3=+epEl.value; document.getElementById('ep3v').textContent=E3; };
+  window.drawSimplex=drawSimplex;
+  renderChips3(); initM(); drawSimplex();
+
+  /* ---------- Results chart (Table 3 averages) ---------- */
+  const DATA={
+    '8b':{p1:{GRPO:[47.6,50.3,48.7],'Dr.GRPO':[49.1,49.5,47.7],MaxRL:[48.6,50.5,50.6]},
+          pk:{GRPO:[54.5,58.3,56.5],'Dr.GRPO':[60.4,59.4,56.9],MaxRL:[58.2,63.1,60.3]}},
+    '17b':{p1:{GRPO:[32.5,35.3,35.0],'Dr.GRPO':[32.2,33.4,32.9],MaxRL:[32.4,35.0,33.6]},
+           pk:{GRPO:[42.1,46.1,42.3],'Dr.GRPO':[42.2,42.5,43.9],MaxRL:[42.8,45.6,45.0]}}
+  };
+  let mSel='8b', kSel='p1';
+  function renderChart(){
+    const d=DATA[mSel][kSel]; const all=Object.values(d).flat();
+    const lo=Math.floor(Math.min(...all))-4, hi=Math.ceil(Math.max(...all))+1;
+    const c={0:'var(--pg)',1:'var(--fwd)',2:'var(--rev)'};
+    let h='';
+    for(const [base,vals] of Object.entries(d)){
+      const names=[base,'+ LPO-fwd','+ LPO-rev'];
+      h+=`<div class="grp"><div class="gname">${base} 系列</div>`;
+      vals.forEach((v,i)=>{
+        const best=v===Math.max(...vals);
+        h+=`<div class="rbar"><div class="lab">${names[i]}</div><div class="trk"><div class="fill" style="width:${((v-lo)/(hi-lo)*100).toFixed(1)}%;background:${c[i]}"></div></div><div class="val" style="${best?'font-weight:700':''}">${v.toFixed(1)}</div></div>`;
+      });
+      h+='</div>';
+    }
+    h+=`<div class="muted" style="font-size:.8rem">坐标轴范围 ${lo} 至 ${hi}。数据来自论文表 3。</div>`;
+    document.getElementById('rchart').innerHTML=h;
+  }
+  function segBind(id,cb){document.querySelectorAll('#'+id+' button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cb(b.dataset.v);renderChart();});}
+  segBind('mSeg',v=>mSel=v); segBind('kSeg',v=>kSel=v);
+  renderChart();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>你只需编辑一次</title>
+<meta name="description" content="Jev-LDE：一个小巧、快速的系统 1 编辑器，只需一次保留、删除或替换操作，就能改进大语言模型的上下文示例。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Noto+Sans+SC:wght@400;600;800&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#E8EEF3;
+  --sheet:#F8FAFC;
+  --ink:#172338;
+  --ink-soft:#4A5870;
+  --rule:#C3CDD8;
+  --pencil:#C3312A;
+  --pencil-wash:#F6DAD6;
+  --retrieve:#3F6FA3;
+  --retrieve-wash:#DCE7F3;
+  --right:#2F7A55;
+  --right-wash:#D7EDE1;
+  --shadow:0 1px 0 rgba(23,35,56,.08), 0 6px 18px -10px rgba(23,35,56,.35);
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, serif;
+  --mono:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121A26;
+    --sheet:#1B2533;
+    --ink:#E4EAF2;
+    --ink-soft:#9DABBE;
+    --rule:#33404F;
+    --pencil:#F0685E;
+    --pencil-wash:#3E2224;
+    --retrieve:#7FA8D6;
+    --retrieve-wash:#1F3148;
+    --right:#5FC08E;
+    --right-wash:#193527;
+    --shadow:0 1px 0 rgba(0,0,0,.4), 0 8px 20px -10px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121A26;
+  --sheet:#1B2533;
+  --ink:#E4EAF2;
+  --ink-soft:#9DABBE;
+  --rule:#33404F;
+  --pencil:#F0685E;
+  --pencil-wash:#3E2224;
+  --retrieve:#7FA8D6;
+  --retrieve-wash:#1F3148;
+  --right:#5FC08E;
+  --right-wash:#193527;
+  --shadow:0 1px 0 rgba(0,0,0,.4), 0 8px 20px -10px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:1.125rem;
+  line-height:1.65;
+  font-optical-sizing:auto;
+}
+a{color:var(--retrieve);text-underline-offset:3px}
+a:focus-visible, button:focus-visible{outline:3px solid var(--retrieve);outline-offset:3px;border-radius:6px}
+
+.column{max-width:42rem;margin:0 auto;padding:0 16px}
+.wide{max-width:62rem;margin:0 auto;padding:0 16px}
+
+h1,h2,h3{font-family:var(--display);font-weight:800;line-height:1.1;letter-spacing:-.01em;margin:0}
+h2{font-size:clamp(1.7rem,4vw,2.3rem);margin:4.5rem 0 1rem}
+h3{font-size:1.2rem;font-weight:600;margin:2rem 0 .5rem}
+p{margin:0 0 1.1rem}
+strong{font-weight:600}
+.lede{font-size:1.28rem;line-height:1.55;color:var(--ink-soft)}
+.aside{font-size:.95rem;color:var(--ink-soft)}
+figure{margin:2rem 0}
+figcaption{font-size:.92rem;color:var(--ink-soft);margin-top:.8rem;line-height:1.5}
+
+/* ---------- Header / hero ---------- */
+header.hero{padding:3.5rem 0 2rem}
+.venue{font-family:var(--display);font-size:.95rem;color:var(--ink-soft);margin-bottom:1.4rem}
+.title{
+  font-size:clamp(3rem,11vw,6.6rem);
+  line-height:.92;
+  letter-spacing:-.035em;
+}
+.title .once{
+  position:relative;
+  white-space:nowrap;
+}
+.title .once::after{
+  content:"";
+  position:absolute;left:-2%;right:-2%;bottom:.06em;height:.12em;
+  background:var(--pencil);
+  border-radius:3px;
+  transform:rotate(-1.5deg) scaleX(0);
+  transform-origin:left center;
+  animation:underline 700ms 300ms cubic-bezier(.3,.7,.2,1) forwards;
+}
+@keyframes underline{to{transform:rotate(-1.5deg) scaleX(1)}}
+.subtitle{font-family:var(--display);font-weight:400;font-size:clamp(1.15rem,2.6vw,1.45rem);line-height:1.35;margin:1.4rem 0 1.6rem;max-width:40rem;color:var(--ink)}
+.authors{font-size:.98rem;color:var(--ink-soft);line-height:1.55;max-width:46rem}
+.authors .eq{font-size:.85em}
+.links{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.4rem}
+.btn{
+  font-family:var(--display);font-weight:600;font-size:1rem;
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.6rem 1.05rem;border-radius:999px;
+  border:1.5px solid var(--ink);color:var(--ink);background:transparent;
+  text-decoration:none;cursor:pointer;
+}
+.btn.solid{background:var(--ink);color:var(--paper)}
+.btn[aria-disabled="true"]{opacity:.55;cursor:default}
+
+/* ---------- Edit stage (hero demo + playground share it) ---------- */
+.stage{
+  background:var(--sheet);
+  border:1px solid var(--rule);
+  border-radius:18px;
+  padding:1.4rem;
+  box-shadow:var(--shadow);
+  margin-top:2.6rem;
+}
+.stage-row{display:grid;grid-template-columns:8.5rem 1fr;gap:1rem;align-items:start}
+.stage-row + .stage-row{margin-top:1.1rem}
+.row-label{font-family:var(--display);font-size:.9rem;color:var(--ink-soft);padding-top:.7rem;line-height:1.3}
+.row-label b{display:block;color:var(--ink);font-weight:600;font-size:1rem}
+.cards{display:flex;flex-wrap:wrap;gap:.7rem}
+.card{
+  position:relative;
+  flex:1 1 11rem;
+  min-width:0;
+  background:var(--paper);
+  border:1.5px solid var(--rule);
+  border-radius:10px;
+  padding:.6rem .75rem .65rem;
+  font-family:var(--display);
+  font-size:.95rem;
+  line-height:1.3;
+  transition:opacity .35s ease, transform .45s cubic-bezier(.3,.7,.2,1), border-color .3s, background .3s;
+}
+.card .id{font-size:.8rem;color:var(--ink-soft);font-weight:600}
+.card .q{display:block;margin:.2rem 0 .45rem}
+.label{
+  display:inline-block;font-family:var(--mono);font-size:.78rem;font-weight:600;
+  padding:.08rem .45rem;border-radius:5px;background:var(--retrieve-wash);color:var(--retrieve);
+}
+.card.query{border-color:var(--ink);background:var(--sheet)}
+.card.query .label{background:transparent;border:1.5px dashed var(--ink-soft);color:var(--ink-soft)}
+.card.retrieved{border-color:var(--retrieve)}
+.card.candidate{opacity:.72;border-style:dashed}
+.card.struck{border-color:var(--pencil);background:var(--pencil-wash)}
+.card.struck::after{
+  content:"";position:absolute;left:8px;right:8px;top:50%;height:3px;border-radius:2px;
+  background:var(--pencil);transform:rotate(-4deg);
+}
+.card.gone{opacity:.25}
+.card.incoming{opacity:1;border-style:solid;border-color:var(--pencil);background:var(--sheet)}
+.card.lift{transform:translateY(-10px)}
+.card.drop{transform:translateY(8px)}
+
+.verdict{
+  margin-top:1.2rem;padding-top:1rem;border-top:1px dashed var(--rule);
+  display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;
+  font-family:var(--display);font-size:.98rem;
+}
+.json{
+  font-family:var(--mono);font-size:.82rem;
+  background:var(--paper);border:1px solid var(--rule);border-radius:8px;
+  padding:.35rem .6rem;color:var(--ink);word-break:break-word;
+}
+.pill{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .7rem;border-radius:999px;font-weight:600;font-size:.92rem}
+.pill.ok{background:var(--right-wash);color:var(--right)}
+.pill.bad{background:var(--pencil-wash);color:var(--pencil)}
+.pill.neutral{background:var(--retrieve-wash);color:var(--retrieve)}
+.fade{opacity:0;transition:opacity .4s ease}
+.fade.show{opacity:1}
+.hero-foot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center;margin-top:.9rem}
+.hero-foot p{margin:0;font-size:.92rem;color:var(--ink-soft)}
+.linkish{background:none;border:0;padding:0;font:inherit;font-family:var(--display);font-weight:600;color:var(--retrieve);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- Two systems ---------- */
+.systems{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:2rem 0}
+.sys{border-radius:16px;padding:1.2rem 1.25rem 1.1rem;border:1.5px solid var(--rule);background:var(--sheet)}
+.sys.one{border-color:var(--pencil)}
+.sys h3{margin:0 0 .3rem;font-size:1.3rem}
+.sys .who{font-family:var(--display);font-size:.95rem;color:var(--ink-soft);margin-bottom:.8rem}
+.sys ul{margin:0;padding-left:1.1rem;font-size:1rem;line-height:1.5}
+.sys li{margin:.25rem 0}
+.speed{height:8px;border-radius:4px;background:var(--rule);margin:.9rem 0 .2rem;overflow:hidden}
+.speed i{display:block;height:100%;border-radius:4px}
+.sys.one .speed i{width:12%;background:var(--pencil)}
+.sys.two .speed i{width:88%;background:var(--retrieve)}
+.speed-note{font-family:var(--display);font-size:.82rem;color:var(--ink-soft)}
+
+/* ---------- Pull quote ---------- */
+.pull{
+  font-family:var(--display);font-weight:600;
+  font-size:clamp(1.4rem,3.6vw,1.95rem);line-height:1.25;letter-spacing:-.01em;
+  margin:2.6rem 0;padding-left:1.1rem;border-left:5px solid var(--pencil);
+}
+
+/* ---------- Number line (one-edit neighborhood) ---------- */
+.nl{background:var(--sheet);border:1px solid var(--rule);border-radius:16px;padding:1.3rem 1.3rem 1rem}
+.nl-row{display:grid;grid-template-columns:7.5rem 1fr;gap:.8rem;align-items:center;margin:.6rem 0 1.6rem}
+.nl-name{font-family:var(--display);font-weight:600;font-size:.98rem}
+.track{position:relative;height:44px}
+.track::before{content:"";position:absolute;left:0;right:0;top:21px;height:2px;background:var(--rule)}
+.zero{position:absolute;top:8px;bottom:8px;width:2px;background:var(--ink-soft)}
+.span{position:absolute;top:18px;height:8px;border-radius:4px;background:var(--retrieve-wash);border:1px solid var(--retrieve)}
+.mark{position:absolute;top:0;transform:translateX(-50%);font-family:var(--display);font-size:.8rem;font-weight:600;white-space:nowrap;text-align:center}
+.mark::after{content:"";display:block;width:12px;height:12px;margin:3px auto 0;border-radius:50%;background:currentColor;border:2px solid var(--sheet)}
+.mark.worst{color:var(--retrieve)}
+.mark.lde{color:var(--pencil)}
+.mark.oracle{color:var(--right)}
+.mark.lde::after{border-radius:2px;transform:rotate(45deg);width:11px;height:11px}
+.nl-legend{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;font-family:var(--display);font-size:.85rem;color:var(--ink-soft)}
+.nl-legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.4rem;vertical-align:-1px;background:currentColor}
+.axis-note{font-family:var(--display);font-size:.8rem;color:var(--ink-soft);display:flex;justify-content:space-between;margin-top:-1rem}
+
+/* ---------- Playground ---------- */
+.actions{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.2rem}
+.chip{
+  font-family:var(--mono);font-size:.8rem;
+  padding:.38rem .6rem;border-radius:8px;border:1.5px solid var(--rule);
+  background:var(--paper);color:var(--ink);cursor:pointer;
+  transition:border-color .2s, background .2s;
+}
+.chip:hover{border-color:var(--ink-soft)}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--sheet);box-shadow:inset 0 0 0 1px var(--ink)}
+.chip.tried-ok{border-color:var(--right)}
+.chip.tried-bad{border-color:var(--pencil)}
+.chip.jev{background:var(--pencil);border-color:var(--pencil);color:#fff}
+.play-controls{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin-top:1.1rem}
+.think{
+  margin-top:1rem;padding:.8rem 1rem;border-radius:10px;
+  background:var(--paper);border:1px dashed var(--pencil);
+  font-size:1rem;line-height:1.55;display:none;
+}
+.think.show{display:block}
+.think code{font-family:var(--mono);font-size:.85rem}
+.score{font-family:var(--display);font-size:.92rem;color:var(--ink-soft)}
+
+/* ---------- Steps ---------- */
+.steps{list-style:none;padding:0;margin:1.6rem 0;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:0 0 1.2rem 3.1rem;border-left:2px solid var(--rule);margin-left:1rem}
+.steps li:last-child{border-left-color:transparent;padding-bottom:0}
+.steps li::before{
+  content:counter(s);position:absolute;left:-1.05rem;top:-.1rem;
+  width:2.1rem;height:2.1rem;border-radius:50%;
+  background:var(--sheet);border:2px solid var(--ink);
+  font-family:var(--display);font-weight:800;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.steps b{font-family:var(--display);font-weight:600;display:block;font-size:1.05rem;line-height:1.3;margin-bottom:.15rem}
+
+/* ---------- Bar charts ---------- */
+.chart{background:var(--sheet);border:1px solid var(--rule);border-radius:16px;padding:1.2rem 1.3rem 1.1rem}
+.chart h3{margin:0 0 1rem;font-size:1.05rem}
+.bar{display:grid;grid-template-columns:9.5rem 1fr 3.4rem;gap:.7rem;align-items:center;margin:.45rem 0;font-family:var(--display);font-size:.95rem}
+.bar .name{line-height:1.2}
+.bar .val{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.bar .t{height:20px;background:var(--paper);border-radius:5px;overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--retrieve);border-radius:5px;opacity:.8}
+.bar.me .name, .bar.me .val{color:var(--pencil)}
+.bar.me .t i{background:var(--pencil);opacity:1}
+.bar.dim .t i{background:var(--ink-soft);opacity:.45}
+.chart-note{font-family:var(--display);font-size:.84rem;color:var(--ink-soft);margin-top:.7rem}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* ---------- Stat strip ---------- */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0}
+.stat{border-top:3px solid var(--ink);padding-top:.7rem}
+.stat .n{font-family:var(--display);font-weight:800;font-size:2.2rem;line-height:1;letter-spacing:-.02em}
+.stat .d{font-size:.98rem;line-height:1.45;color:var(--ink-soft);margin-top:.35rem}
+
+/* ---------- Transfer map ---------- */
+.transfer{width:100%;border-collapse:collapse;font-family:var(--display);font-size:.95rem;margin:1.5rem 0}
+.transfer th, .transfer td{padding:.6rem .5rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+.transfer th{font-weight:600;color:var(--ink-soft);font-size:.88rem}
+.transfer td.g{color:var(--right);font-weight:600;white-space:nowrap}
+
+/* ---------- Limits ---------- */
+.limits{background:var(--sheet);border:1px solid var(--rule);border-radius:16px;padding:1.2rem 1.35rem .4rem}
+.limits p{font-size:1.02rem}
+
+/* ---------- Footer ---------- */
+pre.bib{
+  font-family:var(--mono);font-size:.8rem;line-height:1.5;
+  background:var(--sheet);border:1px solid var(--rule);border-radius:12px;
+  padding:1rem;overflow-x:auto;white-space:pre;
+}
+footer{padding:3rem 0 4rem;font-size:.92rem;color:var(--ink-soft)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:720px){
+  body{font-size:1.06rem}
+  .stage{padding:1rem}
+  .stage-row{grid-template-columns:1fr;gap:.4rem}
+  .row-label{padding-top:0}
+  .row-label b{display:inline;margin-right:.4rem}
+  .systems, .pair{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+  .nl-row{grid-template-columns:1fr;gap:.2rem}
+  .bar{grid-template-columns:7rem 1fr 3rem}
+  .card{flex-basis:100%}
+  .transfer{font-size:.86rem}
+  .transfer td.g{white-space:normal}
+  .transfer th, .transfer td{padding:.5rem .3rem}
+}
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{animation-duration:0s !important;animation-delay:0s !important;transition:none !important}
+}
+
+/* ---------- Chinese typography ---------- */
+:root{
+  --display:"Bricolage Grotesque", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --body:"Source Serif 4", "Noto Serif SC", "Songti SC", "SimSun", Georgia, serif;
+}
+body{line-height:1.85}
+h1,h2,h3{letter-spacing:0;line-height:1.3}
+.title{letter-spacing:.01em;line-height:1.08;font-size:clamp(2.5rem,10vw,6.6rem)}
+.lede{line-height:1.75}
+.pull{line-height:1.45;letter-spacing:0}
+em{font-style:normal;font-weight:600}
+.steps b{margin-bottom:.25rem}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wide">
+    <div class="venue">预印本论文，来自清华大学自动化系</div>
+    <h1 class="title">你只需编辑<span class="once">一次</span>。</h1>
+    <p class="subtitle">给大语言模型配上一份小巧、敏捷的“直觉”，让它一眼看出该参考哪些示例，它的上下文学习能力就会明显变强。我们把这份直觉叫作 Jev-LDE。</p>
+    <p class="authors">
+      Jiarong Wen, Qi Wang, Yun Qu, Yixiu Mao, Heming Zou, Haoang Chi, Lizhou Cai, Yiqin Lv, Kaiyu Zhang, Yuhang Jiang, Xiangyang Ji
+    </p>
+    <div class="links">
+      <a class="btn solid" href="https://arxiv.org/pdf/2609.33609" target="_blank" rel="noopener">阅读论文</a>
+      <a class="btn" href="#" aria-disabled="true">代码即将发布</a>
+    </div>
+
+    <!-- Hero demo: one glance, one edit, one call -->
+    <div class="stage" id="hero-stage" aria-label="Jev-LDE 替换一个示例的动画演示">
+      <div class="stage-row">
+        <div class="row-label"><b>查询</b>目标大语言模型需要标注的问题</div>
+        <div class="cards">
+          <div class="card query"><span class="q">东京有多少人口？</span><span class="label">?</span></div>
+        </div>
+      </div>
+      <div class="stage-row">
+        <div class="row-label"><b>检索结果</b>按向量相似度检索出的前 3 个“长得像”的示例</div>
+        <div class="cards" id="hero-retrieved">
+          <div class="card retrieved" data-slot="S1"><span class="id">S1</span><span class="q">东京以什么闻名？</span><span class="label">DESC</span></div>
+          <div class="card retrieved" data-slot="S2" id="hero-s2"><span class="id">S2</span><span class="q">东京位于哪里？</span><span class="label">LOC</span></div>
+          <div class="card retrieved" data-slot="S3"><span class="id">S3</span><span class="q">东京都知事是谁？</span><span class="label">HUM</span></div>
+        </div>
+      </div>
+      <div class="stage-row">
+        <div class="row-label"><b>候选</b>检索列表中紧随其后的几个示例</div>
+        <div class="cards">
+          <div class="card candidate" id="hero-c1"><span class="id">C1</span><span class="q">加拿大有多少人口？</span><span class="label">NUM</span></div>
+          <div class="card candidate"><span class="id">C2</span><span class="q">日本的首都是哪里？</span><span class="label">LOC</span></div>
+          <div class="card candidate"><span class="id">C3</span><span class="q">“东京”这个名字是什么意思？</span><span class="label">DESC</span></div>
+        </div>
+      </div>
+      <div class="verdict fade" id="hero-verdict">
+        <span>Jev-LDE 的一步操作：</span>
+        <span class="json">{"action":"Replace","selected_id":"S2","candidate_id":"C1"}</span>
+        <span class="pill ok">目标大语言模型回答 NUM，正确</span>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <p>一个 TREC 风格的问题分类小例子（DESC 为描述，LOC 为地点，HUM 为人物，NUM 为数值）。示例全都与东京有关，却没有一个在问“多少”。</p>
+      <button class="linkish" id="hero-replay" type="button">重播编辑过程</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="column">
+
+  <h2>一张抄错了重点的小抄</h2>
+  <p class="lede">上下文学习（in-context learning，ICL）有点像允许学生带一张小抄进考场。学生（大语言模型）不改动任何一个参数，只是读几道例题，然后照葫芦画瓢。</p>
+  <p>所以一切都取决于小抄上抄了哪些例题。常见做法是检索与问题最相似的示例：成本低，效果也常常不错。但回头看看上面的东京例子：三个最近邻都提到了东京，却没有一个是“多少”类的问题。模型看到的是 DESC、LOC 和 HUM，而最诱人的答案 LOC 恰恰是错的。</p>
+  <p>多放几个示例并不能可靠地解决问题。上下文窗口有限，长提示会消耗显存和算力，无关或重复的示例还会分散模型的注意力。我们需要的是恰到好处的那几个。</p>
+  <p>在大规模场景下精确找出最优子集几乎不可能：从 <em>n</em> 个候选中挑出 <em>k</em> 个是组合爆炸问题，而评价一个子集唯一可靠的方式，就是一遍又一遍地询问目标模型。查询目标模型的方法以高昂代价换来准确率；不查询的方法速度快，却只能依赖相似度之类的代理指标来评判示例。</p>
+
+  <h2>两种思考方式</h2>
+  <p>丹尼尔·卡尼曼在《思考，快与慢》中把人的思维分成两种模式。<strong>系统 2</strong> 缓慢、费力、深思熟虑：列竖式做长除法，逐字推敲合同条款。<strong>系统 1</strong> 快速而凭直觉：瞥一眼就知道对方生气了，读一句话就觉得哪里不对劲。</p>
+  <p>我们的论文把这种划分落到了实处。大型目标模型是系统 2：昂贵、能力强，真正负责作答。Jev-LDE 则是挡在它前面的一个小小的系统 1，经过训练后，只需快速看一眼查询和检索到的示例，就能说出：“那个会误导人，换成这个。”</p>
+</div>
+
+<div class="wide">
+  <div class="systems">
+    <div class="sys one">
+      <h3>系统 1：Jev-LDE</h3>
+      <div class="who">一个 17 亿参数的编辑器（Qwen3-1.7B，经强化学习后训练）</div>
+      <ul>
+        <li>读取查询、检索到的示例以及少量候选</li>
+        <li>从不亲自回答查询，只判断哪些示例有帮助</li>
+        <li>只做一步操作：保留（Keep）、删除（Delete）或替换（Replace）</li>
+        <li>一次贪心生成，决策过程中不调用目标模型</li>
+      </ul>
+      <div class="speed"><i></i></div>
+      <div class="speed-note">一眼即决</div>
+    </div>
+    <div class="sys two">
+      <h3>系统 2：目标大语言模型</h3>
+      <div class="who">Llama-3-8B、Qwen2.5-7B、Qwen3-8B、Qwen3.5-9B、DeepSeek-V4-Flash</div>
+      <ul>
+        <li>参数冻结，可以是 API 背后的黑盒</li>
+        <li>负责阅读示例、预测答案这项真正的工作</li>
+        <li>每个查询只基于编辑后的示例集调用一次</li>
+        <li>不重新训练，也不为打分而反复查询</li>
+      </ul>
+      <div class="speed"><i></i></div>
+      <div class="speed-note">承担重活</div>
+    </div>
+  </div>
+</div>
+
+<div class="column">
+  <p>这种分工很关键。判断<em>哪些示例有帮助</em>，比<em>解决任务本身</em>容易得多，就像一位好助教即使自己做不出前沿研究，也能一眼挑出令人困惑的例题。正因如此，一个比目标模型小好几倍的模型，依然能为它掌舵。</p>
+
+  <h2>为什么一次编辑就足以带来改变</h2>
+  <p>动手之前，我们先问了一个直白的问题：从检索到的示例集出发，如果最多只允许改动一个示例，能挖出多少准确率？</p>
+  <p>在 4-shot 的 TREC 上，我们对每个测试查询尝试了所有合法的单步编辑。如果有一个能偷看真实标签、为每个查询挑出最佳编辑的 Oracle，它相对普通的 Semantic TopK 能让 Llama-3-8B 提升 <strong>26.0 个百分点</strong>，让 Qwen2.5-7B 提升 <strong>16.8 个百分点</strong>。相比之下，随机编辑平均几乎毫无作用，最坏情况下甚至是灾难性的。</p>
+</div>
+
+<div class="wide">
+  <figure>
+    <div class="nl" role="img" aria-label="4-shot TREC 上单步编辑带来的准确率变化。Llama-3-8B：最差的随机编辑为 -46.4，Jev-LDE 为 +8.2，Oracle 为 +26.0。Qwen2.5-7B：最差的随机编辑为 -33.8，Jev-LDE 为 +7.4，Oracle 为 +16.8。">
+      <div class="nl-legend">
+        <span style="color:var(--retrieve)">随机单步编辑的范围</span>
+        <span style="color:var(--pencil)">Jev-LDE，不使用标签</span>
+        <span style="color:var(--right)">Oracle，使用真实标签</span>
+      </div>
+      <div id="nl-rows"></div>
+      <div class="axis-note"><span>比 Semantic TopK 差</span><span>更好</span></div>
+    </div>
+    <figcaption>在 4-shot TREC 上只做一次编辑时，相对 Semantic TopK 的准确率变化（百分点）。竖线表示“无变化”。单步编辑之内藏着大量准确率，难点在于没有答案时如何选中它。</figcaption>
+  </figure>
+</div>
+
+<div class="column">
+  <p>这张图就是整项工作的动机。单步编辑邻域足够小，可以处理；又足够大，蕴藏着显著收益。在候选池为 16、4-shot 的设置下，它只有 <strong>53 种选择</strong>；而在大小为 3 或 4 的子集上做全局搜索，则有 <strong>2,380 种</strong>。诀窍在于学会一种直觉，一眼挑中对的那一个。</p>
+
+  <h2>试着当一回系统 1</h2>
+  <p>还是那个东京的例子，这次把它的整个单步编辑邻域都摆了出来：1 个保留、3 个删除和 9 个替换。点击任意一种编辑，看看它会怎样改动小抄。然后，让 Jev-LDE 来选。</p>
+</div>
+
+<div class="wide">
+  <div class="stage" id="play">
+    <div class="stage-row">
+      <div class="row-label"><b>查询</b>真实标签为 NUM</div>
+      <div class="cards">
+        <div class="card query"><span class="q">东京有多少人口？</span><span class="label">?</span></div>
+      </div>
+    </div>
+    <div class="stage-row">
+      <div class="row-label"><b>编辑后的示例集</b>目标大语言模型将看到的内容</div>
+      <div class="cards" id="play-set"></div>
+    </div>
+    <div class="stage-row">
+      <div class="row-label"><b>候选</b>可用于替换</div>
+      <div class="cards" id="play-cands"></div>
+    </div>
+    <div class="stage-row">
+      <div class="row-label"><b>全部 13 种编辑</b>单步编辑邻域</div>
+      <div class="actions" id="play-actions" role="group" aria-label="选择一种编辑"></div>
+    </div>
+    <div class="verdict" id="play-verdict" aria-live="polite">
+      <span class="pill neutral">选择一种编辑，看看目标模型可能怎么回答</span>
+    </div>
+    <div class="play-controls">
+      <button class="btn solid" type="button" id="play-jev">让 Jev-LDE 来选</button>
+      <button class="btn" type="button" id="play-reset">重置</button>
+      <span class="score" id="play-score"></span>
+    </div>
+    <div class="think" id="play-think">
+      <code>&lt;think&gt;</code> 查询问的是人口数量。S2 和查询都提到了“东京”，但它的标签是 LOC，正是最具迷惑性的错误答案。C1 同样是“……有多少人口”的句式，标签为 NUM。用 C1 替换 S2。<code>&lt;/think&gt;</code><br>
+      <code>&lt;answer&gt;{"action":"Replace","selected_id":"S2","candidate_id":"C1"}&lt;/answer&gt;</code>
+    </div>
+  </div>
+  <p class="aside" style="margin-top:.8rem">这是对机制的示意，并非真实的模型输出。这里目标模型的回答是手工编写的，只为说明思路；本文其余部分的数字均来自论文。</p>
+</div>
+
+<div class="column">
+  <p>13 种编辑中只有 3 种能纠正这个查询。注意这些好编辑的共同点：它们没有加入更多“东京”，而是加入了<em>类型</em>对、<em>标签</em>也对的问题。这正是 Jev-LDE 的提示词要求它做出的判断：匹配任务类型、推理模式、标签边界和答案格式，并警惕那些表面相似、却带着误导性标签的示例。</p>
+
+  <h2>直觉从何而来</h2>
+  <p>系统 1 并非生来就懂，它靠经验练成。Jev-LDE 也是如此，通过基于可验证奖励的强化学习来学习。奖励简单到极致：编辑之后，冻结的目标大语言模型答对了吗？答对得 1 分，答错得 0 分。</p>
+
+  <ol class="steps">
+    <li><b>设定一个情境。</b>取一个训练查询，用 Semantic TopK 检索出前 k 个示例，并把前 16 名中剩下的示例作为替换候选。</li>
+    <li><b>让编辑器尝试八种编辑。</b>Jev-LDE 采样八个输出，每个输出都以一个保留、删除或替换操作结尾。</li>
+    <li><b>每种编辑各问一次目标模型。</b>每个编辑后的示例集都交给冻结的 Meta-Llama-3-8B-Instruct。预测正确得 1 分；预测错误或输出无法解析得 0 分。</li>
+    <li><b>向优于平均水平的编辑靠拢。</b>GRPO 把每种编辑与组内平均水平比较，将概率向表现更好的编辑倾斜。</li>
+  </ol>
+
+  <p>有两个设计选择让这一切行之有效。第一，<strong>用强化学习而非监督标签</strong>：往往有好几种编辑同样有效，并不存在唯一的“正确操作”可供模仿，而强化学习让编辑器去探索，而不是死记一个答案。第二，<strong>只在选择真正重要的地方训练</strong>：如果某个状态下所有编辑的结果都一样，就没什么可学的，因此只保留那些试探性编辑有成有败的训练状态。</p>
+  <p>在 AGNews、TREC、DBPedia 和 GSM8K 上经过 752 次更新，编辑器的平均奖励从前 100 次更新的 0.475 上升到最后 100 次的 0.713。</p>
+
+  <p>最能说明问题的，是没有这种训练时会发生什么。下面是在 one-shot TREC 上做编辑的五种方式，目标模型都是 Llama-3-8B：</p>
+</div>
+
+<div class="wide">
+  <figure>
+    <div class="chart" id="chart-ablation"></div>
+    <figcaption>以 Meta-Llama-3-8B-Instruct 为目标模型的 one-shot TREC 准确率。起始示例、候选和动作空间完全相同，唯一变化的是做决策的模型。</figcaption>
+  </figure>
+</div>
+
+<div class="column">
+  <p class="pull">未经训练的小模型，凭直觉还不如什么都不做。经过强化学习后，同一个模型比什么都不做高出 12.8 个百分点。</p>
+  <p>未经训练的 Qwen3-1.7B 只有 31.2%，远低于直接保留检索示例的 52.8%。即便让大得多的 Llama-3-8B 刻意挑选一种编辑，也只能达到 57.8%。经过后训练，这个 1.7B 的编辑器达到了 65.6%。换句话说，直觉与模型大小无关；它来自“什么真正对目标模型有帮助”的反馈。</p>
+
+  <h2>快速的一次编辑换来了什么</h2>
+  <p>测试时的流程很短：检索，让 Jev-LDE 用一次贪心生成做出一个编辑，再调用一次目标模型。无需反复为上下文打分，也无需子集搜索。</p>
+</div>
+
+<div class="wide">
+  <div class="stats">
+    <div class="stat"><div class="n">81.2 → 88.1</div><div class="d">在 TREC、DBPedia 和 Banking77 上、四个目标大语言模型的 one-shot 平均准确率，从 Semantic TopK 到 Jev-LDE。</div></div>
+    <div class="stat"><div class="n">46 / 48</div><div class="d">在 48 个分类配置中，Jev-LDE 在 46 个上超越了自己的起点；其中 44 个取得最佳或并列最佳。</div></div>
+    <div class="stat"><div class="n">+11% 耗时</div><div class="d">在 one-shot TREC、Qwen2.5-7B 上的端到端额外耗时，而准确率从 65.4% 升至 80.6%。</div></div>
+  </div>
+
+  <div class="pair">
+    <figure style="margin-top:0">
+      <div class="chart" id="chart-main"></div>
+      <figcaption>TREC、DBPedia 和 Banking77 上的 one-shot 平均准确率，对 Qwen2.5-7B、Llama-3-8B、Qwen3-8B 和 Qwen3.5-9B 四个目标模型取平均。</figcaption>
+    </figure>
+    <figure style="margin-top:0">
+      <div class="chart" id="chart-time"></div>
+      <figcaption>在 one-shot TREC、Qwen2.5-7B-Instruct 上的端到端耗时，包括检索、示例选择或编辑，以及目标模型推理。</figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="column">
+  <p>耗时图最能体现“系统 1”这一设计的价值。像 TopK+ConE 这样借助目标模型为示例排序的方法，耗时是两倍多。Jev-LDE 的开销与纯检索方法相当，准确率却位居榜首。示例预算越紧，收益越大（one-shot 时每个示例都至关重要）；在更大的预算下，平均收益依然为正：即使在 8-shot 和 16-shot，一次编辑也在 24 个设置中的 18 个里带来了提升。</p>
+
+  <h2>一种可以迁移的直觉</h2>
+  <p>Jev-LDE 只从一位“老师” Llama-3-8B 那里、在四个训练基准上获得过反馈，我们也从未重新训练它。但它依然能帮助其他模型、其他数据集和其他检索器：</p>
+
+  <table class="transfer">
+    <thead><tr><th>设置</th><th>新在哪里</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td>Qwen2.5-7B、Qwen3-8B、Qwen3.5-9B</td><td>未见过的目标模型</td><td class="g">36 个中 35 个提升</td></tr>
+      <tr><td>Banking77 意图分类</td><td>未见过的基准</td><td class="g">16 个中 14 个提升</td></tr>
+      <tr><td>SST-2 情感分类</td><td>未见过的基准</td><td class="g">全部设置均提升</td></tr>
+      <tr><td>DeepSeek-V4-Flash，TACRED</td><td>未见过的模型和基准</td><td class="g">+0.3 至 +2.2</td></tr>
+      <tr><td>DeepSeek-V4-Flash，TREC-50</td><td>未见过的模型，50 个细粒度标签（与 TREC 领域相近）</td><td class="g">+2.4 至 +4.4</td></tr>
+      <tr><td>以 BM25、CASE、TopK+ConE 作为检索器</td><td>不同的初始示例集和候选池</td><td class="g">24 个中 24 个提升</td></tr>
+    </tbody>
+  </table>
+
+  <p>检索器上的结果很好地体现了“即插即用”。在 TREC、Qwen2.5-7B 上，把 Jev-LDE 接在 BM25 之后，各示例预算平均提升 9.8 个百分点；接在 CASE 之后提升 10.2；接在 TopK+ConE 之后，更是提升了惊人的 22.9。不管是谁交出了小抄的初稿，它都知道如何改得更好。</p>
+  <p>为什么能迁移？我们最好的解释正是“系统 1”：Jev-LDE 不是在解题，而是在判断相关性、冗余度和标签区分，而这些判断在不同的分类问题之间是相通的。需要说明的是，实验并未单独拆分这些因素各自的贡献，因此请把它看作一个合理的解释，而非已被证实的机制。</p>
+
+  <h2>一点理论，用大白话讲</h2>
+  <p>论文中的两个结果为“局部编辑”的直觉提供了支撑。</p>
+  <p><strong>就近修复是常态。</strong>在一个简化模型中，假设每个检索到的示例指向正确方向的可能性大于指向错误方向，那么一次失败的检索需要超过 <em>h</em> 次替换才能修复的概率，会随 <em>h</em> 呈几何级数下降。检索出错时，通常只错在一处。</p>
+  <p><strong>动作空间越小，学起来越省。</strong>学到一个接近最优的编辑策略所需的反馈量，随可用动作的数量线性增长。在 53 种局部编辑上学习，远比在成千上万个全局子集上学习容易。</p>
+
+  <h2>系统 1 的下一步</h2>
+  <div class="limits">
+    <p><strong>推理任务需要另一根杠杆。</strong>在数学题上，编辑示例几乎没有带来变化：GSM8K 上的平均变化不超过一个百分点；在未参与训练的 AQuA-RAT 上，Qwen2.5-7B 和 Llama-3-8B 的准确率分别下降了 0.8 和 1.9 个百分点。我们的理解是：对推理密集型任务而言，在推理阶段给目标模型更多算力，比调整它的示例更划算。与其把小抄写得更好，不如给它更多思考的时间。</p>
+    <p>但这并不意味着系统 1 就此出局，而是它的职责变了。如今用来决定“展示哪些示例”的那份快速、轻量的判断力，同样可以用来决定“一个查询值得多少推理”：在难题上多花思考 token，在简单题上把它们省下来。让一个小小的系统 1 为更大的系统 2 分配算力，是顺理成章的下一步，也是我们期待探索的方向。</p>
+    <p><strong>一步操作，一个候选池。</strong>Jev-LDE 无法从候选池之外找来示例，也无法修复需要多处协同修改的示例集。候选池也并非越大越好：在 one-shot TREC、Qwen2.5-7B 上，大小为 16 的候选池达到 80.6%，而大小为 32 的只有 79.4%。</p>
+  </div>
+
+  <h2>结语</h2>
+  <p>想让上下文学习变得更好，并不需要搜索整个提示空间。从检索器给出的结果出发，让一个直觉敏锐的小模型做一次谨慎的编辑，然后只问大语言模型一次。一个快速的系统 1 搭配一个能干的系统 2，事实证明是一种简单、便宜且出人意料地强大的组合。</p>
+
+  <h3>引用本文</h3>
+<pre class="bib">@article{wen2026yoeo,
+  title   = {You Only Edit Once: Incentivizing In-Context Capability
+             of LLMs via Local Demonstration Refinement},
+  author  = {Wen, Jiarong and Wang, Qi and Qu, Yun and Mao, Yixiu and
+             Zou, Heming and Chi, Haoang and Cai, Lizhou and Lv, Yiqin and
+             Zhang, Kaiyu and Jiang, Yuhang and Ji, Xiangyang},
+  journal = {arXiv preprint arXiv:2609.33609},
+  year    = {2026}
+}</pre>
+</div>
+</main>
+
+<footer>
+  <div class="column">
+    关于本工作的问题，请联系 <a href="mailto:cheemswang@mail.tsinghua.edu.cn">cheemswang@mail.tsinghua.edu.cn</a>。使用后训练 Jev-LDE 进行推理的代码将随论文最终版本一同发布。
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Hero animation ---------- */
+  var s2 = document.getElementById('hero-s2');
+  var c1 = document.getElementById('hero-c1');
+  var verdict = document.getElementById('hero-verdict');
+  var original = s2.innerHTML;
+  var timers = [];
+  function clear(){ timers.forEach(clearTimeout); timers = []; }
+  function resetHero(){
+    s2.className = 'card retrieved';
+    s2.innerHTML = original;
+    c1.className = 'card candidate';
+    verdict.classList.remove('show');
+  }
+  function finalHero(){
+    s2.className = 'card retrieved incoming';
+    s2.innerHTML = '<span class="id">S2，现为 C1</span><span class="q">加拿大有多少人口？</span><span class="label">NUM</span>';
+    c1.className = 'card candidate gone';
+    verdict.classList.add('show');
+  }
+  function playHero(){
+    clear(); resetHero();
+    if(reduce){ finalHero(); return; }
+    timers.push(setTimeout(function(){ s2.classList.add('struck','lift'); }, 1100));
+    timers.push(setTimeout(function(){ c1.classList.add('incoming','lift'); }, 1700));
+    timers.push(setTimeout(function(){ finalHero(); }, 2500));
+  }
+  document.getElementById('hero-replay').addEventListener('click', playHero);
+  playHero();
+
+  /* ---------- Number line ---------- */
+  var MIN = -50, MAX = 30;
+  function pos(v){ return ((v - MIN) / (MAX - MIN) * 100) + '%'; }
+  var rows = [
+    {name:'Llama-3-8B', worst:-46.4, lde:8.2, oracle:26.0},
+    {name:'Qwen2.5-7B', worst:-33.8, lde:7.4, oracle:16.8}
+  ];
+  var nl = document.getElementById('nl-rows');
+  rows.forEach(function(r){
+    var row = document.createElement('div');
+    row.className = 'nl-row';
+    row.innerHTML =
+      '<div class="nl-name">' + r.name + '</div>' +
+      '<div class="track">' +
+        '<div class="span" style="left:' + pos(r.worst) + ';width:calc(' + pos(r.oracle) + ' - ' + pos(r.worst) + ')"></div>' +
+        '<div class="zero" style="left:' + pos(0) + '"></div>' +
+        '<div class="mark worst" style="left:' + pos(r.worst) + '">' + r.worst + '</div>' +
+        '<div class="mark lde" style="left:' + pos(r.lde) + '">+' + r.lde + '</div>' +
+        '<div class="mark oracle" style="left:' + pos(r.oracle) + '">+' + r.oracle + '</div>' +
+      '</div>';
+    nl.appendChild(row);
+  });
+
+  /* ---------- Bar charts ---------- */
+  function barChart(id, title, data, max, unit, note){
+    var el = document.getElementById(id);
+    var html = '<h3>' + title + '</h3>';
+    data.forEach(function(d){
+      var cls = 'bar' + (d.me ? ' me' : '') + (d.dim ? ' dim' : '');
+      html += '<div class="' + cls + '"><span class="name">' + d.n + '</span>' +
+              '<span class="t"><i style="width:' + (d.v / max * 100) + '%"></i></span>' +
+              '<span class="val">' + d.v + unit + '</span></div>';
+    });
+    if(note) html += '<div class="chart-note">' + note + '</div>';
+    el.innerHTML = html;
+  }
+  barChart('chart-ablation', '由谁来做编辑？', [
+    {n:'Jev-LDE（1.7B，RL 后）', v:65.6, me:true},
+    {n:'Llama-3-8B，直接提示', v:57.8},
+    {n:'保留，不编辑', v:52.8, dim:true},
+    {n:'Qwen3-1.7B，RL 前', v:31.2},
+    {n:'随机编辑', v:23.2}
+  ], 100, '%');
+  barChart('chart-main', '准确率', [
+    {n:'Jev-LDE', v:88.1, me:true},
+    {n:'CASE', v:81.4},
+    {n:'Semantic TopK', v:81.2},
+    {n:'TopK+ConE', v:78.3},
+    {n:'LMS3', v:75.9},
+    {n:'BM25', v:74.6}
+  ], 100, '%');
+  barChart('chart-time', '耗时（秒）', [
+    {n:'TopK+ConE', v:197.5},
+    {n:'Jev-LDE', v:91.1, me:true},
+    {n:'LMS3', v:88.7},
+    {n:'Semantic TopK', v:82.1},
+    {n:'CASE', v:81.1},
+    {n:'BM25', v:79.8},
+    {n:'随机', v:79.1, dim:true}
+  ], 200, 's');
+
+  /* ---------- Playground ---------- */
+  var S = {
+    S1:{q:'东京以什么闻名？', l:'DESC'},
+    S2:{q:'东京位于哪里？', l:'LOC'},
+    S3:{q:'东京都知事是谁？', l:'HUM'}
+  };
+  var C = {
+    C1:{q:'加拿大有多少人口？', l:'NUM'},
+    C2:{q:'日本的首都是哪里？', l:'LOC'},
+    C3:{q:'“东京”这个名字是什么意思？', l:'DESC'}
+  };
+  var actions = [{type:'Keep'}];
+  ['S1','S2','S3'].forEach(function(s){ actions.push({type:'Delete', s:s}); });
+  ['S1','S2','S3'].forEach(function(s){ ['C1','C2','C3'].forEach(function(c){ actions.push({type:'Replace', s:s, c:c}); }); });
+
+  function key(a){ return a.type + (a.s ? '-' + a.s : '') + (a.c ? '-' + a.c : ''); }
+  function label(a){
+    if(a.type === 'Keep') return '保留';
+    if(a.type === 'Delete') return '删除 ' + a.s;
+    return '用 ' + a.c + ' 替换 ' + a.s;
+  }
+  function predict(a){
+    if(a.type === 'Replace' && a.c === 'C1') return 'NUM';
+    if(a.type === 'Replace' && a.c === 'C3') return 'DESC';
+    if(a.type === 'Delete' && a.s === 'S2') return 'DESC';
+    return 'LOC';
+  }
+  function json(a){
+    if(a.type === 'Keep') return '{"action":"Keep"}';
+    if(a.type === 'Delete') return '{"action":"Delete","selected_id":"' + a.s + '"}';
+    return '{"action":"Replace","selected_id":"' + a.s + '","candidate_id":"' + a.c + '"}';
+  }
+
+  var setEl = document.getElementById('play-set');
+  var candEl = document.getElementById('play-cands');
+  var actEl = document.getElementById('play-actions');
+  var verdictEl = document.getElementById('play-verdict');
+  var scoreEl = document.getElementById('play-score');
+  var thinkEl = document.getElementById('play-think');
+  var tried = {};
+
+  function cardHTML(id, d, cls, idText){
+    return '<div class="card ' + cls + '"><span class="id">' + (idText || id) + '</span><span class="q">' + d.q + '</span><span class="label">' + d.l + '</span></div>';
+  }
+  function render(a){
+    var h = '';
+    ['S1','S2','S3'].forEach(function(s){
+      if(a && a.type === 'Delete' && a.s === s){
+        h += cardHTML(s, S[s], 'retrieved struck');
+      } else if(a && a.type === 'Replace' && a.s === s){
+        h += cardHTML(a.c, C[a.c], 'retrieved incoming', s + '，现为 ' + a.c);
+      } else {
+        h += cardHTML(s, S[s], 'retrieved');
+      }
+    });
+    setEl.innerHTML = h;
+    var ch = '';
+    ['C1','C2','C3'].forEach(function(c){
+      var used = a && a.type === 'Replace' && a.c === c;
+      ch += cardHTML(c, C[c], 'candidate' + (used ? ' gone' : ''));
+    });
+    candEl.innerHTML = ch;
+  }
+  function choose(a, fromJev){
+    render(a);
+    var p = predict(a);
+    var ok = p === 'NUM';
+    tried[key(a)] = ok;
+    Array.prototype.forEach.call(actEl.children, function(b){
+      var k = b.getAttribute('data-k');
+      b.setAttribute('aria-pressed', k === key(a) ? 'true' : 'false');
+      b.classList.toggle('tried-ok', tried[k] === true);
+      b.classList.toggle('tried-bad', tried[k] === false);
+      b.classList.toggle('jev', !!fromJev && k === key(a));
+    });
+    verdictEl.innerHTML =
+      '<span class="json">' + json(a) + '</span>' +
+      '<span class="pill ' + (ok ? 'ok' : 'bad') + '">目标模型回答 ' + p + (ok ? '，正确' : '，错误') + '</span>';
+    var n = Object.keys(tried).length;
+    var good = Object.keys(tried).filter(function(k){ return tried[k]; }).length;
+    scoreEl.textContent = '你已尝试 13 种编辑中的 ' + n + ' 种，其中 ' + good + ' 种纠正了答案。';
+  }
+  actions.forEach(function(a){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.textContent = label(a);
+    b.setAttribute('data-k', key(a));
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', function(){ thinkEl.classList.remove('show'); choose(a, false); });
+    actEl.appendChild(b);
+  });
+  document.getElementById('play-jev').addEventListener('click', function(){
+    choose({type:'Replace', s:'S2', c:'C1'}, true);
+    thinkEl.classList.add('show');
+  });
+  document.getElementById('play-reset').addEventListener('click', function(){
+    tried = {};
+    render(null);
+    thinkEl.classList.remove('show');
+    scoreEl.textContent = '';
+    verdictEl.innerHTML = '<span class="pill neutral">选择一种编辑，看看目标模型可能怎么回答</span>';
+    Array.prototype.forEach.call(actEl.children, function(b){
+      b.setAttribute('aria-pressed','false');
+      b.classList.remove('tried-ok','tried-bad','jev');
+    });
+  });
+  render(null);
+})();
+</script>
+</body>
+</html>

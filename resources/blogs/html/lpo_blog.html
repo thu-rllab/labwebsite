@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NIPS26 LPO: Listwise Policy Optimization</title>
+<meta name="description" content="Group-based RLVR (GRPO, Dr.GRPO, MaxRL) secretly chases a target distribution on the response simplex. LPO makes that target explicit and projects onto it exactly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+:root{
+  --bg:#fbf8f3; --paper:#ffffff; --fg:#1d1b19; --muted:#6b645c; --line:#e6dfd4;
+  --card:#f4efe6; --code:#f1ebe0;
+  --pg:#8d8d8d; --fwd:#9b1c2c; --rev:#e0a93b; --accent:#9b1c2c; --ink2:#2f5d8a;
+  --good:#2e7d4f; --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(60,40,20,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15130f; --paper:#1d1a16; --fg:#efe9df; --muted:#a79e92; --line:#3a342c;
+    --card:#241f1a; --code:#2a241d; --pg:#9a9a9a; --fwd:#e0566a; --rev:#f0bf5c; --accent:#e0566a; --ink2:#7fb0e0;
+    --good:#5fc28a; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15130f; --paper:#1d1a16; --fg:#efe9df; --muted:#a79e92; --line:#3a342c;
+  --card:#241f1a; --code:#2a241d; --pg:#9a9a9a; --fwd:#e0566a; --rev:#f0bf5c; --accent:#e0566a; --ink2:#7fb0e0;
+  --good:#5fc28a; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:18px/1.7 "Source Sans 3",system-ui,sans-serif;}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+.wide{max-width:980px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.2;letter-spacing:-.01em}
+h1{font-size:clamp(2rem,5.5vw,3.3rem);margin:.3em 0 .3em}
+h2{font-size:clamp(1.5rem,3.6vw,2.05rem);margin:2.4em 0 .5em}
+h3{font-size:1.2rem;margin:1.6em 0 .4em}
+p{margin:.8em 0}
+a{color:var(--accent)}
+code,.mono{font-family:"JetBrains Mono",monospace;font-size:.86em}
+.kicker{font:600 .8rem/1 "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+.katex{font-size:1.04em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0;position:relative}
+.katex{position:relative}
+
+/* hero */
+header.hero{padding:56px 0 28px;border-bottom:1px solid var(--line);background:
+  radial-gradient(1000px 400px at 85% -10%, color-mix(in srgb,var(--rev) 22%,transparent), transparent 60%),
+  radial-gradient(800px 380px at 0% 0%, color-mix(in srgb,var(--fwd) 12%,transparent), transparent 60%);}
+.dek{font-size:1.2rem;color:var(--muted);max-width:640px}
+.authors{font-size:.95rem;margin-top:22px;color:var(--fg)}
+.authors .aff{color:var(--muted);font-size:.88rem}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid var(--line);
+  background:var(--paper);color:var(--fg);text-decoration:none;font-weight:600;font-size:.95rem;box-shadow:var(--shadow)}
+.btn.primary{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn.ghost{opacity:.7}
+
+.tldr{margin:36px 0 8px;padding:22px 24px;background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--accent);
+  border-radius:14px;box-shadow:var(--shadow)}
+.tldr b{color:var(--accent)}
+.tldr ul{margin:.4em 0 0;padding-left:1.2em}
+
+.callout{background:var(--card);border-radius:14px;padding:16px 20px;margin:1.4em 0;font-size:.97rem}
+.callout.big{font-family:Fraunces,Georgia,serif;font-size:1.25rem;line-height:1.45;text-align:center;padding:26px 22px}
+
+/* two-step */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:1.4em 0}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.step .n{font:700 .75rem "JetBrains Mono",monospace;color:var(--accent);letter-spacing:.1em}
+.step h4{margin:.3em 0 .2em;font-family:Fraunces,serif;font-size:1.15rem}
+@media (max-width:640px){.steps{grid-template-columns:1fr}}
+
+table.t{width:100%;border-collapse:collapse;font-size:.95rem;margin:1em 0}
+table.t th,table.t td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}
+table.t th{font-weight:700;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+.tablewrap{overflow-x:auto}
+
+/* demo cards */
+.demo{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px;margin:1.6em 0;box-shadow:var(--shadow)}
+.demo .title{font:700 .78rem "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
+.demo .hint{font-size:.9rem;color:var(--muted);margin:0 0 14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:6px 10px;cursor:pointer;
+  font:600 .9rem "JetBrains Mono",monospace;color:var(--fg);min-width:52px;text-align:center;user-select:none;transition:.15s}
+.chip.on{background:color-mix(in srgb,var(--good) 18%,var(--paper));border-color:var(--good);color:var(--good)}
+.chip:hover{transform:translateY(-1px)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--paper);color:var(--fg);padding:7px 12px;font:600 .88rem "Source Sans 3",system-ui,sans-serif;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--fg);color:var(--bg)}
+label.sl{display:flex;align-items:center;gap:10px;font-size:.92rem;color:var(--muted)}
+input[type=range]{accent-color:var(--accent);width:150px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:190px;margin:18px 0 6px;position:relative;border-bottom:1px solid var(--line)}
+.bar{flex:1;background:var(--pg);border-radius:6px 6px 0 0;position:relative;transition:height .35s ease,background .2s}
+.bar.win{background:var(--fwd)}
+.bar span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font:600 .72rem "JetBrains Mono",monospace;color:var(--muted);white-space:nowrap}
+.uline{position:absolute;left:0;right:0;border-top:2px dashed var(--muted);opacity:.6;pointer-events:none}
+.uline i{position:absolute;right:0;top:-18px;font:normal .7rem "JetBrains Mono";color:var(--muted)}
+.xl{display:flex;gap:8px}.xl div{flex:1;text-align:center;font:.75rem "JetBrains Mono",monospace;color:var(--muted)}
+.readout{font-size:.95rem;margin-top:12px;padding:12px 14px;background:var(--card);border-radius:10px}
+
+.simplex-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:720px){.simplex-grid{grid-template-columns:1fr}}
+svg.sx{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.88rem;margin:8px 0}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.ctl{display:flex;flex-direction:column;gap:12px}
+.act{display:flex;gap:8px;flex-wrap:wrap}
+.act button{border:1px solid var(--line);background:var(--paper);color:var(--fg);border-radius:10px;padding:8px 13px;font:600 .9rem "Source Sans 3",system-ui,sans-serif;cursor:pointer}
+.act button.go{background:var(--accent);color:#fff;border-color:var(--accent)}
+.act button:disabled{opacity:.5;cursor:default}
+table.mini{width:100%;border-collapse:collapse;font:.8rem "JetBrains Mono",monospace}
+table.mini td,table.mini th{padding:5px 4px;border-bottom:1px solid var(--line);text-align:right}
+table.mini td:first-child,table.mini th:first-child{text-align:left}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+
+/* props */
+.props{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:1.3em 0}
+.prop{background:var(--card);border-radius:14px;padding:16px}
+.prop .ic{font-size:1.5rem}
+.prop h4{margin:.3em 0;font-family:Fraunces,serif;font-size:1.08rem}
+.prop p{font-size:.92rem;margin:.2em 0;color:var(--muted)}
+@media (max-width:640px){.props{grid-template-columns:1fr}}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:1.4em 0}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.stat .v{font:700 1.9rem/1.1 Fraunces,serif;color:var(--accent)}
+.stat .l{font-size:.85rem;color:var(--muted);margin-top:6px;line-height:1.4}
+@media (max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+
+/* results chart */
+.rchart .grp{margin:14px 0}
+.rchart .gname{font-weight:700;font-size:.92rem;margin-bottom:4px}
+.rbar{display:flex;align-items:center;gap:8px;margin:3px 0;font:.8rem "JetBrains Mono",monospace}
+.rbar .lab{width:78px;color:var(--muted);flex:none}
+.rbar .trk{flex:1;height:18px;background:var(--card);border-radius:5px;overflow:hidden}
+.rbar .fill{height:100%;border-radius:5px;transition:width .45s ease}
+.rbar .val{width:44px;text-align:right;flex:none}
+
+.findings{padding-left:0;list-style:none}
+.findings li{padding:12px 0 12px 34px;border-bottom:1px solid var(--line);position:relative}
+.findings li::before{content:attr(data-i);position:absolute;left:0;top:12px;font:700 1rem Fraunces,serif;color:var(--accent)}
+
+pre.bib{background:var(--code);border-radius:12px;padding:16px;overflow-x:auto;font:.8rem/1.55 "JetBrains Mono",monospace;white-space:pre}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 50px;color:var(--muted);font-size:.9rem}
+.theme-t{position:fixed;right:14px;bottom:14px;border:1px solid var(--line);background:var(--paper);color:var(--fg);border-radius:999px;
+  width:40px;height:40px;cursor:pointer;box-shadow:var(--shadow);font-size:1.1rem}
+</style>
+</head>
+<body>
+<button class="theme-t" id="themeT" aria-label="Toggle theme">◐</button>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Research blog · RL for LLM reasoning</div>
+    <h1><span style="color:var(--accent)">NIPS26 LPO:</span> Your GRPO update is secretly chasing a target.<br>LPO just aims at it.</h1>
+    <p class="dek">Group-based RLVR methods (GRPO, Dr.GRPO, MaxRL, and friends) look like tweaks to advantage normalization. Underneath, they all share one geometric move: build a target distribution over the sampled responses, then take a first-order step toward it. <b>Listwise Policy Optimization (LPO)</b> makes that move explicit and exact.</p>
+    <div class="authors">
+      Yun Qu, Qi Wang, Yixiu Mao, Heming Zou, Yuhang Jiang, Yingyue Li, Wutong Xu, Lizhou Cai, Weijie Liu, Clive Bai, Kai Yang, Yangkun Chen, Saiyong Yang, Xiangyang Ji<br>
+      <span class="aff">Department of Automation, Tsinghua University · LLM Department, Tencent · arXiv, May 2026</span>
+    </div>
+    <div class="btns">
+      <a class="btn primary" href="https://arxiv.org/abs/2605.06139">📄 Paper (arXiv 2605.06139)</a>
+      <a class="btn ghost" href="#" title="Replace with repository link">💻 Code (coming soon)</a>
+      <a class="btn" href="#cite">❝ Cite</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<div class="tldr">
+  <b>TL;DR</b>
+  <ul>
+    <li>Sample $K$ responses to a prompt and they form a tiny probability simplex. On it, <b>every group-based policy gradient implicitly targets</b> a reward-weighted softmax, $w^* = \mathrm{softmax}(R/\tau)$, where the "temperature" $\tau$ is whatever the advantage normalizer divides by.</li>
+    <li>The usual policy-gradient step is only a <b>first-order approximation</b> of a reverse-KL projection toward that target, and it drifts once updates go off-policy.</li>
+    <li><b>LPO</b> splits each update into two clean steps: <i>compute the target</i> in closed form, then <i>project</i> onto it exactly with a divergence of your choice. Gradients become bounded, zero-sum and self-correcting, at <b>no extra compute</b>.</li>
+    <li>Across logic, math, code and multimodal geometry (1.5B–14B models, 4 LLM families), LPO beats its matched PG baseline in the large majority of settings, while keeping entropy up and gradient norms down.</li>
+  </ul>
+</div>
+
+<h2>1 · A group of answers is a little universe</h2>
+<p>Here's the standard RLVR loop: give the model a math problem, sample $K=8$ attempts, let a verifier mark each one right or wrong, and nudge the model toward the good ones. GRPO does the nudging with <i>group-relative advantages</i>: subtract the group's mean reward, divide by its standard deviation.</p>
+<p>Now change the viewpoint. Instead of looking at each response in isolation, ask: <i>among these eight</i>, how much does the current policy prefer each one, relative to the policy that sampled them? That gives a distribution over the group:</p>
+$$P_{\theta,k} \;=\; \mathrm{softmax}(s_\theta)_k,\qquad s_{\theta,k} = \log\frac{\pi_\theta(y_k\mid x)}{\pi_b(y_k\mid x)}.$$
+<p>Before any update, $\pi_\theta=\pi_b$ and this is just uniform, $1/K$ each. As training moves the policy, $P_\theta$ slides around a $(K-1)$-dimensional simplex, the <b>response simplex</b>. That tiny, finite space is where the whole story plays out.</p>
+
+<h2>2 · The target nobody wrote down</h2>
+<p>Here's the first result. Take any zero-mean advantage vector $A$ and define $w^* = \mathrm{softmax}(A)$. Then, at the on-policy point,</p>
+$$\underbrace{\tfrac{1}{K}\textstyle\sum_k A_k\,\nabla_\theta \log\pi_\theta(y_k\mid x)}_{\text{the policy gradient you already use}} \;=\; -\nabla_\theta\, D_{\mathrm{KL}}\!\left(P_\theta \,\|\, w^*\right).$$
+<div class="callout big">A policy-gradient step <i>is</i> a gradient step on reverse KL toward a hidden target.<br><span class="muted" style="font-size:.95rem">…but only exactly at the on-policy point. The error grows with off-policy drift.</span></div>
+<p>Since advantages have the shape $(R_k-\mu)/\tau$ and softmax ignores the shift $\mu$, the hidden target is always $\mathrm{softmax}(R/\tau)$. Methods that look different on paper turn out to aim at <b>the same family of targets</b>, and differ only in how sharp that target is:</p>
+<div class="tablewrap">
+<table class="t">
+<tr><th>Method</th><th>Advantage</th><th>Implicit target</th><th>Temperature τ</th></tr>
+<tr><td>GRPO / DAPO</td><td>$(R_k-\mu_G)/\sigma_G$</td><td>$\mathrm{softmax}(R/\sigma_G)$</td><td>group std $\sigma_G$</td></tr>
+<tr><td>Dr.GRPO / RLOO</td><td>$R_k-\mu_G$</td><td>$\mathrm{softmax}(R)$</td><td>≈ 1</td></tr>
+<tr><td>MaxRL</td><td>$(R_k-\mu_G)/\mu_G$</td><td>$\mathrm{softmax}(R/\mu_G)$</td><td>success rate $\mu_G$</td></tr>
+</table>
+</div>
+
+<div class="demo" id="demo1">
+  <div class="title">▶ Play: meet the hidden target</div>
+  <p class="hint">Click responses to mark them correct ✓ or wrong ✗, then switch the normalizer. The bars show how much probability each method's hidden target puts on each response.</p>
+  <div class="row" id="chips8"></div>
+  <div class="row" style="margin-top:12px">
+    <div class="seg" id="normSeg">
+      <button data-m="grpo" class="on">GRPO (τ=σ)</button><button data-m="dr">Dr.GRPO (τ=1)</button><button data-m="max">MaxRL (τ=μ)</button>
+    </div>
+  </div>
+  <div class="bars" id="bars8"><div class="uline" id="uline"><i>uniform 1/K</i></div></div>
+  <div class="xl" id="xl8"></div>
+  <div class="readout" id="read8"></div>
+</div>
+
+<p>Play with it and you'll see something neat. <b>MaxRL's target gets extremely sharp on hard prompts</b>: with one lucky success out of eight, τ = 1/8 and that response is weighted about 3000× more than each failure. On easy prompts it relaxes to about 3×. GRPO is symmetric instead: its target is <i>softest</i> for a 50/50 group (σ is largest there) and sharpens toward both extremes. The normalizer isn't just a variance trick; it's a choice of <i>where you're aiming</i>.</p>
+
+<h2>3 · From "aim roughly" to "aim exactly": LPO</h2>
+<p>Classic RL-as-inference methods (REPS, MPO, AWR) also build a reward-weighted target and move the policy toward it, but with continuous actions they must approximate everything. LLM RLVR has a lucky structural gift: the sampled responses form a <b>finite</b> simplex. Both the target and the projection can be computed in closed form. So LPO does exactly that, in two decoupled steps:</p>
+
+<div class="steps">
+  <div class="step">
+    <div class="n">STEP 1 · TARGET</div>
+    <h4>What to aim for</h4>
+    <p style="font-size:.95rem;margin:.3em 0">Maximize expected reward on the simplex, inside a KL trust region around the current policy:</p>
+    $$\max_{w\in\Delta^{K-1}} \textstyle\sum_k w_k R_k - \tau\, D_{\mathrm{KL}}(w\|P_t)$$
+    <p style="font-size:.95rem;margin:.3em 0">Unique closed-form answer, a listwise Gibbs target:</p>
+    $$w^*_k = \mathrm{softmax}\!\left(\tfrac{R_k}{\tau} + s_{t,k}\right)$$
+  </div>
+  <div class="step">
+    <div class="n">STEP 2 · PROJECTION</div>
+    <h4>How to get there</h4>
+    <p style="font-size:.95rem;margin:.3em 0">Minimize a divergence between target and listwise policy. Every choice gives $\nabla = \sum_k c_k \nabla_\theta\log\pi_\theta(y_k|x)$:</p>
+    <p style="font-size:.95rem;margin:.5em 0"><b style="color:var(--fwd)">LPO<sub>fwd</sub></b> · $D_{\mathrm{KL}}(w^*\|P_\theta)$<br>$c_k = P_{\theta,k} - w^*_k$</p>
+    <p style="font-size:.95rem;margin:.5em 0"><b style="color:var(--rev)">LPO<sub>rev</sub></b> · $D_{\mathrm{KL}}(P_\theta\|w^*)$<br>$c_k = P_{\theta,k}(d_k-\bar d),\ \ d_k = s_{\theta,k}-\phi_k$</p>
+  </div>
+</div>
+
+<p>Two nice things fall out immediately. On-policy, Step 1 reproduces exactly the hidden targets in the table above, except now $\tau$ has a real meaning (a trust-region strength) instead of being a side effect of normalization. And because target and projection are separate, <b>the divergence becomes a design knob</b> that policy gradient never exposed.</p>
+
+<div class="demo" id="demo2">
+  <div class="title">▶ Play: race to the target on a 3-response simplex</div>
+  <p class="hint">Three sampled responses. Each corner is "all probability on that response"; the centre is the untouched policy. We run several inner updates on the same samples (like PPO-style epochs), which is exactly where off-policy drift kicks in. Toy model: each response's log-probability is a free parameter; PG uses unclipped importance ratios.</p>
+  <div class="simplex-grid">
+    <div>
+      <svg class="sx" id="sx" viewBox="0 0 400 350" role="img" aria-label="Response simplex with optimization trajectories"></svg>
+      <div class="legend">
+        <span><i style="background:var(--pg)"></i>Policy gradient</span>
+        <span><i style="background:var(--fwd)"></i>LPO<sub>fwd</sub></span>
+        <span><i style="background:var(--rev)"></i>LPO<sub>rev</sub></span>
+        <span>★ target $w^*$</span>
+      </div>
+    </div>
+    <div class="ctl">
+      <div><div class="muted" style="font-size:.88rem;margin-bottom:6px">Rewards (click to cycle 0 → 0.5 → 1)</div><div class="row" id="chips3"></div></div>
+      <label class="sl">τ <input type="range" id="tau3" min="0.3" max="2" step="0.05" value="0.6"><b id="tau3v" class="mono">0.60</b></label>
+      <label class="sl">inner updates <input type="range" id="ep3" min="2" max="20" step="1" value="8"><b id="ep3v" class="mono">8</b></label>
+      <div class="act">
+        <button class="go" id="run3">Run iteration</button>
+        <button id="reset3">Reset</button>
+      </div>
+      <div class="mono muted" style="font-size:.8rem" id="iter3">iteration 0</div>
+      <table class="mini" id="tab3"></table>
+    </div>
+  </div>
+  <div class="readout" id="read3">Hit <b>Run iteration</b>. Notice that the very first grey step lands exactly on the first yellow one: on-policy, PG <i>is</i> reverse-KL projection. After that PG's step size never shrinks (the importance ratio even amplifies it), so it blows straight past the star into the corner. PG's E[R] of 1.00 looks great, but it got there by putting everything on one response from a group of three, ignoring the trust region. In a real LLM that's the overconfident, entropy-collapsing update clipping has to fight. The LPO paths slow down and stop <i>on</i> the target. Run a few more iterations to see LPO climb toward the best response one controlled step at a time.</div>
+</div>
+
+<h3>Why the exact projection behaves so well</h3>
+<div class="props">
+  <div class="prop"><div class="ic">⚖️</div><h4>Zero-sum</h4><p>Coefficients sum to 0: pushing one response up automatically pushes others down. A built-in control variate, for any divergence you pick.</p></div>
+  <div class="prop"><div class="ic">📏</div><h4>Bounded</h4><p>For LPO<sub>fwd</sub>, $|c_k|\le 1$ and $\sum_k|c_k|\le 2$ regardless of reward scale. No exploding updates from lopsided groups.</p></div>
+  <div class="prop"><div class="ic">🎯</div><h4>Self-correcting</h4><p>Coefficients vanish as $P_\theta\to w^*$. The update knows when it has arrived instead of relying on a clip to stop it.</p></div>
+</div>
+<p>On top of that, iterating target-then-project gives a <b>monotonic improvement guarantee</b>: the listwise reward goes up each iteration by at least $\tau$ times the Jeffreys divergence between old policy and target, minus a term for imperfect projection. And the two KL flavours bring their own personalities. Forward KL is <b>mode-covering</b>: any response the target cares about gets a guaranteed probability floor, a log-barrier against collapse. Reverse KL secretly contains an <b>entropy bonus</b>: it decomposes into expected target logit plus $H(P_\theta)$.</p>
+
+<div class="callout"><b>Is "listwise" really the key?</b> The authors ablate it: keep the same target, but fit it pointwise with a weighted log-likelihood (the MPO/AWR style). Performance drops severely and optimization turns unstable. In the pointwise loss every response gets pushed up, just by different amounts, and the push never switches off: there's no competition between responses and no built-in control variate. Exact target fitting only pays off when paired with listwise normalization.</div>
+
+<h2>4 · Does it work?</h2>
+<p>The comparison is deliberately strict. For each baseline (GRPO, Dr.GRPO, MaxRL), LPO uses <b>the exact same temperature</b> as that baseline's implicit target. Only the projection changes, so any difference is down to exact listwise projection, not tuning. Tasks: Countdown (logic), MATH (math), PRIME (code) and Geometry3k (vision-language), with Qwen3 1.7B/4B/8B/14B, Qwen2.5-VL-3B, and cross-family checks on DeepSeek-R1-Distill, Llama-3.1 and Mistral.</p>
+
+<div class="stats">
+  <div class="stat"><div class="v">13/15</div><div class="l">settings where each LPO variant beats its matched PG baseline on Pass@1 training curves</div></div>
+  <div class="stat"><div class="v">15/15</div><div class="l">settings where LPO<sub>fwd</sub> beats PG on Pass@k (LPO<sub>rev</sub>: 11/15)</div></div>
+  <div class="stat"><div class="v">~70</div><div class="l">steps for LPO<sub>fwd</sub> to reach GRPO's 200-step peak (Qwen3-14B, Polaris)</div></div>
+  <div class="stat"><div class="v">0</div><div class="l">extra compute: same rollouts, same pipeline, only the loss coefficients change</div></div>
+</div>
+
+<div class="demo">
+  <div class="title">Final math benchmark scores (average over 6 benchmarks)</div>
+  <p class="hint">Pass@1 averages all six benchmarks (AIME24/25, AMC23, MATH500, Minerva, OlympiadBench); Pass@k averages the four with k&gt;1. Each group compares a PG baseline with its temperature-matched LPO variants. Axis is truncated to make differences visible. Not every cell is a win: on Qwen3-8B, Dr.GRPO's own Pass@k stays on top.</p>
+  <div class="row" style="gap:14px">
+    <div class="seg" id="mSeg"><button data-v="8b" class="on">Qwen3-8B</button><button data-v="17b">Qwen3-1.7B</button></div>
+    <div class="seg" id="kSeg"><button data-v="p1" class="on">Pass@1</button><button data-v="pk">Pass@k</button></div>
+  </div>
+  <div class="rchart" id="rchart"></div>
+</div>
+
+<ul class="findings">
+  <li data-i="①"><b>Diversity is preserved.</b> Both LPO variants keep response entropy higher than PG throughout training, the direct antidote to the entropy collapse that plagues RLVR, and the reason Pass@k gains are so robust.</li>
+  <li data-i="②"><b>Training is calmer.</b> Gradient norms are lower and more stable than PG's, exactly what bounded, self-correcting coefficients predict.</li>
+  <li data-i="③"><b>Forward vs. reverse KL has a personality.</b> Head to head, LPO<sub>fwd</sub> beats LPO<sub>rev</sub> on Pass@k in 13/15 settings. That's its mode-covering nature keeping many valid solution paths alive. LPO responses also run longer than PG's, and LPO<sub>fwd</sub>'s are the longest.</li>
+  <li data-i="④"><b>Small groups benefit most.</b> Across $K\in\{2,4,8,16,32\}$ the gains are largest at small $K$, where noisy advantages hurt PG the most.</li>
+  <li data-i="⑤"><b>Theory checks out.</b> In a strictly on-policy run (one update per batch), LPO<sub>rev</sub> and GRPO curves are practically identical, just as the equivalence predicts. The gap opens once updates go off-policy; even in that on-policy setup, LPO<sub>fwd</sub> is more sample-efficient early and ends higher on Pass@k.</li>
+</ul>
+
+<h2>5 · The bigger picture</h2>
+<p>Seen through this lens, a lot of RLVR design debates reorganize themselves. Arguments about how to normalize advantages become arguments about <b>which target to aim at</b>. Clipping and trust regions become questions about <b>how to project</b>. Keeping the two separate opens a design space that was hidden before:</p>
+<ul>
+  <li><b>Any divergence.</b> Zero-sum gradients hold for <i>any</i> differentiable divergence on the simplex, so Jensen–Shannon and other f-divergences, or schedules (forward KL early to explore, reverse KL late to exploit, or annealing τ) are all fair game.</li>
+  <li><b>DPO as the K=2 special case.</b> With two responses, LPO<sub>fwd</sub> becomes a binary cross-entropy with soft, τ-controlled labels: an online, trust-region cousin of DPO. As $K\to\infty$ you recover classical KL-regularized RL.</li>
+  <li><b>Plug-and-play.</b> Engineering tricks like DAPO's dynamic sampling and asymmetric clipping are orthogonal to LPO and can be layered on top. The paper deliberately uses a minimal shared pipeline so the gains are clearly due to the projection.</li>
+  <li><b>What's next.</b> Step-level listwise projection for multi-turn agents and process rewards, and off-policy replay where listwise normalization acts as self-normalized importance sampling.</li>
+</ul>
+<div class="callout big">Group-based RL was always target-then-project.<br>LPO just stops approximating.</div>
+
+<h2 id="cite">Cite</h2>
+<pre class="bib">@article{qu2026lpo,
+  title   = {Listwise Policy Optimization: Group-based RLVR as
+             Target-Projection on the LLM Response Simplex},
+  author  = {Qu, Yun and Wang, Qi and Mao, Yixiu and Zou, Heming and
+             Jiang, Yuhang and Li, Yingyue and Xu, Wutong and Cai, Lizhou and
+             Liu, Weijie and Bai, Clive and Yang, Kai and Chen, Yangkun and
+             Yang, Saiyong and Ji, Xiangyang},
+  journal = {arXiv preprint arXiv:2605.06139},
+  year    = {2026}
+}</pre>
+</main>
+
+<footer><div class="wrap">Tsinghua University · Tencent. Interactive demos are simplified illustrations of the ideas in the paper, not the training code.</div></footer>
+
+<script>
+(function(){
+  // theme toggle
+  const root=document.documentElement;
+  document.getElementById('themeT').onclick=()=>{
+    const dark = root.dataset.theme ? root.dataset.theme==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    drawSimplex();
+  };
+
+  const softmax=v=>{const m=Math.max(...v);const e=v.map(x=>Math.exp(x-m));const z=e.reduce((a,b)=>a+b,0);return e.map(x=>x/z);};
+  const mean=v=>v.reduce((a,b)=>a+b,0)/v.length;
+  const css=n=>getComputedStyle(root).getPropertyValue(n).trim();
+
+  /* ---------- Demo 1: hidden target over K=8 ---------- */
+  const K=8; let R8=[1,0,0,1,0,0,0,0]; let norm='grpo';
+  const chips8=document.getElementById('chips8'), bars8=document.getElementById('bars8'), xl8=document.getElementById('xl8');
+  for(let k=0;k<K;k++){
+    const c=document.createElement('div'); c.className='chip'; c.onclick=()=>{R8[k]=1-R8[k];render8();}; chips8.appendChild(c);
+    const b=document.createElement('div'); b.className='bar'; b.innerHTML='<span></span>'; bars8.appendChild(b);
+    const l=document.createElement('div'); l.textContent='y'+(k+1); xl8.appendChild(l);
+  }
+  document.querySelectorAll('#normSeg button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#normSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');norm=b.dataset.m;render8();});
+  function render8(){
+    const mu=mean(R8), sd=Math.sqrt(mu*(1-mu)); let tau, note='';
+    if(norm==='grpo') tau=sd; else if(norm==='dr') tau=1; else tau=mu;
+    const degenerate = mu===0||mu===1;
+    let w;
+    if(degenerate){ w=Array(K).fill(1/K); }
+    else w=softmax(R8.map(r=>r/tau));
+    const maxW=Math.max(...w,0.2); const H=165;
+    [...chips8.children].forEach((c,k)=>{c.classList.toggle('on',!!R8[k]);c.textContent=(R8[k]?'✓':'✗')+' y'+(k+1);});
+    const barsEls=[...bars8.querySelectorAll('.bar')];
+    barsEls.forEach((b,k)=>{b.style.height=(w[k]/maxW*H)+'px';b.classList.toggle('win',!!R8[k]&&!degenerate);b.querySelector('span').textContent=(w[k]*100).toFixed(1)+'%';});
+    document.getElementById('uline').style.bottom=((1/K)/maxW*H)+'px';
+    const n=R8.reduce((a,b)=>a+b,0);
+    const rd=document.getElementById('read8');
+    if(degenerate){
+      rd.innerHTML=`All ${K} responses got the same reward, so the target is <b>uniform</b>: the policy is already there and the gradient is zero. No signal from this prompt.`;
+    } else {
+      const ratio=Math.exp(1/tau);
+      const fmt=ratio>=1000?ratio.toExponential(1):ratio.toFixed(ratio<10?2:0);
+      rd.innerHTML=`${n}/${K} correct → τ = <b class="mono">${tau.toFixed(3)}</b>. Each correct response gets <b>${fmt}×</b> the weight of a wrong one; together the correct answers hold <b>${(w.reduce((a,x,k)=>a+(R8[k]?x:0),0)*100).toFixed(1)}%</b> of the target.`;
+    }
+  }
+  render8();
+
+  /* ---------- Demo 2: simplex race ---------- */
+  let R3=[1,0.5,0], tau3=0.6, E3=8; const eta=1.2;
+  const V=[[200,28],[34,318],[366,318]];
+  let M, iter=0, running=false;
+  const colors=()=>({pg:css('--pg'),fwd:css('--fwd'),rev:css('--rev')});
+  function initM(){
+    M={};
+    ['pg','fwd','rev'].forEach(k=>{M[k]={s:[0,0,0],sb:[0,0,0],path:[[1/3,1/3,1/3]]};});
+    iter=0;
+  }
+  const target=m=>softmax(R3.map((r,k)=>r/tau3+m.sb[k]));
+  function step(name){
+    const m=M[name], P=softmax(m.s);
+    if(name==='pg'){
+      const mu=mean(R3); const A=R3.map(r=>(r-mu)/tau3);
+      for(let k=0;k<3;k++){ const r=Math.exp(Math.min(m.s[k]-m.sb[k],12)); m.s[k]+=eta*1.6*r*A[k]/3; }
+    } else if(name==='fwd'){
+      const w=target(m); for(let k=0;k<3;k++) m.s[k]-=eta*(P[k]-w[k]);
+    } else {
+      const phi=R3.map((r,k)=>r/tau3+m.sb[k]); const d=m.s.map((s,k)=>s-phi[k]);
+      const db=P.reduce((a,p,k)=>a+p*d[k],0); for(let k=0;k<3;k++) m.s[k]-=eta*1.6*P[k]*(d[k]-db);
+    }
+    for(let k=0;k<3;k++) m.s[k]=Math.max(-30,Math.min(30,m.s[k]));
+    m.path.push(softmax(m.s));
+  }
+  const xy=p=>[p[0]*V[0][0]+p[1]*V[1][0]+p[2]*V[2][0], p[0]*V[0][1]+p[1]*V[1][1]+p[2]*V[2][1]];
+  function star(cx,cy,r,fill,stroke){
+    let pts=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5, rr=i%2?r*0.45:r;pts.push((cx+rr*Math.cos(a)).toFixed(1)+','+(cy+rr*Math.sin(a)).toFixed(1));}
+    return `<polygon points="${pts.join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>`;
+  }
+  function drawSimplex(){
+    if(!M) return;
+    const c=colors(), fg=css('--fg'), line=css('--line'), muted=css('--muted'), card=css('--card'), good=css('--good');
+    let s=`<polygon points="${V.map(v=>v.join(',')).join(' ')}" fill="${card}" stroke="${line}" stroke-width="2"/>`;
+    // grid lines
+    for(let t=1;t<4;t++){const f=t/4;
+      const a=xy([f,1-f,0]),b=xy([f,0,1-f]); s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${line}" stroke-dasharray="3 4"/>`;}
+    const [cx,cy]=xy([1/3,1/3,1/3]); s+=`<circle cx="${cx}" cy="${cy}" r="4" fill="${muted}"/>`;
+    const lab=[[200,14,'middle'],[18,338,'start'],[382,338,'end']];
+    lab.forEach((l,k)=>{s+=`<text x="${l[0]}" y="${l[1]}" text-anchor="${l[2]}" font-family="JetBrains Mono" font-size="12" fill="${R3[k]===1?good:muted}" font-weight="600">y${k+1} · R=${R3[k]}</text>`;});
+    ['pg','fwd','rev'].forEach(n=>{
+      const pts=M[n].path.map(xy);
+      s+=`<polyline points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="${c[n]}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".95"/>`;
+      pts.forEach((p,i)=>{ if(i) s+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.6" fill="${c[n]}"/>`; });
+    });
+    // targets
+    const tg=['fwd','rev','pg'].map(n=>[n,xy(target(M[n]))]);
+    tg.forEach(([n,p])=>{ s+=star(p[0],p[1],10,c[n],fg); });
+    // current heads
+    ['pg','fwd','rev'].forEach(n=>{const p=xy(M[n].path[M[n].path.length-1]); s+=`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${c[n]}" stroke="${css('--paper')}" stroke-width="2"/>`;});
+    document.getElementById('sx').innerHTML=s;
+    // table
+    let t=`<tr><th>method</th><th>P(y1)</th><th>P(y2)</th><th>P(y3)</th><th>E[R]</th><th>KL(w*‖P)</th></tr>`;
+    const names={pg:'PG',fwd:'LPO-fwd',rev:'LPO-rev'};
+    ['pg','fwd','rev'].forEach(n=>{
+      const P=M[n].path[M[n].path.length-1], w=target(M[n]);
+      const kl=w.reduce((a,wk,k)=>a+wk*Math.log(wk/Math.max(P[k],1e-12)),0);
+      const er=P.reduce((a,p,k)=>a+p*R3[k],0);
+      t+=`<tr><td><span class="dot" style="background:${c[n]}"></span>${names[n]}</td><td>${P[0].toFixed(2)}</td><td>${P[1].toFixed(2)}</td><td>${P[2].toFixed(2)}</td><td>${er.toFixed(2)}</td><td>${kl.toFixed(3)}</td></tr>`;
+    });
+    document.getElementById('tab3').innerHTML=t;
+    document.getElementById('iter3').textContent='iteration '+iter;
+  }
+  function renderChips3(){
+    const box=document.getElementById('chips3'); box.innerHTML='';
+    R3.forEach((r,k)=>{const c=document.createElement('div');c.className='chip'+(r===1?' on':'');c.textContent='y'+(k+1)+' · R='+r;
+      c.onclick=()=>{ if(running) return; R3[k]=r===0?0.5:(r===0.5?1:0); renderChips3(); initM(); drawSimplex(); }; box.appendChild(c);});
+  }
+  function runIter(){
+    if(running) return;
+    if(R3.every(r=>r===R3[0])){document.getElementById('read3').innerHTML='All three rewards are equal, so the target is the current policy and nothing moves. Toggle a reward to create a learning signal.';return;}
+    running=true; document.getElementById('run3').disabled=true;
+    if(iter>0) ['pg','fwd','rev'].forEach(n=>{M[n].sb=M[n].s.slice();});
+    iter++;
+    let e=0;
+    const tick=()=>{ ['pg','fwd','rev'].forEach(step); e++; drawSimplex();
+      if(e<E3) setTimeout(tick,70); else {running=false;document.getElementById('run3').disabled=false;} };
+    tick();
+  }
+  document.getElementById('run3').onclick=runIter;
+  document.getElementById('reset3').onclick=()=>{ if(running) return; initM(); drawSimplex(); };
+  const tauEl=document.getElementById('tau3'), epEl=document.getElementById('ep3');
+  tauEl.oninput=()=>{ if(running){tauEl.value=tau3;return;} tau3=+tauEl.value; document.getElementById('tau3v').textContent=tau3.toFixed(2); initM(); drawSimplex(); };
+  epEl.oninput=()=>{ E3=+epEl.value; document.getElementById('ep3v').textContent=E3; };
+  window.drawSimplex=drawSimplex;
+  renderChips3(); initM(); drawSimplex();
+
+  /* ---------- Results chart (Table 3 averages) ---------- */
+  const DATA={
+    '8b':{p1:{GRPO:[47.6,50.3,48.7],'Dr.GRPO':[49.1,49.5,47.7],MaxRL:[48.6,50.5,50.6]},
+          pk:{GRPO:[54.5,58.3,56.5],'Dr.GRPO':[60.4,59.4,56.9],MaxRL:[58.2,63.1,60.3]}},
+    '17b':{p1:{GRPO:[32.5,35.3,35.0],'Dr.GRPO':[32.2,33.4,32.9],MaxRL:[32.4,35.0,33.6]},
+           pk:{GRPO:[42.1,46.1,42.3],'Dr.GRPO':[42.2,42.5,43.9],MaxRL:[42.8,45.6,45.0]}}
+  };
+  let mSel='8b', kSel='p1';
+  function renderChart(){
+    const d=DATA[mSel][kSel]; const all=Object.values(d).flat();
+    const lo=Math.floor(Math.min(...all))-4, hi=Math.ceil(Math.max(...all))+1;
+    const c={0:'var(--pg)',1:'var(--fwd)',2:'var(--rev)'};
+    let h='';
+    for(const [base,vals] of Object.entries(d)){
+      const names=[base,'+ LPO-fwd','+ LPO-rev'];
+      h+=`<div class="grp"><div class="gname">${base} family</div>`;
+      vals.forEach((v,i)=>{
+        const best=v===Math.max(...vals);
+        h+=`<div class="rbar"><div class="lab">${names[i]}</div><div class="trk"><div class="fill" style="width:${((v-lo)/(hi-lo)*100).toFixed(1)}%;background:${c[i]}"></div></div><div class="val" style="${best?'font-weight:700':''}">${v.toFixed(1)}</div></div>`;
+      });
+      h+='</div>';
+    }
+    h+=`<div class="muted" style="font-size:.8rem">Axis from ${lo} to ${hi}. Values from Table 3 of the paper.</div>`;
+    document.getElementById('rchart').innerHTML=h;
+  }
+  function segBind(id,cb){document.querySelectorAll('#'+id+' button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');cb(b.dataset.v);renderChart();});}
+  segBind('mSeg',v=>mSel=v); segBind('kSeg',v=>kSel=v);
+  renderChart();
+})();
+</script>
+</body>
+</html>

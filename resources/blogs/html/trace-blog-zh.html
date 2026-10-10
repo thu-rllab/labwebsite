@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EMNLP26 TRACE：在关键处分叉</title>
+<meta name="description" content="TRACE 是面向智能体强化学习的 rollout 预算分配框架：它决定采样哪些 prompt、各采样几次、从轨迹中途哪些轮次重放，让仅基于结果的奖励产生更多对比。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+SC:wght@500;700;800&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F6; --surface:#FFFFFF; --ink:#18213A; --muted:#5B6781; --line:#D5DBE6;
+  --violet:#6A4BD6; --lav:#DDD4FB; --ok:#1C9A6E; --bad:#DD4B45; --grey:#AEB7C6; --edge:#8C97AD;
+  --display:"Bricolage Grotesque", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --text:"Literata", "Noto Serif SC", "Songti SC", "SimSun", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151F; --surface:#182031; --ink:#E7EBF3; --muted:#9AA6BD; --line:#2A3448;
+    --violet:#A08BF4; --lav:#3A2F6B; --ok:#3CC08F; --bad:#F06A62; --grey:#56627A; --edge:#6B7690;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10151F; --surface:#182031; --ink:#E7EBF3; --muted:#9AA6BD; --line:#2A3448;
+  --violet:#A08BF4; --lav:#3A2F6B; --ok:#3CC08F; --bad:#F06A62; --grey:#56627A; --edge:#6B7690;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-size:18px;line-height:1.85;}
+em{font-style:normal;font-weight:600}
+a{color:var(--violet);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--violet);outline-offset:3px;border-radius:4px}
+
+.wrap{max-width:700px;margin:0 auto;padding:0 16px}
+.wide{max-width:1020px;margin:0 auto;padding:0 16px}
+
+h1,h2,h3{font-family:var(--display);line-height:1.12;letter-spacing:-0.015em;margin:0}
+h2{font-size:clamp(1.7rem,3.6vw,2.3rem);font-weight:800;margin:4.2rem 0 1rem}
+h3{font-size:1.2rem;font-weight:700;margin:2rem 0 .5rem}
+p{margin:0 0 1.1rem}
+strong{font-weight:600}
+
+/* Hero */
+.hero{padding:56px 0 24px}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(2.3rem,5.4vw,4rem);font-weight:800;letter-spacing:-0.01em;line-height:1.12}
+.hero h1 .venue{display:block;color:var(--violet);margin-bottom:.12em}
+.dek{font-size:1.2rem;color:var(--muted);margin:1.3rem 0 1.4rem;max-width:34em}
+.byline{font-size:.95rem;color:var(--muted);line-height:1.55}
+.byline b{color:var(--ink);font-weight:600}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:1.4rem}
+.btn{font-family:var(--display);font-weight:700;font-size:1rem;text-decoration:none;padding:.65rem 1.1rem;border-radius:999px;border:2px solid var(--ink);color:var(--ink);background:transparent}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn:hover{background:var(--violet);border-color:var(--violet);color:#fff}
+.hero-tree{width:100%;height:auto;display:block}
+.hero-key{display:flex;gap:6px 14px;flex-wrap:wrap;font-family:var(--display);font-size:.85rem;color:var(--muted);margin-top:6px;justify-content:center}
+.hero-key span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:50%;display:inline-block}
+
+/* TL;DR */
+.tldr{background:var(--surface);border-left:6px solid var(--violet);padding:22px 24px;border-radius:0 14px 14px 0;margin:28px 0 0}
+.tldr h3{margin:0 0 .6rem;font-size:1.05rem}
+.tldr ul{margin:0;padding-left:1.2rem}
+.tldr li{margin:.35rem 0}
+
+/* Equations */
+.eq{font-family:var(--text);font-size:1.25rem;text-align:center;background:var(--surface);border-radius:12px;padding:18px 16px;margin:1.2rem 0 .6rem;overflow-x:auto;white-space:nowrap}
+.eq i{font-style:italic}
+.eq .lbl{font-family:var(--display);font-size:.8rem;color:var(--muted);display:block;margin-top:.4rem;white-space:normal}
+.gloss{font-size:.95rem;color:var(--muted)}
+
+/* Interactive panels */
+.panel{background:var(--surface);border-radius:18px;padding:24px;margin:1.8rem 0;border:1px solid var(--line)}
+.panel h3{margin:0 0 .3rem}
+.panel .hint{font-size:.92rem;color:var(--muted);margin:0 0 1rem}
+.controls{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;font-family:var(--display);font-size:.95rem}
+.controls label{display:flex;flex-direction:column;gap:4px;min-width:200px;flex:1}
+.controls output{font-weight:700;color:var(--violet)}
+input[type=range]{accent-color:var(--violet);width:100%}
+.ghost{font-family:var(--display);font-weight:700;font-size:.95rem;border:2px solid var(--violet);color:var(--violet);background:transparent;padding:.5rem 1rem;border-radius:999px;cursor:pointer}
+.ghost:hover{background:var(--violet);color:#fff}
+
+.groupA{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;margin-top:18px;align-items:start}
+.dots{display:flex;flex-wrap:wrap;gap:10px 8px}
+.dot{display:flex;flex-direction:column;align-items:center;width:42px;font-family:var(--display);font-size:.78rem;color:var(--muted)}
+.dot .c{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1rem;margin-bottom:3px}
+.dot.s .c{background:var(--ok)} .dot.f .c{background:var(--bad)}
+.dot .a{font-variant-numeric:tabular-nums}
+.dot .a.zero{color:var(--bad);font-weight:700}
+.verdict{font-family:var(--display);font-size:1rem;margin-top:14px;padding:10px 14px;border-radius:10px;background:var(--bg)}
+.verdict.dead{color:var(--bad)} .verdict.live{color:var(--ok)}
+.bignum{font-family:var(--display);font-weight:800;font-size:2.4rem;line-height:1;color:var(--violet);font-variant-numeric:tabular-nums}
+.bigcap{font-family:var(--display);font-size:.9rem;color:var(--muted);margin-bottom:8px}
+.curve{width:100%;height:auto}
+.curve text{font-family:var(--display);font-size:11px;fill:var(--muted)}
+
+/* Allocation game */
+.alloc{width:100%;border-collapse:collapse;margin-top:16px;font-size:.95rem}
+.alloc th{font-family:var(--display);font-weight:700;font-size:.85rem;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.alloc td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.alloc .ptxt{font-size:.92rem;line-height:1.35}
+.vchip{font-family:var(--display);font-weight:700;font-size:.8rem;padding:2px 8px;border-radius:999px;background:var(--bg);white-space:nowrap}
+.pips{display:flex;flex-wrap:wrap;gap:3px;max-width:190px}
+.pip{width:9px;height:9px;border-radius:2px;background:var(--edge)}
+.pip.t{background:var(--violet)}
+.skipped{font-family:var(--display);font-size:.8rem;color:var(--muted)}
+.prob{font-family:var(--display);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:3px}
+.totals{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.tot{border-radius:12px;padding:14px 16px;background:var(--bg);font-family:var(--display)}
+.tot .n{font-size:1.9rem;font-weight:800;font-variant-numeric:tabular-nums}
+.tot.u .n{color:var(--muted)} .tot.t .n{color:var(--violet)}
+.tot .k{font-size:.85rem;color:var(--muted)}
+
+/* Tree figure */
+.treefig{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:1.6rem 0}
+.treefig figure{margin:0;background:var(--surface);border-radius:16px;padding:16px;border:1px solid var(--line)}
+.treefig figcaption{font-family:var(--display);font-size:.9rem;color:var(--muted);margin-top:8px}
+.treefig figcaption b{color:var(--ink)}
+.tree svg,.treefig svg{width:100%;height:auto;display:block}
+.cap{font-size:.9rem;color:var(--muted);margin-top:-.4rem}
+
+/* Win-probability meter */
+.meter{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:1.4rem 0}
+.meter > div{background:var(--surface);border-radius:12px;padding:14px;border:1px solid var(--line);font-family:var(--display)}
+.meter .v{font-size:1.5rem;font-weight:800}
+.meter .bar{height:8px;border-radius:4px;background:var(--bg);margin:8px 0 6px;overflow:hidden}
+.meter .bar i{display:block;height:100%;background:var(--violet)}
+.meter .k{font-size:.85rem;color:var(--muted);line-height:1.35}
+
+/* Steps */
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:1.2rem 0}
+ol.steps li{counter-increment:s;position:relative;padding:0 0 1rem 3rem}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:.05rem;width:2rem;height:2rem;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--display);font-weight:800;display:grid;place-items:center;font-size:.95rem}
+ol.steps li:not(:last-child)::after{content:"";position:absolute;left:.97rem;top:2.2rem;bottom:.2rem;width:2px;background:var(--line)}
+
+/* Results */
+.seg{display:inline-flex;background:var(--bg);border-radius:999px;padding:4px;gap:2px;flex-wrap:wrap}
+.seg button{font-family:var(--display);font-weight:700;font-size:.9rem;border:0;background:transparent;color:var(--muted);padding:.45rem .9rem;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.res{margin-top:18px}
+.res-row{display:grid;grid-template-columns:210px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.res-row .d{font-family:var(--display);font-weight:700;font-size:.98rem;line-height:1.25}
+.res-row .d small{display:block;font-weight:500;color:var(--muted);font-size:.8rem;margin-top:3px}
+.bars{position:relative;display:flex;flex-direction:column;gap:5px}
+.brow{position:relative;height:18px}
+.brow .zero{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--line)}
+.brow .b{position:absolute;top:0;height:100%;border-radius:3px}
+.brow .lab{position:absolute;top:0;font-family:var(--display);font-size:.75rem;line-height:18px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.b.pcl{background:var(--grey)} .b.tree{background:var(--edge)} .b.trace{background:var(--violet)}
+.axis{display:grid;grid-template-columns:210px 1fr;gap:14px;margin-top:6px}
+.axis .ticks{position:relative;height:18px;font-family:var(--display);font-size:.75rem;color:var(--muted)}
+.axis .ticks span{position:absolute;transform:translateX(-50%)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--display);font-size:.85rem;color:var(--muted);margin-top:14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:10px;border-radius:2px;display:inline-block}
+
+.callout{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:1.6rem 0}
+.callout > div{background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--line)}
+.callout .from{font-family:var(--display);font-size:1rem;color:var(--muted)}
+.callout .to{font-family:var(--display);font-size:2.2rem;font-weight:800;color:var(--violet);line-height:1.05}
+.callout .k{font-family:var(--display);font-size:.88rem;color:var(--muted);margin-top:4px}
+
+table.data{width:100%;border-collapse:collapse;font-size:.95rem;margin:1rem 0 .4rem;background:var(--surface);border-radius:12px;overflow:hidden}
+table.data th{font-family:var(--display);font-size:.85rem;color:var(--muted);text-align:left;padding:10px 12px;font-weight:700;border-bottom:1px solid var(--line)}
+table.data td{padding:10px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+table.data tr:last-child td{border-bottom:0}
+table.data tr.hl td{background:color-mix(in srgb, var(--lav) 55%, transparent);font-weight:600}
+.tablewrap{overflow-x:auto}
+
+/* Stacked time bar */
+.stack{display:flex;height:28px;border-radius:8px;overflow:hidden;margin:6px 0 14px}
+.stack i{display:block;height:100%}
+.stacklab{font-family:var(--display);font-size:.9rem;display:flex;justify-content:space-between;color:var(--muted)}
+.stacklab b{color:var(--ink)}
+
+pre.bib{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:.8rem;line-height:1.5;overflow-x:auto;white-space:pre}
+.bibhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:4.2rem 0 1rem}
+.bibhead h2{margin:0}
+footer{padding:48px 0 64px;color:var(--muted);font-size:.9rem}
+
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr;gap:18px}
+  .groupA{grid-template-columns:1fr}
+  .treefig{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  body{font-size:17px}
+  .panel{padding:18px 14px}
+  .res-row,.axis{grid-template-columns:1fr}
+  .axis > div:first-child{display:none}
+  .meter{grid-template-columns:1fr}
+  .eq{white-space:normal;font-size:1.1rem}
+  .callout{grid-template-columns:1fr}
+  .totals{grid-template-columns:1fr}
+  .alloc th:nth-child(1),.alloc td:nth-child(1){max-width:130px}
+  .pips{max-width:110px}
+}
+
+/* One orchestrated moment: the hero tree grows on load */
+.grow-edge{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .55s ease-out forwards;animation-delay:var(--d)}
+@keyframes draw{to{stroke-dashoffset:0}}
+.grow-node{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.3);animation:pop .35s cubic-bezier(.3,1.5,.6,1) forwards;animation-delay:var(--d)}
+@keyframes pop{to{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){
+  .grow-edge{animation:none;stroke-dashoffset:0}
+  .grow-node{animation:none;opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wide hero-grid">
+    <div>
+      <h1><span class="venue">EMNLP26 TRACE：</span>在结果尚未注定之处分叉</h1>
+      <p class="dek">TRACE 是一个面向智能体强化学习的 rollout 预算分配框架。它决定采样哪些 prompt、每个采样几次、从轨迹中途的哪些轮次重新展开，让固定的采样预算持续产出策略可以相互对比的成功与失败。</p>
+      <p class="byline"><b>Tree Rollout Allocation for Contrastive Exploration</b><br>面向对比式探索的树状 rollout 分配<br>
+      Heming Zou, Qi Wang, Yun Qu, Yuhang Jiang, Lizhou Cai, Yixiu Mao, Ru Peng, Xin Xu, Weijie Liu, Kai Yang, Saiyong Yang, Xiangyang Ji<br>
+      清华大学、腾讯</p>
+      <div class="actions">
+        <a class="btn primary" href="https://arxiv.org/abs/2606.11119">阅读论文</a>
+        <a class="btn" href="#cite">引用本文</a>
+      </div>
+    </div>
+    <div>
+      <svg id="heroTree" class="hero-tree" viewBox="0 0 520 380" role="img" aria-label="从一批候选 prompt 长出的 rollout 树。两个 prompt 被跳过；高亮的前缀获得额外分支，其叶子以成功与失败交错收尾。"></svg>
+      <div class="hero-key">
+        <span><i class="sw" style="background:var(--lav);border:2px solid var(--violet)"></i>TRACE 重放的前缀</span>
+        <span><i class="sw" style="border:2px dashed var(--grey)"></i>被跳过的 prompt</span>
+        <span><i class="sw" style="background:var(--ok)"></i>成功</span>
+        <span><i class="sw" style="background:var(--bad)"></i>失败</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+  <div class="tldr">
+    <h3>速览</h3>
+    <ul>
+      <li>仅基于结果奖励的强化学习靠对比来学习。一组 rollout 若全部成功或全部失败，梯度为零。</li>
+      <li>在多轮智能体中，每个“思考—行动—观察”轮次都是天然的存档点。从合适的存档点重放，就能把一个终局奖励变成一次受控的并排对比。</li>
+      <li>TRACE 用一个小型可学习预测器，把固定预算花在最可能分化出成功与失败的 prompt 和前缀上。同样的预算，更多的信号：在 Qwen3-14B 多跳问答上比 GRPO 最高提升 2.8 个点；在数学任务上，有效训练组的占比提升到原来的两倍以上。</li>
+    </ul>
+  </div>
+
+  <h2>八次 rollout，零信号</h2>
+  <p>大多数可扩展的大模型强化学习流水线只奖励最终结果：答案要么对，要么不对。GRPO 类训练靠对比从中榨取学习信号：对同一个 prompt 采样一组 rollout，每条打 1 分或 0 分，再把策略推向高于组平均的那些 rollout。</p>
+  <p>这套机制运转良好，直到整组意见一致。如果八条 rollout 全部成功，每条的优势都恰好为零；全部失败时也一样。你为八条冗长的、调用工具的轨迹付了费，换来的梯度却是零。试试下面的演示：把成功率推向任意一端，看信号如何消失。</p>
+</div>
+
+<div class="wide">
+  <section class="panel" aria-labelledby="wa">
+    <h3 id="wa">一组 rollout 什么时候才真正有用？</h3>
+    <p class="hint">每个圆圈是一条 rollout，下方数字是它的组内相对优势：（奖励 − 均值）÷ 标准差。</p>
+    <div class="controls">
+      <label>Prompt 成功率 <output id="pOut">50%</output>
+        <input id="pIn" type="range" min="0" max="1" step="0.01" value="0.5">
+      </label>
+      <label>每个 prompt 的 rollout 数 <output id="mOut">8</output>
+        <input id="mIn" type="range" min="2" max="16" step="1" value="8">
+      </label>
+      <button class="ghost" id="resample" type="button">再采样一次</button>
+    </div>
+    <div class="groupA">
+      <div>
+        <div class="dots" id="dots" aria-live="polite"></div>
+        <div class="verdict" id="verdict"></div>
+      </div>
+      <div>
+        <div class="bigcap">该组同时包含成功与失败的概率</div>
+        <div class="bignum" id="pmix">99%</div>
+        <svg class="curve" id="curve" viewBox="0 0 320 150" aria-hidden="true"></svg>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <p>还有第二个更隐蔽的问题。在多轮智能体中，一个终局奖励会被盖到轨迹的每一轮上。一个搜索智能体发出了三个精准的查询、却在最后作答时失手，它拿到的 0 分和第一步就走错的智能体完全一样。奖励只告诉你<em>某处</em>失败了，却没告诉你<em>哪里</em>。</p>
+  <p>已有的 prompt 选择与 rollout 分配方法在 prompt 层面解决第一个问题：跳过太简单或太难的 prompt，把更多 rollout 留给有潜力的 prompt。但一旦选定了 prompt，每条 rollout 仍被当作不可分割的整条轨迹来采样。TRACE 往下又深入了一层。</p>
+
+  <h2>你的 rollout 其实是一棵树</h2>
+  <p>ReAct 风格的智能体按轮次工作：思考、行动（搜索、运行代码、调用 API）、读取观察。每个完成的轮次都是一个干净且有语义的存档点。读取存档，固定历史，重新采样一个新的未来。如果重放的结局与原来不同，你就得到了一次受控实验：相同的过去，不同的续写，相反的结果。这就是无需手工设计过程奖励的局部信用分配。</p>
+  <p>难点在于选择重放哪些存档点。有些已经注定失败：搜索只返回了无关内容，智能体无路可走。有些已经稳操胜券：答案已经到手。在这些地方重放，只是多买几份已知结局的副本。真正有价值的是那些悬于刀锋的状态，接下来几步决策仍将决定结果。</p>
+</div>
+
+<div class="wide">
+  <div class="treefig">
+    <figure>
+      <svg id="treeU" viewBox="0 0 440 300" role="img" aria-label="随机分叉：从随机选中的前缀重放，全部重复了原有结局。"></svg>
+      <figcaption><b>随机分叉。</b>六个叶子，每次重放都重复了分叉处原有的结局。前缀下方的对比对数：<b id="cntU">0</b>。</figcaption>
+    </figure>
+    <figure>
+      <svg id="treeT" viewBox="0 0 440 300" role="img" aria-label="TRACE 分叉：从选中的前缀重放，分化出成功与失败。"></svg>
+      <figcaption><b>TRACE 分叉。</b>同样六个叶子，花在仍未分出胜负的前缀上。前缀下方的对比对数：<b id="cntT">0</b>。</figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="wrap">
+  <p>这样看来，整个 rollout 预算就是一份建树预算。prompt 是深度为零的锚点，访问过的前缀是更深的锚点，每一次采样决策都是在选择让哪个锚点获得更多后代。</p>
+
+  <h2>同一条规则，两个尺度</h2>
+  <p>TRACE 的分配原则一句话就能说清：<strong>把预算交给那些后代最可能同时包含成功与失败的锚点。</strong>这条规则用了两次。</p>
+
+  <h3>在 prompt 层面</h3>
+  <p>如果预测器估计 prompt <i>x</i> 的成功概率为 <i>v</i>，那么 <i>m</i> 条全新 rollout 构成混合组的概率为</p>
+  <div class="eq"><i>V</i><sub>root</sub>(<i>x</i>, <i>m</i>) = 1 − <i>v</i><sup><i>m</i></sup> − (1 − <i>v</i>)<sup><i>m</i></sup>
+    <span class="lbl">m 条 rollout 并非全部一致的概率</span></div>
+  <p class="gloss">TRACE 为每个候选 prompt 选择一个数量 <i>m</i> ∈ {0, 2, 3, …}，使总数等于根预算。0 表示跳过该 prompt；2 及以上表示保留，并决定它获得多少条 rollout。一个旋钮同时取代了 prompt 筛选和 rollout 数量分配。</p>
+
+  <h3>在前缀层面</h3>
+  <p>对于一个前缀，我们已经知道原 rollout 的结局：奖励 <i>r</i>。设 <i>q</i> 为一次全新续写重复该结局的预测概率，那么 <i>k</i> 次重放中至少出现一次反转的概率为</p>
+  <div class="eq"><i>V</i><sub>pref</sub> = 1 − <i>q</i><sup><i>k</i></sup>,&nbsp;&nbsp; <i>q</i> = <i>r</i>·<i>Ṽ</i>(<i>H</i>) + (1 − <i>r</i>)·(1 − <i>Ṽ</i>(<i>H</i>))
+    <span class="lbl">至少一次重放与既有结局不同的概率</span></div>
+  <p class="gloss">每个被选中的 prompt 获得与其 rollout 数成正比的局部续写预算，并分摊到它访问过的各个前缀上。两个问题都可以用一个小型动态规划精确求解，其开销与生成相比可以忽略不计。</p>
+
+  <p>亲手试试这个分配器。六个 prompt，一份预算。均匀采样把 rollout 平均分配；TRACE 则求解上面的根分配问题。</p>
+</div>
+
+<div class="wide">
+  <section class="panel" aria-labelledby="wb">
+    <h3 id="wb">你有一份 rollout 预算，该花在哪里？</h3>
+    <p class="hint">示意用的 prompt，预测成功率为虚构数值。每个小方块代表一条 rollout。</p>
+    <div class="controls">
+      <label>根 rollout 预算 <output id="bOut">24</output>
+        <input id="bIn" type="range" min="12" max="48" step="6" value="24">
+      </label>
+    </div>
+    <div class="tablewrap">
+    <table class="alloc">
+      <thead><tr><th>Prompt</th><th>预测成功率</th><th>均匀</th><th>TRACE</th></tr></thead>
+      <tbody id="allocBody"></tbody>
+    </table>
+    </div>
+    <div class="totals">
+      <div class="tot u"><div class="n" id="totU">0</div><div class="k">期望混合组数（均匀）</div></div>
+      <div class="tot t"><div class="n" id="totT">0</div><div class="k">期望混合组数（TRACE）</div></div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <p>看看最优解做了什么。预算紧张时，全部预算都流向中间段的 prompt，两头偏斜的被跳过。随着预算增加，接近五五开的 prompt 很快饱和（五条 rollout 已能让它们以超过 90% 的概率形成混合组），于是新增的 rollout 流向成功率 90% 和 15% 的 prompt，在那里每多一条仍能换来实打实的对比。99% 的 prompt 永远不值得投入，而 2% 的 prompt 只有在滑块接近顶端、侥幸成功变得可能时才能分到 rollout。</p>
+
+  <h2>为什么关键在中间地带</h2>
+  <p>想象体育直播里的实时胜率仪表。比赛早期它在 50% 附近徘徊，每一次进攻都让它大幅摆动；到了一边倒的尾声，它停在 98% 几乎纹丝不动。随着 rollout 一轮轮展开，策略完成任务的概率也是这样变化的，论文用三个结论把这一点刻画得很精确。</p>
+
+  <div class="meter" aria-hidden="true">
+    <div><div class="v">50%</div><div class="bar"><i style="width:50%"></i></div><div class="k">悬而未决。剩余摆动最大，在这里重放最可能出现分歧。</div></div>
+    <div><div class="v">90%</div><div class="bar"><i style="width:90%"></i></div><div class="k">有所倾向。仍有一些对比空间，但概率更低。</div></div>
+    <div><div class="v">99%</div><div class="bar"><i style="width:99%"></i></div><div class="k">大局已定。重放大多只是买到同一结局的副本。</div></div>
+  </div>
+
+  <p><strong>历史越多，预测越准。</strong>随着观察到的轮次增加，预测一组续写的得分只会更容易：可达到的最优平方误差不会随深度增加。因此对前缀打分所掌握的信息至少和对 prompt 打分一样多。在 Qwen3-8B HotpotQA 上，预测器的组成功率误差到第四轮时降到 prompt 层面的约三分之一。</p>
+  <p><strong>不确定性就是剩余的对比潜力。</strong>把成功概率 <i>V</i> 看作那块实时仪表。从任意前缀出发，直到 rollout 结束，仪表读数的期望累计平方变动恰好等于</p>
+  <div class="eq">𝔼[ Σ<sub><i>s</i></sub> (<i>Z</i><sub><i>s</i>+1</sub> − <i>Z</i><sub><i>s</i></sub>)² | <i>H</i><sub><i>t</i></sub> ] = <i>V</i><sub><i>t</i></sub>(1 − <i>V</i><sub><i>t</i></sub>)
+    <span class="lbl">前缀之下成功预测值的期望累计摆动</span></div>
+  <p>因此 <i>V</i>(1 − <i>V</i>) 不只是一个静态的不确定性分数：它衡量的是该前缀之下结局还能摆动多少。实证结果与此一致：许多 prompt 和前缀的成功率集中在 0% 或 100% 附近，而按这一对比量给锚点排序，只用一小部分预算就能覆盖大部分可用的成对对比。</p>
+  <p><strong>对比才能激活梯度。</strong>在二值奖励下，除非某个锚点的后代同时包含成功与失败，否则成对式和组相对式的更新在它之下都会消失。于是期望平方梯度可以分解为“激活概率 × 梯度尺度”。在论文的归一化假设下，最大化激活概率（这正是 TRACE 两个目标所做的）在每个阶段得到的期望梯度能量都不低于均匀分配。</p>
+
+  <h2>让 0.6B 模型告诉 14B 模型该往哪看</h2>
+  <p>上面每个公式都需要在采样之前，对一个 prompt 或一段部分轨迹给出成功率估计。TRACE 用一个共享预测器同时完成两件事：一个 Qwen3-0.6B 评论家（critic）模型，读取序列化后的 prompt 与交互历史，输出 0 到 1 之间的分数。</p>
+  <p>它利用 TRACE 收集的树在线训练。每个节点的目标值是其下方叶子的成功率，自底向上计算，预测器在每一步之后对这些目标做回归。训练以 prompt 层面的样本为主，前缀样本只占每个预测器批次的 6%。即便如此，它在前缀层面与真实结果的秩相关仍保持为正，说明它学到的是依赖历史的难度感知，而不是记住了 prompt 本身。</p>
+  <p>而且它很便宜。在 HotpotQA 上，预测器的打分与更新合计只占约 3% 的墙钟时间：</p>
+
+  <div aria-label="训练时间分解">
+    <div class="stacklab"><b>Qwen3-8B</b><span>预测器合计 3.2%</span></div>
+    <div class="stack" id="stack8"></div>
+    <div class="stacklab"><b>Qwen3-14B</b><span>预测器合计 2.3%</span></div>
+    <div class="stack" id="stack14"></div>
+    <div class="legend" id="stackLegend"></div>
+  </div>
+
+  <h2>一个训练步如何运行</h2>
+  <ol class="steps">
+    <li><strong>为候选池打分。</strong>预测器为每个候选 prompt 估计成功率。</li>
+    <li><strong>分配根 rollout。</strong>求解带预算约束的根分配问题：大多数候选分到零，被选中的 prompt 获得两条或更多条完整 rollout。</li>
+    <li><strong>立即局部展开。</strong>某个 prompt 的 rollout 一返回，就为它访问过的前缀打分，并在那里花掉它的续写预算，无需等待批次中最慢的 prompt。</li>
+    <li><strong>更新预测器。</strong>在完成的树上自底向上计算成功率目标，做一步回归。</li>
+    <li><strong>更新策略。</strong>把树交给任意支持树结构的优化器。论文在数学和问答上使用 TreeRPO，在函数调用上使用 Tree-GRPO。</li>
+  </ol>
+  <p>第 3 步按 prompt 独立展开，是刻意照顾系统效率的设计。完全全局的前缀分配器必须等批次中所有 prompt 都完成；TRACE 只需要一个 prompt 的 rollout，而它们本来就在同一个 worker 上。</p>
+
+  <h2>同等预算下的结果</h2>
+  <p>评测覆盖三类智能体场景：带 Python 解释器的数学推理（在 DeepScaleR 上训练）、带本地维基百科检索器的多跳问答（在 HotpotQA 上训练），以及多轮函数调用（BFCL v4）。基线包括 GRPO、PCL（预测式 prompt 选择）和 TreePO；TreePO 与 TRACE 使用相同的树状 rollout 和树感知更新，但随机分叉。所有方法采用相同的 rollout 预算核算，因此差异来自样本花在哪里，而不是样本有多少。</p>
+</div>
+
+<div class="wide">
+  <section class="panel" aria-labelledby="wr">
+    <h3 id="wr">相对 GRPO 的准确率提升</h3>
+    <p class="hint">条形表示训练结束时高于 GRPO 的点数；左侧标注绝对分数。</p>
+    <div class="seg" role="group" aria-label="选择策略模型">
+      <button type="button" data-m="Qwen3-8B" aria-pressed="true">Qwen3-8B</button>
+      <button type="button" data-m="Qwen3-14B" aria-pressed="false">Qwen3-14B</button>
+      <button type="button" data-m="Llama-3.2-3B" aria-pressed="false">Llama-3.2-3B</button>
+    </div>
+    <div class="res" id="res"></div>
+    <div class="axis"><div></div><div class="ticks" id="ticks"></div></div>
+    <div class="legend">
+      <span><i style="background:var(--grey)"></i>PCL</span>
+      <span><i style="background:var(--edge)"></i>TreePO（随机分叉）</span>
+      <span><i style="background:var(--violet)"></i>TRACE</span>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <p>TRACE 在所有场景、两种 Qwen 规模下都取得了最佳平均成绩，而且在轨迹最长、最适合分叉的场景中差距最大：多跳问答和函数调用。与 TreePO 的对比最能说明问题：两者都建树、使用相同的优化器，唯一区别是分叉落在随机前缀还是预测出的前缀上。在 Llama-3.2-3B-Instruct 上也是同样的规律，TRACE 比 GRPO 高 3.8 个点，比随机分叉高 3.1 个点。</p>
+
+  <h3>真正有学习价值的组多了很多</h3>
+  <p>最明显的效果体现在<em>有效比例</em>上：一个批次中，rollout 树同时以成功和失败收尾的 prompt 所占的比例。在 DeepScaleR 数学任务上：</p>
+  <div class="callout">
+    <div><div class="from">GRPO 26.8%</div><div class="to">60.6%</div><div class="k">Qwen3-8B，TRACE 的平均有效比例</div></div>
+    <div><div class="from">GRPO 34.7%</div><div class="to">59.7%</div><div class="k">Qwen3-14B，TRACE 的平均有效比例</div></div>
+  </div>
+
+  <h3>两个阶段各有贡献</h3>
+  <p>在 Qwen3-8B HotpotQA 上把每个学习式分配器分别换成均匀分配，可以看到收益是叠加的：根分配挑出可能分化的 prompt，前缀分配把重放花在仍能揭示对比的地方。</p>
+  <div class="tablewrap">
+  <table class="data">
+    <thead><tr><th>Prompt 阶段</th><th>前缀阶段</th><th>平均准确率</th><th>有效比例</th></tr></thead>
+    <tbody>
+      <tr><td>均匀</td><td>均匀</td><td>49.5</td><td>42.8%</td></tr>
+      <tr><td>自适应</td><td>均匀</td><td>49.8</td><td>49.1%</td></tr>
+      <tr><td>均匀</td><td>自适应</td><td>50.0</td><td>47.3%</td></tr>
+      <tr class="hl"><td>自适应</td><td>自适应</td><td>50.6</td><td>52.3%</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>预算的形状与大小同样重要</h3>
+  <p>一次轨迹中途的重放大约相当于半条完整 rollout 的开销，因此 <i>M</i> 条根 rollout、每条根 <i>N</i> 次续写的配置，总开销约为 <i>M</i>(1 + <i>N</i>/2) 条轨迹。在每个预算下 TRACE 都胜过随机分叉，有效比例每次都提升约十个点。</p>
+  <div class="tablewrap">
+  <table class="data">
+    <thead><tr><th>预算</th><th>根数 M，重放数 N</th><th>TreePO 准确率 / 有效比例</th><th>TRACE 准确率 / 有效比例</th></tr></thead>
+    <tbody>
+      <tr><td>1024</td><td>512, 2</td><td>48.8 / 32.2%</td><td>49.7 / 42.4%</td></tr>
+      <tr><td>2048</td><td>512, 6</td><td>49.4 / 37.7%</td><td>50.3 / 47.8%</td></tr>
+      <tr class="hl"><td>2048</td><td>1024, 2</td><td>49.5 / 42.8%</td><td>50.6 / 52.3%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>在同为 2048 的预算下，更宽的根覆盖胜过从更少的根做更深的重放。瓶颈不在 rollout 的原始数量，而在于它们能否到达奖励可能出现分歧的状态。</p>
+
+  <h2>预算最终流向了哪里</h2>
+  <p>观察 TRACE 在 BFCL 函数调用上的分配（这里一个回合可以长达数十轮），它的行为就变得很具体。在 prompt 层面它相当挑剔：Qwen3-8B 约有 71% 的候选 prompt 被跳过，Qwen3-14B 约为 65%，被选中的 prompt 通常获得五到七条 rollout。重要的是，参与训练的不同 prompt 数量从未超过固定规模的基线，所以收益并非来自看到了更多数据。</p>
+  <p>在前缀层面，重放分布在整条轨迹上。最早的几轮拿到最大的单项份额，但仍有可观的预算到达第 15 轮这样深的前缀。第二阶段并不是悄悄充当额外的根采样，而是在长交互的各处寻找决策点。</p>
+
+  <h2>局限与展望</h2>
+  <p>TRACE 面向结果可验证的任务；对于没有明确终局检验的场景，需要重新思考混合结果这一目标。这里的预测器有意保持简单，更准确的预测器应能更好地安排预算，尤其是它要拟合的目标会随策略改进而漂移，这天然适合引入持续学习技术。实验涵盖数学、多跳问答和函数调用，模型为 Qwen3-8B、Qwen3-14B 和 Llama-3.2-3B，更长程、非平稳的智能体环境留待未来研究。</p>
+  <p>更大的启示是一种视角的转换。对于智能体强化学习，采样问题不只是抽多少条独立 rollout，而是在 rollout 树的哪里分叉。</p>
+
+  <section id="cite">
+    <div class="bibhead"><h2>引用本文</h2><button class="ghost" id="copyBib" type="button">复制 BibTeX</button></div>
+<pre class="bib" id="bib">@article{zou2026trace,
+  title   = {TRACE: A Unified Rollout Budget Allocation Framework for
+             Efficient Agentic Reinforcement Learning},
+  author  = {Zou, Heming and Wang, Qi and Qu, Yun and Jiang, Yuhang and
+             Cai, Lizhou and Mao, Yixiu and Peng, Ru and Xu, Xin and
+             Liu, Weijie and Yang, Kai and Yang, Saiyong and Ji, Xiangyang},
+  journal = {arXiv preprint arXiv:2606.11119},
+  year    = {2026}
+}</pre>
+  </section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">清华大学与腾讯 LLM Department。关于本工作的问题，可联系<a href="https://arxiv.org/abs/2606.11119">论文</a>中列出的通讯作者。</div>
+</footer>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+
+  /* ---------- Tree renderer ---------- */
+  // node: {sel, skip, n (new branch), r (leaf reward 1/0), c:[children]}
+  function layout(node, depth, st){
+    node.d = depth; st.maxD = Math.max(st.maxD, depth);
+    if (!node.c){ node.x = st.i++; return; }
+    node.c.forEach(ch => layout(ch, depth + 1, st));
+    node.x = (node.c[0].x + node.c[node.c.length - 1].x) / 2;
+  }
+  function renderTree(svg, tree, o){
+    const vb = svg.viewBox.baseVal, W = vb.width, H = vb.height;
+    const st = {i:0, maxD:0}; layout(tree, 0, st);
+    const px = o.padX || 30, py = o.padY || 24;
+    const sx = x => px + x * (W - 2*px) / Math.max(1, st.i - 1);
+    const sy = d => py + d * (H - 2*py) / Math.max(1, st.maxD);
+    const gE = el("g", {}, svg), gN = el("g", {}, svg);
+    const step = o.animate ? 0.28 : 0;
+    (function walk(n){
+      const x = sx(n.x), y = sy(n.d);
+      if (n.c) n.c.forEach(ch => {
+        const cx = sx(ch.x), cy = sy(ch.d), my = (y + cy) / 2;
+        const newEdge = ch.n;
+        const p = el("path", {
+          d:`M${x},${y} C${x},${my} ${cx},${my} ${cx},${cy}`,
+          fill:"none",
+          stroke: newEdge ? (o.newColor || "var(--violet)") : "var(--edge)",
+          "stroke-width": newEdge ? 2.6 : 1.8,
+          "stroke-dasharray": (newEdge && o.dashNew) ? "5 4" : null,
+          pathLength: o.animate ? 1 : null
+        }, gE);
+        if (!(newEdge && o.dashNew)) p.removeAttribute("stroke-dasharray");
+        if (!o.animate) p.removeAttribute("pathLength");
+        if (o.animate){ p.classList.add("grow-edge"); p.style.setProperty("--d", (0.15 + n.d*step) + "s"); }
+        walk(ch);
+      });
+      const outer = el("g", {transform:`translate(${x},${y})`}, gN);
+      const g = el("g", {}, outer);
+      if (o.animate){ g.classList.add("grow-node"); g.style.setProperty("--d", (0.15 + n.d*step + (n.d ? 0.2 : 0)) + "s"); }
+      if (!n.c && n.skip){
+        el("circle", {r:7.5, fill:"var(--surface)", stroke:"var(--grey)", "stroke-width":2, "stroke-dasharray":"3 3"}, g);
+      } else if (!n.c){
+        el("circle", {r: o.leafR || 9, fill: n.r ? "var(--ok)" : "var(--bad)"}, g);
+        const s = (o.leafR || 9) / 9;
+        el("path", {d: n.r ? `M${-3.6*s},${0.2*s} L${-1*s},${2.8*s} L${3.8*s},${-2.6*s}` : `M${-3*s},${-3*s} L${3*s},${3*s} M${3*s},${-3*s} L${-3*s},${3*s}`,
+          stroke:"#fff", "stroke-width":2.2, fill:"none", "stroke-linecap":"round", "stroke-linejoin":"round"}, g);
+      } else {
+        const r = n.d === 0 ? 11 : 7.5;
+        let fill = "var(--surface)", stroke = "var(--ink)";
+        if (n.sel){ fill = o.selFill || "var(--lav)"; stroke = o.selStroke || "var(--violet)"; }
+        if (n.skip){ fill = "var(--surface)"; stroke = "var(--grey)"; }
+        el("circle", {r, fill, stroke, "stroke-width": n.sel ? 2.6 : 2}, g);
+      }
+    })(tree);
+  }
+  function leaves(n){ return n.c ? n.c.flatMap(leaves) : [n.r]; }
+  function prefixPairs(n, isRoot){
+    if (!n.c) return 0;
+    let tot = 0;
+    if (!isRoot && n.c.length > 1){
+      const L = n.c.map(leaves);
+      for (let a = 0; a < L.length; a++) for (let b = a+1; b < L.length; b++)
+        for (const x of L[a]) for (const y of L[b]) if (x !== y) tot++;
+    }
+    return tot + n.c.reduce((s, ch) => s + prefixPairs(ch, false), 0);
+  }
+
+  const L = (r, n) => ({r, n});
+  const hero = {c:[
+    {c:[{c:[{sel:true, c:[{c:[L(0)]}, {n:1, c:[L(1,1)]}, {n:1, c:[L(1,1)]}]}]}]},
+    {sel:true, c:[{c:[{c:[L(1)]}]}, {n:1, c:[L(0,1)]}]},
+    {skip:true},
+    {c:[{sel:true, c:[L(1), L(0,1), L(0,1)]}]},
+    {skip:true}
+  ]};
+  renderTree(document.getElementById("heroTree"), hero, {animate:true, padX:28, padY:22, leafR:10});
+
+  const treeU = {c:[
+    {c:[{sel:true, selFill:"", c:[L(0), L(0,1)]}]},
+    {sel:true, c:[{c:[L(0)]}, {n:1, c:[L(0,1)]}]},
+    {c:[{sel:true, c:[L(1), L(1,1)]}]}
+  ]};
+  const treeT = {c:[
+    {sel:true, c:[{c:[L(1)]}, {n:1, c:[L(0,1)]}, {n:1, c:[L(1,1)]}]},
+    {c:[{sel:true, c:[L(0), L(1,1)]}]},
+    {c:[{c:[L(1)]}]}
+  ]};
+  renderTree(document.getElementById("treeU"), treeU, {newColor:"var(--edge)", dashNew:true, selFill:"var(--bg)", selStroke:"var(--edge)"});
+  renderTree(document.getElementById("treeT"), treeT, {});
+  document.getElementById("cntU").textContent = prefixPairs(treeU, true);
+  document.getElementById("cntT").textContent = prefixPairs(treeT, true);
+
+  /* ---------- Widget A: zero-signal groups ---------- */
+  const pIn = document.getElementById("pIn"), mIn = document.getElementById("mIn");
+  const dotsEl = document.getElementById("dots"), verdict = document.getElementById("verdict");
+  const curve = document.getElementById("curve");
+  const mix = (p, m) => 1 - Math.pow(p, m) - Math.pow(1 - p, m);
+  const numWords = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen"];
+
+  function sample(){
+    const p = +pIn.value, m = +mIn.value;
+    const rs = Array.from({length:m}, () => Math.random() < p ? 1 : 0);
+    const mean = rs.reduce((a,b)=>a+b,0) / m;
+    const sd = Math.sqrt(rs.reduce((a,b)=>a+(b-mean)**2,0) / m);
+    dotsEl.innerHTML = "";
+    rs.forEach(r => {
+      const adv = sd === 0 ? 0 : (r - mean) / sd;
+      const d = document.createElement("div");
+      d.className = "dot " + (r ? "s" : "f");
+      d.innerHTML = `<span class="c">${r ? "✓" : "✗"}</span><span class="a ${sd===0?"zero":""}">${sd===0 ? "0" : (adv>0?"+":"")+adv.toFixed(2)}</span>`;
+      d.setAttribute("aria-label", (r ? "成功" : "失败") + "，优势 " + adv.toFixed(2));
+      dotsEl.appendChild(d);
+    });
+    const w = numWords[m] || m;
+    if (sd === 0){
+      verdict.className = "verdict dead";
+      verdict.textContent = `全部 ${m} 条 rollout 都${rs[0] ? "成功" : "失败"}了。每条的优势都是零，这一组对更新毫无贡献。`;
+    } else {
+      const k = rs.filter(x=>x).length;
+      verdict.className = "verdict live";
+      verdict.textContent = `${m} 条中有 ${k} 条成功。成功者被推高，失败者被压低：这一组有学习价值。`;
+    }
+  }
+  function drawCurve(){
+    const p = +pIn.value, m = +mIn.value;
+    curve.innerHTML = "";
+    const X = v => 44 + v * 256, Y = v => 125 - v * 110;
+    el("line", {x1:X(0), y1:Y(0), x2:X(1), y2:Y(0), stroke:"var(--line)"}, curve);
+    el("line", {x1:X(0), y1:Y(0), x2:X(0), y2:Y(1), stroke:"var(--line)"}, curve);
+    let d = "";
+    for (let i = 0; i <= 100; i++){ const x = i/100; d += (i ? "L" : "M") + X(x).toFixed(1) + "," + Y(mix(x, m)).toFixed(1); }
+    el("path", {d, fill:"none", stroke:"var(--violet)", "stroke-width":2.5}, curve);
+    el("circle", {cx:X(p), cy:Y(mix(p,m)), r:6, fill:"var(--violet)", stroke:"var(--surface)", "stroke-width":2}, curve);
+    const t = (x,y,s,a) => { const e = el("text", {x, y, "text-anchor":a||"middle"}, curve); e.textContent = s; };
+    t(X(0), 142, "0%"); t(X(1), 142, "100%", "end"); t(X(.5), 142, "prompt 成功率");
+    t(38, Y(1)+4, "100%", "end"); t(38, Y(0)+4, "0%", "end");
+    document.getElementById("pmix").textContent = Math.round(mix(p, m)*100) + "%";
+  }
+  function updA(){
+    document.getElementById("pOut").textContent = Math.round(pIn.value*100) + "%";
+    document.getElementById("mOut").textContent = mIn.value;
+    sample(); drawCurve();
+  }
+  pIn.addEventListener("input", updA); mIn.addEventListener("input", updA);
+  document.getElementById("resample").addEventListener("click", sample);
+  updA();
+
+  /* ---------- Widget B: root allocation game ---------- */
+  const prompts = [
+    {t:"调用计算器工具做一道简单加法", v:0.99},
+    {t:"判断两位导演是否国籍相同", v:0.90},
+    {t:"连续三次查询维基百科，找出某人出生地", v:0.62},
+    {t:"解一道 AMC 难度的组合题", v:0.45},
+    {t:"完成一个缺少参数的 12 步交易流程", v:0.15},
+    {t:"一次性证明一道奥赛不等式", v:0.02}
+  ];
+  const f = (v, m) => m < 2 ? 0 : mix(v, m);
+  function solveDP(M){
+    const n = prompts.length, NEG = -1e9;
+    const dp = Array.from({length:n+1}, () => new Array(M+1).fill(NEG));
+    const ch = Array.from({length:n+1}, () => new Array(M+1).fill(0));
+    dp[0][0] = 0;
+    for (let i = 1; i <= n; i++){
+      for (let b = 0; b <= M; b++){
+        for (let m = 0; m <= b; m++){
+          if (m === 1) continue;
+          const prev = dp[i-1][b-m]; if (prev <= NEG/2) continue;
+          const val = prev + f(prompts[i-1].v, m);
+          if (val > dp[i][b] + 1e-12){ dp[i][b] = val; ch[i][b] = m; }
+        }
+      }
+    }
+    const out = new Array(n).fill(0); let b = M;
+    for (let i = n; i >= 1; i--){ out[i-1] = ch[i][b]; b -= ch[i][b]; }
+    return out;
+  }
+  const pips = (k, cls) => k === 0 ? `<span class="skipped">跳过</span>` : `<div class="pips">${('<i class="pip '+cls+'"></i>').repeat(k)}</div>`;
+  function updB(){
+    const M = +document.getElementById("bIn").value;
+    document.getElementById("bOut").textContent = M;
+    const u = M / prompts.length, t = solveDP(M);
+    let tu = 0, tt = 0, rows = "";
+    prompts.forEach((p, i) => {
+      const fu = f(p.v, u), ft = f(p.v, t[i]); tu += fu; tt += ft;
+      rows += `<tr><td class="ptxt">${p.t}</td><td><span class="vchip">${Math.round(p.v*100)}%</span></td>
+        <td>${pips(u, "")}<div class="prob">${u} 条，${Math.round(fu*100)}% 混合</div></td>
+        <td>${pips(t[i], "t")}<div class="prob">${t[i] ? t[i] + " 条，" + Math.round(ft*100) + "% 混合" : "节省预算"}</div></td></tr>`;
+    });
+    document.getElementById("allocBody").innerHTML = rows;
+    document.getElementById("totU").textContent = tu.toFixed(2);
+    document.getElementById("totT").textContent = tt.toFixed(2);
+  }
+  document.getElementById("bIn").addEventListener("input", updB);
+  updB();
+
+  /* ---------- Time breakdown ---------- */
+  const parts = [
+    ["策略更新", "var(--ink)", 66.5, 75.4],
+    ["LLM rollout", "var(--edge)", 28.6, 21.2],
+    ["预测器打分", "var(--violet)", 1.9, 1.4],
+    ["预测器更新", "var(--lav)", 1.3, 0.9],
+    ["其他", "var(--grey)", 1.7, 1.1]
+  ];
+  const s8 = document.getElementById("stack8"), s14 = document.getElementById("stack14");
+  parts.forEach(([name, c, a, b]) => {
+    const i1 = document.createElement("i"); i1.style.width = a + "%"; i1.style.background = c; i1.title = `${name}: ${a}%`; s8.appendChild(i1);
+    const i2 = document.createElement("i"); i2.style.width = b + "%"; i2.style.background = c; i2.title = `${name}: ${b}%`; s14.appendChild(i2);
+  });
+  document.getElementById("stackLegend").innerHTML = parts.map(([n, c, a, b]) => `<span><i style="background:${c}"></i>${n} (${a}% / ${b}%)</span>`).join("");
+
+  /* ---------- Results explorer ---------- */
+  const DOM = [
+    ["数学", "分布内，5 个基准"],
+    ["数学", "分布外，3 个基准"],
+    ["多跳问答", "4 个基准"],
+    ["函数调用", "BFCL v4 多轮，4 个子集"]
+  ];
+  const R = {
+    "Qwen3-8B":  {GRPO:[70.0,74.6,48.5,43.5], PCL:[70.4,74.8,48.9,44.3], TreePO:[70.4,74.9,49.5,44.2], TRACE:[71.1,75.3,50.6,46.2]},
+    "Qwen3-14B": {GRPO:[73.5,77.1,51.2,46.1], PCL:[73.9,77.3,51.5,45.9], TreePO:[74.0,77.4,53.0,46.6], TRACE:[74.9,77.8,54.0,48.0]},
+    "Llama-3.2-3B": {GRPO:[null,null,28.5,null], PCL:[null,null,28.9,null], TreePO:[null,null,29.2,null], TRACE:[null,null,32.3,null]}
+  };
+  const lo = -0.5, hi = 4.0, pct = v => (v - lo) / (hi - lo) * 100;
+  const ticks = document.getElementById("ticks");
+  ticks.innerHTML = [0,1,2,3,4].map(v => `<span style="left:${pct(v)}%">${v ? "+" + v : "0"}</span>`).join("");
+  function renderRes(model){
+    const d = R[model]; let html = "";
+    DOM.forEach((dm, k) => {
+      if (d.GRPO[k] == null) return;
+      const bars = [["PCL","pcl"],["TreePO","tree"],["TRACE","trace"]].map(([m, cls]) => {
+        const delta = +(d[m][k] - d.GRPO[k]).toFixed(1);
+        const a = pct(Math.min(0, delta)), b = pct(Math.max(0, delta));
+        const txt = (delta > 0 ? "+" : delta < 0 ? "−" : "±") + Math.abs(delta).toFixed(1);
+        return `<div class="brow" aria-label="${m}：${txt} 个点"><span class="zero" style="left:${pct(0)}%"></span>
+          <span class="b ${cls}" style="left:${a}%;width:${Math.max(0.6, b - a)}%"></span>
+          <span class="lab" style="left:calc(${b}% + 6px)">${txt}</span></div>`;
+      }).join("");
+      html += `<div class="res-row"><div class="d">${dm[0]}<small>${dm[1]}。TRACE ${d.TRACE[k].toFixed(1)} 对比 GRPO ${d.GRPO[k].toFixed(1)}</small></div><div class="bars">${bars}</div></div>`;
+    });
+    document.getElementById("res").innerHTML = html;
+  }
+  document.querySelectorAll(".seg button").forEach(btn => btn.addEventListener("click", () => {
+    document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    renderRes(btn.dataset.m);
+  }));
+  renderRes("Qwen3-8B");
+
+  /* ---------- Copy BibTeX ---------- */
+  document.getElementById("copyBib").addEventListener("click", async (e) => {
+    try { await navigator.clipboard.writeText(document.getElementById("bib").textContent); e.target.textContent = "已复制"; }
+    catch(_) { e.target.textContent = "请手动选中文本复制"; }
+    setTimeout(() => e.target.textContent = "复制 BibTeX", 1800);
+  });
+})();
+</script>
+</body>
+</html>

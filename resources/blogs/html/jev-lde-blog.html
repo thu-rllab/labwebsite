@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>You Only Edit Once</title>
+<meta name="description" content="Jev-LDE: a small, fast System-1 editor that fixes an LLM's in-context examples with a single Keep, Delete, or Replace move.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#E8EEF3;
+  --sheet:#F8FAFC;
+  --ink:#172338;
+  --ink-soft:#4A5870;
+  --rule:#C3CDD8;
+  --pencil:#C3312A;
+  --pencil-wash:#F6DAD6;
+  --retrieve:#3F6FA3;
+  --retrieve-wash:#DCE7F3;
+  --right:#2F7A55;
+  --right-wash:#D7EDE1;
+  --shadow:0 1px 0 rgba(23,35,56,.08), 0 6px 18px -10px rgba(23,35,56,.35);
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, serif;
+  --mono:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121A26;
+    --sheet:#1B2533;
+    --ink:#E4EAF2;
+    --ink-soft:#9DABBE;
+    --rule:#33404F;
+    --pencil:#F0685E;
+    --pencil-wash:#3E2224;
+    --retrieve:#7FA8D6;
+    --retrieve-wash:#1F3148;
+    --right:#5FC08E;
+    --right-wash:#193527;
+    --shadow:0 1px 0 rgba(0,0,0,.4), 0 8px 20px -10px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121A26;
+  --sheet:#1B2533;
+  --ink:#E4EAF2;
+  --ink-soft:#9DABBE;
+  --rule:#33404F;
+  --pencil:#F0685E;
+  --pencil-wash:#3E2224;
+  --retrieve:#7FA8D6;
+  --retrieve-wash:#1F3148;
+  --right:#5FC08E;
+  --right-wash:#193527;
+  --shadow:0 1px 0 rgba(0,0,0,.4), 0 8px 20px -10px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:1.125rem;
+  line-height:1.65;
+  font-optical-sizing:auto;
+}
+a{color:var(--retrieve);text-underline-offset:3px}
+a:focus-visible, button:focus-visible{outline:3px solid var(--retrieve);outline-offset:3px;border-radius:6px}
+
+.column{max-width:42rem;margin:0 auto;padding:0 16px}
+.wide{max-width:62rem;margin:0 auto;padding:0 16px}
+
+h1,h2,h3{font-family:var(--display);font-weight:800;line-height:1.1;letter-spacing:-.01em;margin:0}
+h2{font-size:clamp(1.7rem,4vw,2.3rem);margin:4.5rem 0 1rem}
+h3{font-size:1.2rem;font-weight:600;margin:2rem 0 .5rem}
+p{margin:0 0 1.1rem}
+strong{font-weight:600}
+.lede{font-size:1.28rem;line-height:1.55;color:var(--ink-soft)}
+.aside{font-size:.95rem;color:var(--ink-soft)}
+figure{margin:2rem 0}
+figcaption{font-size:.92rem;color:var(--ink-soft);margin-top:.8rem;line-height:1.5}
+
+/* ---------- Header / hero ---------- */
+header.hero{padding:3.5rem 0 2rem}
+.venue{font-family:var(--display);font-size:.95rem;color:var(--ink-soft);margin-bottom:1.4rem}
+.title{
+  font-size:clamp(3rem,11vw,6.6rem);
+  line-height:.92;
+  letter-spacing:-.035em;
+}
+.title .once{
+  position:relative;
+  white-space:nowrap;
+}
+.title .once::after{
+  content:"";
+  position:absolute;left:-2%;right:-2%;bottom:.06em;height:.12em;
+  background:var(--pencil);
+  border-radius:3px;
+  transform:rotate(-1.5deg) scaleX(0);
+  transform-origin:left center;
+  animation:underline 700ms 300ms cubic-bezier(.3,.7,.2,1) forwards;
+}
+@keyframes underline{to{transform:rotate(-1.5deg) scaleX(1)}}
+.subtitle{font-family:var(--display);font-weight:400;font-size:clamp(1.15rem,2.6vw,1.45rem);line-height:1.35;margin:1.4rem 0 1.6rem;max-width:40rem;color:var(--ink)}
+.authors{font-size:.98rem;color:var(--ink-soft);line-height:1.55;max-width:46rem}
+.authors .eq{font-size:.85em}
+.links{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.4rem}
+.btn{
+  font-family:var(--display);font-weight:600;font-size:1rem;
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.6rem 1.05rem;border-radius:999px;
+  border:1.5px solid var(--ink);color:var(--ink);background:transparent;
+  text-decoration:none;cursor:pointer;
+}
+.btn.solid{background:var(--ink);color:var(--paper)}
+.btn[aria-disabled="true"]{opacity:.55;cursor:default}
+
+/* ---------- Edit stage (hero demo + playground share it) ---------- */
+.stage{
+  background:var(--sheet);
+  border:1px solid var(--rule);
+  border-radius:18px;
+  padding:1.4rem;
+  box-shadow:var(--shadow);
+  margin-top:2.6rem;
+}
+.stage-row{display:grid;grid-template-columns:8.5rem 1fr;gap:1rem;align-items:start}
+.stage-row + .stage-row{margin-top:1.1rem}
+.row-label{font-family:var(--display);font-size:.9rem;color:var(--ink-soft);padding-top:.7rem;line-height:1.3}
+.row-label b{display:block;color:var(--ink);font-weight:600;font-size:1rem}
+.cards{display:flex;flex-wrap:wrap;gap:.7rem}
+.card{
+  position:relative;
+  flex:1 1 11rem;
+  min-width:0;
+  background:var(--paper);
+  border:1.5px solid var(--rule);
+  border-radius:10px;
+  padding:.6rem .75rem .65rem;
+  font-family:var(--display);
+  font-size:.95rem;
+  line-height:1.3;
+  transition:opacity .35s ease, transform .45s cubic-bezier(.3,.7,.2,1), border-color .3s, background .3s;
+}
+.card .id{font-size:.8rem;color:var(--ink-soft);font-weight:600}
+.card .q{display:block;margin:.2rem 0 .45rem}
+.label{
+  display:inline-block;font-family:var(--mono);font-size:.78rem;font-weight:600;
+  padding:.08rem .45rem;border-radius:5px;background:var(--retrieve-wash);color:var(--retrieve);
+}
+.card.query{border-color:var(--ink);background:var(--sheet)}
+.card.query .label{background:transparent;border:1.5px dashed var(--ink-soft);color:var(--ink-soft)}
+.card.retrieved{border-color:var(--retrieve)}
+.card.candidate{opacity:.72;border-style:dashed}
+.card.struck{border-color:var(--pencil);background:var(--pencil-wash)}
+.card.struck::after{
+  content:"";position:absolute;left:8px;right:8px;top:50%;height:3px;border-radius:2px;
+  background:var(--pencil);transform:rotate(-4deg);
+}
+.card.gone{opacity:.25}
+.card.incoming{opacity:1;border-style:solid;border-color:var(--pencil);background:var(--sheet)}
+.card.lift{transform:translateY(-10px)}
+.card.drop{transform:translateY(8px)}
+
+.verdict{
+  margin-top:1.2rem;padding-top:1rem;border-top:1px dashed var(--rule);
+  display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;
+  font-family:var(--display);font-size:.98rem;
+}
+.json{
+  font-family:var(--mono);font-size:.82rem;
+  background:var(--paper);border:1px solid var(--rule);border-radius:8px;
+  padding:.35rem .6rem;color:var(--ink);word-break:break-word;
+}
+.pill{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .7rem;border-radius:999px;font-weight:600;font-size:.92rem}
+.pill.ok{background:var(--right-wash);color:var(--right)}
+.pill.bad{background:var(--pencil-wash);color:var(--pencil)}
+.pill.neutral{background:var(--retrieve-wash);color:var(--retrieve)}
+.fade{opacity:0;transition:opacity .4s ease}
+.fade.show{opacity:1}
+.hero-foot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center;margin-top:.9rem}
+.hero-foot p{margin:0;font-size:.92rem;color:var(--ink-soft)}
+.linkish{background:none;border:0;padding:0;font:inherit;font-family:var(--display);font-weight:600;color:var(--retrieve);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- Two systems ---------- */
+.systems{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:2rem 0}
+.sys{border-radius:16px;padding:1.2rem 1.25rem 1.1rem;border:1.5px solid var(--rule);background:var(--sheet)}
+.sys.one{border-color:var(--pencil)}
+.sys h3{margin:0 0 .3rem;font-size:1.3rem}
+.sys .who{font-family:var(--display);font-size:.95rem;color:var(--ink-soft);margin-bottom:.8rem}
+.sys ul{margin:0;padding-left:1.1rem;font-size:1rem;line-height:1.5}
+.sys li{margin:.25rem 0}
+.speed{height:8px;border-radius:4px;background:var(--rule);margin:.9rem 0 .2rem;overflow:hidden}
+.speed i{display:block;height:100%;border-radius:4px}
+.sys.one .speed i{width:12%;background:var(--pencil)}
+.sys.two .speed i{width:88%;background:var(--retrieve)}
+.speed-note{font-family:var(--display);font-size:.82rem;color:var(--ink-soft)}
+
+/* ---------- Pull quote ---------- */
+.pull{
+  font-family:var(--display);font-weight:600;
+  font-size:clamp(1.4rem,3.6vw,1.95rem);line-height:1.25;letter-spacing:-.01em;
+  margin:2.6rem 0;padding-left:1.1rem;border-left:5px solid var(--pencil);
+}
+
+/* ---------- Number line (one-edit neighborhood) ---------- */
+.nl{background:var(--sheet);border:1px solid var(--rule);border-radius:16px;padding:1.3rem 1.3rem 1rem}
+.nl-row{display:grid;grid-template-columns:7.5rem 1fr;gap:.8rem;align-items:center;margin:.6rem 0 1.6rem}
+.nl-name{font-family:var(--display);font-weight:600;font-size:.98rem}
+.track{position:relative;height:44px}
+.track::before{content:"";position:absolute;left:0;right:0;top:21px;height:2px;background:var(--rule)}
+.zero{position:absolute;top:8px;bottom:8px;width:2px;background:var(--ink-soft)}
+.span{position:absolute;top:18px;height:8px;border-radius:4px;background:var(--retrieve-wash);border:1px solid var(--retrieve)}
+.mark{position:absolute;top:0;transform:translateX(-50%);font-family:var(--display);font-size:.8rem;font-weight:600;white-space:nowrap;text-align:center}
+.mark::after{content:"";display:block;width:12px;height:12px;margin:3px auto 0;border-radius:50%;background:currentColor;border:2px solid var(--sheet)}
+.mark.worst{color:var(--retrieve)}
+.mark.lde{color:var(--pencil)}
+.mark.oracle{color:var(--right)}
+.mark.lde::after{border-radius:2px;transform:rotate(45deg);width:11px;height:11px}
+.nl-legend{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;font-family:var(--display);font-size:.85rem;color:var(--ink-soft)}
+.nl-legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.4rem;vertical-align:-1px;background:currentColor}
+.axis-note{font-family:var(--display);font-size:.8rem;color:var(--ink-soft);display:flex;justify-content:space-between;margin-top:-1rem}
+
+/* ---------- Playground ---------- */
+.actions{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.2rem}
+.chip{
+  font-family:var(--mono);font-size:.8rem;
+  padding:.38rem .6rem;border-radius:8px;border:1.5px solid var(--rule);
+  background:var(--paper);color:var(--ink);cursor:pointer;
+  transition:border-color .2s, background .2s;
+}
+.chip:hover{border-color:var(--ink-soft)}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--sheet);box-shadow:inset 0 0 0 1px var(--ink)}
+.chip.tried-ok{border-color:var(--right)}
+.chip.tried-bad{border-color:var(--pencil)}
+.chip.jev{background:var(--pencil);border-color:var(--pencil);color:#fff}
+.play-controls{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin-top:1.1rem}
+.think{
+  margin-top:1rem;padding:.8rem 1rem;border-radius:10px;
+  background:var(--paper);border:1px dashed var(--pencil);
+  font-size:1rem;line-height:1.55;display:none;
+}
+.think.show{display:block}
+.think code{font-family:var(--mono);font-size:.85rem}
+.score{font-family:var(--display);font-size:.92rem;color:var(--ink-soft)}
+
+/* ---------- Steps ---------- */
+.steps{list-style:none;padding:0;margin:1.6rem 0;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:0 0 1.2rem 3.1rem;border-left:2px solid var(--rule);margin-left:1rem}
+.steps li:last-child{border-left-color:transparent;padding-bottom:0}
+.steps li::before{
+  content:counter(s);position:absolute;left:-1.05rem;top:-.1rem;
+  width:2.1rem;height:2.1rem;border-radius:50%;
+  background:var(--sheet);border:2px solid var(--ink);
+  font-family:var(--display);font-weight:800;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.steps b{font-family:var(--display);font-weight:600;display:block;font-size:1.05rem;line-height:1.3;margin-bottom:.15rem}
+
+/* ---------- Bar charts ---------- */
+.chart{background:var(--sheet);border:1px solid var(--rule);border-radius:16px;padding:1.2rem 1.3rem 1.1rem}
+.chart h3{margin:0 0 1rem;font-size:1.05rem}
+.bar{display:grid;grid-template-columns:9.5rem 1fr 3.4rem;gap:.7rem;align-items:center;margin:.45rem 0;font-family:var(--display);font-size:.95rem}
+.bar .name{line-height:1.2}
+.bar .val{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.bar .t{height:20px;background:var(--paper);border-radius:5px;overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--retrieve);border-radius:5px;opacity:.8}
+.bar.me .name, .bar.me .val{color:var(--pencil)}
+.bar.me .t i{background:var(--pencil);opacity:1}
+.bar.dim .t i{background:var(--ink-soft);opacity:.45}
+.chart-note{font-family:var(--display);font-size:.84rem;color:var(--ink-soft);margin-top:.7rem}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* ---------- Stat strip ---------- */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0}
+.stat{border-top:3px solid var(--ink);padding-top:.7rem}
+.stat .n{font-family:var(--display);font-weight:800;font-size:2.2rem;line-height:1;letter-spacing:-.02em}
+.stat .d{font-size:.98rem;line-height:1.45;color:var(--ink-soft);margin-top:.35rem}
+
+/* ---------- Transfer map ---------- */
+.transfer{width:100%;border-collapse:collapse;font-family:var(--display);font-size:.95rem;margin:1.5rem 0}
+.transfer th, .transfer td{padding:.6rem .5rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+.transfer th{font-weight:600;color:var(--ink-soft);font-size:.88rem}
+.transfer td.g{color:var(--right);font-weight:600;white-space:nowrap}
+
+/* ---------- Limits ---------- */
+.limits{background:var(--sheet);border:1px solid var(--rule);border-radius:16px;padding:1.2rem 1.35rem .4rem}
+.limits p{font-size:1.02rem}
+
+/* ---------- Footer ---------- */
+pre.bib{
+  font-family:var(--mono);font-size:.8rem;line-height:1.5;
+  background:var(--sheet);border:1px solid var(--rule);border-radius:12px;
+  padding:1rem;overflow-x:auto;white-space:pre;
+}
+footer{padding:3rem 0 4rem;font-size:.92rem;color:var(--ink-soft)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:720px){
+  body{font-size:1.06rem}
+  .stage{padding:1rem}
+  .stage-row{grid-template-columns:1fr;gap:.4rem}
+  .row-label{padding-top:0}
+  .row-label b{display:inline;margin-right:.4rem}
+  .systems, .pair{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+  .nl-row{grid-template-columns:1fr;gap:.2rem}
+  .bar{grid-template-columns:7rem 1fr 3rem}
+  .card{flex-basis:100%}
+  .transfer{font-size:.86rem}
+  .transfer td.g{white-space:normal}
+  .transfer th, .transfer td{padding:.5rem .3rem}
+}
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{animation-duration:0s !important;animation-delay:0s !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wide">
+    <div class="venue">Preprint from the Department of Automation, Tsinghua University</div>
+    <h1 class="title">You only edit <span class="once">once</span>.</h1>
+    <p class="subtitle">Give a large language model a small, fast intuition for which examples to look at, and its in-context learning gets noticeably better. We call that intuition Jev-LDE.</p>
+    <p class="authors">
+      Jiarong Wen, Qi Wang, Yun Qu, Yixiu Mao, Heming Zou, Haoang Chi, Lizhou Cai, Yiqin Lv, Kaiyu Zhang, Yuhang Jiang, and Xiangyang Ji
+    </p>
+    <div class="links">
+      <a class="btn solid" href="https://arxiv.org/pdf/2609.33609" target="_blank" rel="noopener">Read the paper</a>
+      <a class="btn" href="#" aria-disabled="true">Code coming soon</a>
+    </div>
+
+    <!-- Hero demo: one glance, one edit, one call -->
+    <div class="stage" id="hero-stage" aria-label="Animated example of Jev-LDE replacing one demonstration">
+      <div class="stage-row">
+        <div class="row-label"><b>Query</b>the question the target LLM must label</div>
+        <div class="cards">
+          <div class="card query"><span class="q">How many people live in Tokyo?</span><span class="label">?</span></div>
+        </div>
+      </div>
+      <div class="stage-row">
+        <div class="row-label"><b>Retrieved</b>top-3 lookalikes by embedding similarity</div>
+        <div class="cards" id="hero-retrieved">
+          <div class="card retrieved" data-slot="S1"><span class="id">S1</span><span class="q">What is Tokyo famous for?</span><span class="label">DESC</span></div>
+          <div class="card retrieved" data-slot="S2" id="hero-s2"><span class="id">S2</span><span class="q">Where is Tokyo located?</span><span class="label">LOC</span></div>
+          <div class="card retrieved" data-slot="S3"><span class="id">S3</span><span class="q">Who is the governor of Tokyo?</span><span class="label">HUM</span></div>
+        </div>
+      </div>
+      <div class="stage-row">
+        <div class="row-label"><b>Candidates</b>the next few in the retrieval list</div>
+        <div class="cards">
+          <div class="card candidate" id="hero-c1"><span class="id">C1</span><span class="q">How many people live in Canada?</span><span class="label">NUM</span></div>
+          <div class="card candidate"><span class="id">C2</span><span class="q">What is the capital of Japan?</span><span class="label">LOC</span></div>
+          <div class="card candidate"><span class="id">C3</span><span class="q">What does the name Tokyo mean?</span><span class="label">DESC</span></div>
+        </div>
+      </div>
+      <div class="verdict fade" id="hero-verdict">
+        <span>Jev-LDE's one move:</span>
+        <span class="json">{"action":"Replace","selected_id":"S2","candidate_id":"C1"}</span>
+        <span class="pill ok">Target LLM answers NUM, correct</span>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <p>A toy question-classification example in the style of TREC. Everything is about Tokyo, yet nothing is about counting.</p>
+      <button class="linkish" id="hero-replay" type="button">Replay the edit</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="column">
+
+  <h2>A cheat sheet with the wrong notes</h2>
+  <p class="lede">In-context learning is a bit like letting a student bring a tiny cheat sheet into the exam. The student (a large language model) doesn't change a single weight; it just reads a few worked examples and imitates them.</p>
+  <p>So everything depends on which examples make it onto the sheet. The usual approach is to retrieve the ones that look most similar to the question. That's cheap, and often good. But look at the Tokyo example above: the three nearest neighbours all mention Tokyo, and not one of them is a "how many" question. The model sees DESC, LOC and HUM, and the most tempting answer, LOC, is wrong.</p>
+  <p>Adding more examples doesn't reliably fix this. Context windows are finite, long prompts cost memory and compute, and irrelevant or repetitive examples can actively distract the model. What you want is the right few.</p>
+  <p>Finding the exact best subset is hopeless at scale: picking <em>k</em> out of <em>n</em> candidates is combinatorial, and the only honest way to score a subset is to ask the target model, over and over. Methods that do query the target get accuracy at a price; methods that don't are fast but judge examples by proxies like similarity.</p>
+
+  <h2>Two ways of thinking</h2>
+  <p>Daniel Kahneman famously split the mind into two modes. <strong>System 2</strong> is slow, effortful and deliberate: long division, weighing a contract clause. <strong>System 1</strong> is fast and intuitive: you glance at a face and know it's angry, you glance at a sentence and know something is off.</p>
+  <p>Our paper takes that split literally. The target LLM is the System 2: expensive, capable, and the one that actually answers. Jev-LDE is a small System 1 sitting in front of it, trained to take one quick look at the query and the retrieved examples and say, in effect, <em>"that one's misleading, swap it for this."</em></p>
+</div>
+
+<div class="wide">
+  <div class="systems">
+    <div class="sys one">
+      <h3>System 1: Jev-LDE</h3>
+      <div class="who">A 1.7B-parameter editor (Qwen3-1.7B, post-trained with RL)</div>
+      <ul>
+        <li>Reads the query, the retrieved examples and a few candidates</li>
+        <li>Never answers the query itself; it only judges which examples will help</li>
+        <li>Makes exactly one move: Keep, Delete or Replace</li>
+        <li>One greedy completion, no calls to the target while deciding</li>
+      </ul>
+      <div class="speed"><i></i></div>
+      <div class="speed-note">One glance</div>
+    </div>
+    <div class="sys two">
+      <h3>System 2: the target LLM</h3>
+      <div class="who">Llama-3-8B, Qwen2.5-7B, Qwen3-8B, Qwen3.5-9B, DeepSeek-V4-Flash</div>
+      <ul>
+        <li>Frozen, can be a black box behind an API</li>
+        <li>Does the real work of reading examples and predicting the answer</li>
+        <li>Called exactly once per query, on the edited set</li>
+        <li>Never retrained, never re-queried for scoring</li>
+      </ul>
+      <div class="speed"><i></i></div>
+      <div class="speed-note">The heavy lifting</div>
+    </div>
+  </div>
+</div>
+
+<div class="column">
+  <p>The division of labour matters. Deciding <em>which examples help</em> is a much easier job than <em>solving the task</em>, the same way a good teaching assistant can spot a confusing worked example without being able to do the research themselves. That's why a model several times smaller than the target can still steer it.</p>
+
+  <h2>Why one edit is enough to matter</h2>
+  <p>Before building anything, we asked a blunt question: if you start from the retrieved set and are allowed to change at most one example, how much accuracy is on the table?</p>
+  <p>On TREC with a 4-shot budget, we tried every valid single edit for every test query. An oracle that peeks at the gold label and picks the best edit per query gains <strong>+26.0 points</strong> for Llama-3-8B and <strong>+16.8</strong> for Qwen2.5-7B over plain Semantic TopK. A random edit, on the other hand, does roughly nothing on average and can be catastrophic in the worst case.</p>
+</div>
+
+<div class="wide">
+  <figure>
+    <div class="nl" role="img" aria-label="Accuracy change from a single edit on 4-shot TREC. Llama-3-8B: worst random edit minus 46.4, Jev-LDE plus 8.2, oracle plus 26.0. Qwen2.5-7B: worst random edit minus 33.8, Jev-LDE plus 7.4, oracle plus 16.8.">
+      <div class="nl-legend">
+        <span style="color:var(--retrieve)">Range of random single edits</span>
+        <span style="color:var(--pencil)">Jev-LDE, no labels</span>
+        <span style="color:var(--right)">Oracle with gold labels</span>
+      </div>
+      <div id="nl-rows"></div>
+      <div class="axis-note"><span>Worse than Semantic TopK</span><span>Better</span></div>
+    </div>
+    <figcaption>Accuracy change (percentage points) relative to Semantic TopK on 4-shot TREC, when exactly one edit is applied. The vertical line is "no change". A lot of accuracy lives within a single edit; the hard part is choosing it without the answer key.</figcaption>
+  </figure>
+</div>
+
+<div class="column">
+  <p>That's the whole motivation in one picture. The one-edit neighbourhood is small enough to be tractable, but large enough to contain big wins. With a 16-example pool and 4 shots, it has <strong>53 options</strong>, compared with <strong>2,380</strong> subsets for a global search over sets of size 3 or 4. The trick is to learn an intuition for the right one.</p>
+
+  <h2>Try being the System 1</h2>
+  <p>Here's the Tokyo example again, with its entire one-edit neighbourhood laid out: one Keep, three Deletes and nine Replaces. Click any edit to see what it does to the cheat sheet. Then let Jev-LDE choose.</p>
+</div>
+
+<div class="wide">
+  <div class="stage" id="play">
+    <div class="stage-row">
+      <div class="row-label"><b>Query</b>gold label is NUM</div>
+      <div class="cards">
+        <div class="card query"><span class="q">How many people live in Tokyo?</span><span class="label">?</span></div>
+      </div>
+    </div>
+    <div class="stage-row">
+      <div class="row-label"><b>Edited set</b>what the target LLM will see</div>
+      <div class="cards" id="play-set"></div>
+    </div>
+    <div class="stage-row">
+      <div class="row-label"><b>Candidates</b>available for Replace</div>
+      <div class="cards" id="play-cands"></div>
+    </div>
+    <div class="stage-row">
+      <div class="row-label"><b>All 13 edits</b>the one-edit neighbourhood</div>
+      <div class="actions" id="play-actions" role="group" aria-label="Choose an edit"></div>
+    </div>
+    <div class="verdict" id="play-verdict" aria-live="polite">
+      <span class="pill neutral">Pick an edit to see what the target might answer</span>
+    </div>
+    <div class="play-controls">
+      <button class="btn solid" type="button" id="play-jev">Let Jev-LDE choose</button>
+      <button class="btn" type="button" id="play-reset">Reset</button>
+      <span class="score" id="play-score"></span>
+    </div>
+    <div class="think" id="play-think">
+      <code>&lt;think&gt;</code> The query asks for a count of people. S2 shares "Tokyo" with it but is labelled LOC, the most tempting wrong answer. C1 has the same "how many people live in" pattern and the NUM label. Replace S2 with C1. <code>&lt;/think&gt;</code><br>
+      <code>&lt;answer&gt;{"action":"Replace","selected_id":"S2","candidate_id":"C1"}&lt;/answer&gt;</code>
+    </div>
+  </div>
+  <p class="aside" style="margin-top:.8rem">This is an illustration of the mechanism, not real model output. The target's answers here are written by hand to show the idea; the numbers in the rest of this post come from the paper.</p>
+</div>
+
+<div class="column">
+  <p>Only 3 of the 13 edits fix this query. Notice what the good edits have in common: they don't add more Tokyo, they add the right <em>kind</em> of question with the right <em>label</em>. That's the judgment Jev-LDE's prompt asks for: match the task, the reasoning pattern, the label boundary and the answer format, and be suspicious of examples that look similar on the surface but carry a misleading label.</p>
+
+  <h2>Where the intuition comes from</h2>
+  <p>System 1 isn't born knowing things; it's trained by experience. Jev-LDE learns the same way, through reinforcement learning with verifiable rewards. The reward is as simple as it gets: after the edit, did the frozen target LLM answer correctly? 1 if yes, 0 if no.</p>
+
+  <ol class="steps">
+    <li><b>Set up a situation.</b>Take a training query, retrieve its top-k examples with Semantic TopK, and offer the next ones in the top-16 as replacement candidates.</li>
+    <li><b>Let the editor try eight edits.</b>Jev-LDE samples eight completions, each ending in one Keep, Delete or Replace action.</li>
+    <li><b>Ask the target, once per edit.</b>Each edited set goes to a frozen Meta-Llama-3-8B-Instruct. Correct prediction, reward 1; wrong or unparseable, reward 0.</li>
+    <li><b>Nudge towards the better-than-average edits.</b>GRPO compares each edit to the group's average and shifts probability towards the ones that beat it.</li>
+  </ol>
+
+  <p>Two design choices make this work well. First, <strong>RL rather than supervised labels</strong>: several different edits are often equally good, so there's no single "correct action" to imitate, and RL lets the editor explore instead of memorising one answer. Second, <strong>only train where the choice matters</strong>: if every edit from a state gives the same outcome, there's nothing to learn, so training states are kept only when some probed edits succeed and others fail.</p>
+  <p>Over 752 updates on AGNews, TREC, DBPedia and GSM8K, the editor's average reward climbs from 0.475 over the first 100 updates to 0.713 over the last 100.</p>
+
+  <p>The most telling result is what happens without this training. Here are five ways to make the one-shot TREC edit, all with Llama-3-8B as the target:</p>
+</div>
+
+<div class="wide">
+  <figure>
+    <div class="chart" id="chart-ablation"></div>
+    <figcaption>One-shot TREC accuracy with Meta-Llama-3-8B-Instruct as the target. Same starting example, same candidates, same action space; only the decision-maker changes.</figcaption>
+  </figure>
+</div>
+
+<div class="column">
+  <p class="pull">The untrained small model's gut feeling is worse than doing nothing. After RL, the same model beats doing nothing by 12.8 points.</p>
+  <p>The untrained Qwen3-1.7B scores 31.2%, well below simply keeping the retrieved example (52.8%). Even asking the much larger Llama-3-8B to deliberately pick an edit only reaches 57.8%. After post-training, the 1.7B editor reaches 65.6%. Intuition, in other words, is not a matter of model size; it's learned from feedback about what actually helps the target.</p>
+
+  <h2>What the fast edit buys</h2>
+  <p>At test time the recipe is short: retrieve, let Jev-LDE make one edit with a single greedy completion, then call the target once. No repeated scoring of contexts, no subset search.</p>
+</div>
+
+<div class="wide">
+  <div class="stats">
+    <div class="stat"><div class="n">81.2 to 88.1</div><div class="d">Average one-shot accuracy over TREC, DBPedia and Banking77 across four target LLMs, Semantic TopK versus Jev-LDE.</div></div>
+    <div class="stat"><div class="n">46 of 48</div><div class="d">Classification configurations where Jev-LDE improves its own starting point; best or tied-best in 44.</div></div>
+    <div class="stat"><div class="n">+11% time</div><div class="d">Extra end-to-end wall time on one-shot TREC with Qwen2.5-7B, while accuracy rises from 65.4% to 80.6%.</div></div>
+  </div>
+
+  <div class="pair">
+    <figure style="margin-top:0">
+      <div class="chart" id="chart-main"></div>
+      <figcaption>Average one-shot accuracy over TREC, DBPedia and Banking77, averaged across Qwen2.5-7B, Llama-3-8B, Qwen3-8B and Qwen3.5-9B.</figcaption>
+    </figure>
+    <figure style="margin-top:0">
+      <div class="chart" id="chart-time"></div>
+      <figcaption>End-to-end wall time on one-shot TREC with Qwen2.5-7B-Instruct, including retrieval, selection or editing, and target inference.</figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="column">
+  <p>The time chart is where the System 1 framing pays off. Methods that consult the target to rank examples, like TopK+ConE, spend more than twice as long. Jev-LDE lands next to the pure-retrieval methods in cost, yet at the top in accuracy. Gains are largest when the budget is tightest (one shot, where every example counts) and remain positive on average at larger budgets; even at 8 and 16 shots, one edit helps in 18 of 24 settings.</p>
+
+  <h2>An intuition that travels</h2>
+  <p>Jev-LDE only ever got feedback from one teacher, Llama-3-8B, on four training benchmarks. We never retrained it. It still helps other models, other datasets and other retrievers:</p>
+
+  <table class="transfer">
+    <thead><tr><th>Setting</th><th>What's new</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Qwen2.5-7B, Qwen3-8B, Qwen3.5-9B</td><td>Unseen target models</td><td class="g">35 of 36 improved</td></tr>
+      <tr><td>Banking77 intent classification</td><td>Unseen benchmark</td><td class="g">14 of 16 improved</td></tr>
+      <tr><td>SST-2 sentiment</td><td>Unseen benchmark</td><td class="g">All settings improved</td></tr>
+      <tr><td>DeepSeek-V4-Flash on TACRED</td><td>Unseen model and benchmark</td><td class="g">+0.3 to +2.2</td></tr>
+      <tr><td>DeepSeek-V4-Flash on TREC-50</td><td>Unseen model, 50 fine-grained labels (near-domain to TREC)</td><td class="g">+2.4 to +4.4</td></tr>
+      <tr><td>BM25, CASE, TopK+ConE as the retriever</td><td>Different starting sets and pools</td><td class="g">24 of 24 improved</td></tr>
+    </tbody>
+  </table>
+
+  <p>The retriever result is a nice one for the plug-and-play story. On TREC with Qwen2.5-7B, putting Jev-LDE after BM25 adds 9.8 points on average across shot budgets, after CASE 10.2, and after TopK+ConE a striking 22.9. Whatever hands it the first draft of the cheat sheet, it knows how to improve it.</p>
+  <p>Why does it transfer? Our best explanation is the System 1 one: Jev-LDE isn't solving the task, it's judging relevance, redundancy and label distinctions, and those judgments look similar across classification problems. We should be clear that the experiments don't isolate those contributions, so treat this as a plausible story rather than a proven mechanism.</p>
+
+  <h2>A little theory, in plain words</h2>
+  <p>Two results in the paper back up the "edit locally" instinct.</p>
+  <p><strong>Nearby repairs are the common case.</strong> In a simplified model where each retrieved example is more likely to point the right way than the wrong way, the chance that a failed retrieval needs more than <em>h</em> swaps to fix shrinks geometrically in <em>h</em>. When retrieval goes wrong, it usually goes wrong by one.</p>
+  <p><strong>Small action spaces are cheaper to learn.</strong> The amount of feedback needed to learn a near-best editing policy grows linearly with the number of available actions. Fifty-three local edits are far easier to learn over than thousands of global subsets.</p>
+
+  <h2>What's next for System 1</h2>
+  <div class="limits">
+    <p><strong>Reasoning needs a different lever.</strong> On math, editing the examples barely moves the needle: on GSM8K the average change stays within one point, and on held-out AQuA-RAT accuracy dips by 0.8 and 1.9 points for Qwen2.5-7B and Llama-3-8B. Our reading is that for reasoning-heavy tasks, giving the target more compute at inference time pays off more than adjusting its examples. A better cheat sheet matters less than more time to think.</p>
+    <p>That doesn't sideline System 1. It changes its job. The same fast, lightweight judgment that now decides which examples to show could decide how much reasoning a query deserves, spending extra thinking tokens on hard problems and saving them on easy ones. A small System 1 that allocates compute for a larger System 2 is a natural next step, and one we're excited to explore.</p>
+    <p><strong>One move, one pool.</strong> Jev-LDE can't fetch an example from outside its candidate pool, and it can't fix a set that needs several coordinated changes. A bigger pool isn't automatically better either: on one-shot TREC with Qwen2.5-7B, a pool of 16 gave 80.6% while a pool of 32 gave 79.4%.</p>
+  </div>
+
+  <h2>The takeaway</h2>
+  <p>You don't need to search the whole space of prompts to make in-context learning work better. Start from whatever your retriever gives you, let a small model with good instincts make one careful edit, and ask the large language model once. A fast System 1 in front of a capable System 2 turns out to be a simple, cheap and surprisingly strong combination.</p>
+
+  <h3>Cite this work</h3>
+<pre class="bib">@article{wen2026yoeo,
+  title   = {You Only Edit Once: Incentivizing In-Context Capability
+             of LLMs via Local Demonstration Refinement},
+  author  = {Wen, Jiarong and Wang, Qi and Qu, Yun and Mao, Yixiu and
+             Zou, Heming and Chi, Haoang and Cai, Lizhou and Lv, Yiqin and
+             Zhang, Kaiyu and Jiang, Yuhang and Ji, Xiangyang},
+  journal = {arXiv preprint arXiv:2609.33609},
+  year    = {2026}
+}</pre>
+</div>
+</main>
+
+<footer>
+  <div class="column">
+    Questions about the work: <a href="mailto:cheemswang@mail.tsinghua.edu.cn">cheemswang@mail.tsinghua.edu.cn</a>. Code for inference with the post-trained Jev-LDE will be released with the final version of the paper.
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Hero animation ---------- */
+  var s2 = document.getElementById('hero-s2');
+  var c1 = document.getElementById('hero-c1');
+  var verdict = document.getElementById('hero-verdict');
+  var original = s2.innerHTML;
+  var timers = [];
+  function clear(){ timers.forEach(clearTimeout); timers = []; }
+  function resetHero(){
+    s2.className = 'card retrieved';
+    s2.innerHTML = original;
+    c1.className = 'card candidate';
+    verdict.classList.remove('show');
+  }
+  function finalHero(){
+    s2.className = 'card retrieved incoming';
+    s2.innerHTML = '<span class="id">S2, now C1</span><span class="q">How many people live in Canada?</span><span class="label">NUM</span>';
+    c1.className = 'card candidate gone';
+    verdict.classList.add('show');
+  }
+  function playHero(){
+    clear(); resetHero();
+    if(reduce){ finalHero(); return; }
+    timers.push(setTimeout(function(){ s2.classList.add('struck','lift'); }, 1100));
+    timers.push(setTimeout(function(){ c1.classList.add('incoming','lift'); }, 1700));
+    timers.push(setTimeout(function(){ finalHero(); }, 2500));
+  }
+  document.getElementById('hero-replay').addEventListener('click', playHero);
+  playHero();
+
+  /* ---------- Number line ---------- */
+  var MIN = -50, MAX = 30;
+  function pos(v){ return ((v - MIN) / (MAX - MIN) * 100) + '%'; }
+  var rows = [
+    {name:'Llama-3-8B', worst:-46.4, lde:8.2, oracle:26.0},
+    {name:'Qwen2.5-7B', worst:-33.8, lde:7.4, oracle:16.8}
+  ];
+  var nl = document.getElementById('nl-rows');
+  rows.forEach(function(r){
+    var row = document.createElement('div');
+    row.className = 'nl-row';
+    row.innerHTML =
+      '<div class="nl-name">' + r.name + '</div>' +
+      '<div class="track">' +
+        '<div class="span" style="left:' + pos(r.worst) + ';width:calc(' + pos(r.oracle) + ' - ' + pos(r.worst) + ')"></div>' +
+        '<div class="zero" style="left:' + pos(0) + '"></div>' +
+        '<div class="mark worst" style="left:' + pos(r.worst) + '">' + r.worst + '</div>' +
+        '<div class="mark lde" style="left:' + pos(r.lde) + '">+' + r.lde + '</div>' +
+        '<div class="mark oracle" style="left:' + pos(r.oracle) + '">+' + r.oracle + '</div>' +
+      '</div>';
+    nl.appendChild(row);
+  });
+
+  /* ---------- Bar charts ---------- */
+  function barChart(id, title, data, max, unit, note){
+    var el = document.getElementById(id);
+    var html = '<h3>' + title + '</h3>';
+    data.forEach(function(d){
+      var cls = 'bar' + (d.me ? ' me' : '') + (d.dim ? ' dim' : '');
+      html += '<div class="' + cls + '"><span class="name">' + d.n + '</span>' +
+              '<span class="t"><i style="width:' + (d.v / max * 100) + '%"></i></span>' +
+              '<span class="val">' + d.v + unit + '</span></div>';
+    });
+    if(note) html += '<div class="chart-note">' + note + '</div>';
+    el.innerHTML = html;
+  }
+  barChart('chart-ablation', 'Who makes the edit?', [
+    {n:'Jev-LDE (1.7B, after RL)', v:65.6, me:true},
+    {n:'Llama-3-8B, prompted', v:57.8},
+    {n:'Keep, no edit', v:52.8, dim:true},
+    {n:'Qwen3-1.7B, before RL', v:31.2},
+    {n:'Random edit', v:23.2}
+  ], 100, '%');
+  barChart('chart-main', 'Accuracy', [
+    {n:'Jev-LDE', v:88.1, me:true},
+    {n:'CASE', v:81.4},
+    {n:'Semantic TopK', v:81.2},
+    {n:'TopK+ConE', v:78.3},
+    {n:'LMS3', v:75.9},
+    {n:'BM25', v:74.6}
+  ], 100, '%');
+  barChart('chart-time', 'Wall time, seconds', [
+    {n:'TopK+ConE', v:197.5},
+    {n:'Jev-LDE', v:91.1, me:true},
+    {n:'LMS3', v:88.7},
+    {n:'Semantic TopK', v:82.1},
+    {n:'CASE', v:81.1},
+    {n:'BM25', v:79.8},
+    {n:'Random', v:79.1, dim:true}
+  ], 200, 's');
+
+  /* ---------- Playground ---------- */
+  var S = {
+    S1:{q:'What is Tokyo famous for?', l:'DESC'},
+    S2:{q:'Where is Tokyo located?', l:'LOC'},
+    S3:{q:'Who is the governor of Tokyo?', l:'HUM'}
+  };
+  var C = {
+    C1:{q:'How many people live in Canada?', l:'NUM'},
+    C2:{q:'What is the capital of Japan?', l:'LOC'},
+    C3:{q:'What does the name Tokyo mean?', l:'DESC'}
+  };
+  var actions = [{type:'Keep'}];
+  ['S1','S2','S3'].forEach(function(s){ actions.push({type:'Delete', s:s}); });
+  ['S1','S2','S3'].forEach(function(s){ ['C1','C2','C3'].forEach(function(c){ actions.push({type:'Replace', s:s, c:c}); }); });
+
+  function key(a){ return a.type + (a.s ? '-' + a.s : '') + (a.c ? '-' + a.c : ''); }
+  function label(a){
+    if(a.type === 'Keep') return 'Keep';
+    if(a.type === 'Delete') return 'Delete ' + a.s;
+    return 'Replace ' + a.s + ' with ' + a.c;
+  }
+  function predict(a){
+    if(a.type === 'Replace' && a.c === 'C1') return 'NUM';
+    if(a.type === 'Replace' && a.c === 'C3') return 'DESC';
+    if(a.type === 'Delete' && a.s === 'S2') return 'DESC';
+    return 'LOC';
+  }
+  function json(a){
+    if(a.type === 'Keep') return '{"action":"Keep"}';
+    if(a.type === 'Delete') return '{"action":"Delete","selected_id":"' + a.s + '"}';
+    return '{"action":"Replace","selected_id":"' + a.s + '","candidate_id":"' + a.c + '"}';
+  }
+
+  var setEl = document.getElementById('play-set');
+  var candEl = document.getElementById('play-cands');
+  var actEl = document.getElementById('play-actions');
+  var verdictEl = document.getElementById('play-verdict');
+  var scoreEl = document.getElementById('play-score');
+  var thinkEl = document.getElementById('play-think');
+  var tried = {};
+
+  function cardHTML(id, d, cls, idText){
+    return '<div class="card ' + cls + '"><span class="id">' + (idText || id) + '</span><span class="q">' + d.q + '</span><span class="label">' + d.l + '</span></div>';
+  }
+  function render(a){
+    var h = '';
+    ['S1','S2','S3'].forEach(function(s){
+      if(a && a.type === 'Delete' && a.s === s){
+        h += cardHTML(s, S[s], 'retrieved struck');
+      } else if(a && a.type === 'Replace' && a.s === s){
+        h += cardHTML(a.c, C[a.c], 'retrieved incoming', s + ', now ' + a.c);
+      } else {
+        h += cardHTML(s, S[s], 'retrieved');
+      }
+    });
+    setEl.innerHTML = h;
+    var ch = '';
+    ['C1','C2','C3'].forEach(function(c){
+      var used = a && a.type === 'Replace' && a.c === c;
+      ch += cardHTML(c, C[c], 'candidate' + (used ? ' gone' : ''));
+    });
+    candEl.innerHTML = ch;
+  }
+  function choose(a, fromJev){
+    render(a);
+    var p = predict(a);
+    var ok = p === 'NUM';
+    tried[key(a)] = ok;
+    Array.prototype.forEach.call(actEl.children, function(b){
+      var k = b.getAttribute('data-k');
+      b.setAttribute('aria-pressed', k === key(a) ? 'true' : 'false');
+      b.classList.toggle('tried-ok', tried[k] === true);
+      b.classList.toggle('tried-bad', tried[k] === false);
+      b.classList.toggle('jev', !!fromJev && k === key(a));
+    });
+    verdictEl.innerHTML =
+      '<span class="json">' + json(a) + '</span>' +
+      '<span class="pill ' + (ok ? 'ok' : 'bad') + '">Target answers ' + p + (ok ? ', correct' : ', wrong') + '</span>';
+    var n = Object.keys(tried).length;
+    var good = Object.keys(tried).filter(function(k){ return tried[k]; }).length;
+    scoreEl.textContent = 'You have tried ' + n + ' of 13 edits; ' + good + ' fixed the answer.';
+  }
+  actions.forEach(function(a){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.textContent = label(a);
+    b.setAttribute('data-k', key(a));
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', function(){ thinkEl.classList.remove('show'); choose(a, false); });
+    actEl.appendChild(b);
+  });
+  document.getElementById('play-jev').addEventListener('click', function(){
+    choose({type:'Replace', s:'S2', c:'C1'}, true);
+    thinkEl.classList.add('show');
+  });
+  document.getElementById('play-reset').addEventListener('click', function(){
+    tried = {};
+    render(null);
+    thinkEl.classList.remove('show');
+    scoreEl.textContent = '';
+    verdictEl.innerHTML = '<span class="pill neutral">Pick an edit to see what the target might answer</span>';
+    Array.prototype.forEach.call(actEl.children, function(b){
+      b.setAttribute('aria-pressed','false');
+      b.classList.remove('tried-ok','tried-bad','jev');
+    });
+  });
+  render(null);
+})();
+</script>
+</body>
+</html>

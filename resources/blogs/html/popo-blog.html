@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>POPO: RLVR Without Wasted Rollouts</title>
+<meta name="description" content="A friendly tour of Group Prioritized Off-Policy Optimization (POPO): how to fill every RLVR batch with useful data without paying for extra rollouts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf7f1; --surface:#ffffff; --surface-2:#f2ede3; --ink:#1c1a17; --muted:#6b645a; --line:#e3dccd;
+  --on:#2f6fdf; --on-soft:#dce7fb; --replay:#e08a12; --replay-soft:#fbe8cb;
+  --dead:#b9b2a6; --dead-soft:#ece8e0; --good:#1f9d6b; --bad:#d64545; --dapo:#c2410c;
+  --code-bg:#1f1d1a; --code-ink:#efe9dc;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15130f; --surface:#1f1c17; --surface-2:#29251f; --ink:#f1ece2; --muted:#a79f92; --line:#3a352d;
+    --on:#6b9cff; --on-soft:#1f2c47; --replay:#f2a93b; --replay-soft:#3d2d14;
+    --dead:#6e675c; --dead-soft:#2b2822; --good:#3ecf94; --bad:#f07070; --dapo:#fb8a4c;
+    --code-bg:#0e0d0b; --code-ink:#efe9dc;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15130f; --surface:#1f1c17; --surface-2:#29251f; --ink:#f1ece2; --muted:#a79f92; --line:#3a352d;
+  --on:#6b9cff; --on-soft:#1f2c47; --replay:#f2a93b; --replay-soft:#3d2d14;
+  --dead:#6e675c; --dead-soft:#2b2822; --good:#3ecf94; --bad:#f07070; --dapo:#fb8a4c;
+  --code-bg:#0e0d0b; --code-ink:#efe9dc;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.7 Inter,system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.15;letter-spacing:-.01em}
+h2{font-size:clamp(1.6rem,4vw,2.1rem);margin:3.2rem 0 .8rem}
+h3{font-size:1.2rem;margin:1.8rem 0 .4rem}
+p{margin:.9rem 0}
+a{color:var(--on)}
+code,.mono{font-family:"JetBrains Mono",monospace;font-size:.88em}
+.kicker{font:600 .78rem/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--replay)}
+
+/* hero */
+header.hero{padding:4.5rem 0 2.5rem;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(2.3rem,7vw,3.6rem);font-weight:800;margin:.8rem 0 1rem}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,var(--replay-soft) 62%)}
+.hero .dek{font-size:1.18rem;color:var(--muted);max-width:40ch}
+.byline{margin-top:1.6rem;font-size:.92rem;color:var(--muted)}
+.byline strong{color:var(--ink);font-weight:600}
+.pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.pill{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:.25rem .8rem;font-size:.82rem;color:var(--muted)}
+
+/* tldr */
+.tldr{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--replay);border-radius:14px;padding:1.2rem 1.4rem;margin:2.2rem 0}
+.tldr ul{margin:.4rem 0 0;padding-left:1.1rem}
+.tldr li{margin:.35rem 0}
+
+/* stat strip */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:2rem 0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1rem;text-align:center}
+.stat b{display:block;font:800 2rem/1.1 Fraunces,serif;color:var(--replay)}
+.stat span{font-size:.82rem;color:var(--muted);line-height:1.35;display:block;margin-top:.35rem}
+@media (max-width:520px){.stats{grid-template-columns:1fr}}
+
+/* widgets */
+.widget{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:1.3rem;margin:1.6rem 0}
+.widget .wtitle{font:600 .8rem/1 Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+.btn{font:600 .88rem Inter,sans-serif;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);padding:.5rem .9rem;border-radius:10px;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+
+/* demo 1 */
+.chips{display:grid;grid-template-columns:repeat(8,1fr);gap:.4rem;margin-bottom:1rem}
+.chip{aspect-ratio:1;border-radius:10px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;cursor:pointer;user-select:none;transition:transform .12s}
+.chip:hover{transform:translateY(-2px)}
+.chip.ok{background:color-mix(in srgb,var(--good) 16%,transparent);border-color:var(--good);color:var(--good)}
+.chip.no{background:color-mix(in srgb,var(--bad) 13%,transparent);border-color:var(--bad);color:var(--bad)}
+.advs{display:grid;grid-template-columns:repeat(8,1fr);gap:.4rem;height:110px;align-items:center;position:relative;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line)}
+.advs::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid var(--line)}
+.adv{position:relative;height:100%}
+.adv i{position:absolute;left:18%;right:18%;border-radius:4px;transition:all .25s}
+.adv small{position:absolute;left:0;right:0;text-align:center;font:500 .7rem "JetBrains Mono";color:var(--muted)}
+.verdict{margin-top:.9rem;padding:.7rem .9rem;border-radius:10px;font-weight:500;font-size:.95rem}
+.verdict.dead{background:var(--dead-soft);color:var(--muted)}
+.verdict.live{background:var(--on-soft);color:var(--ink)}
+
+/* demo 2 */
+.lane-label{font-size:.8rem;color:var(--muted);margin:.8rem 0 .35rem;display:flex;justify-content:space-between}
+.lane{display:grid;grid-template-columns:repeat(12,1fr);gap:.3rem}
+.slot{aspect-ratio:1;border-radius:7px;display:flex;align-items:center;justify-content:center;font:600 .66rem "JetBrains Mono";transition:background .3s}
+.slot.on{background:var(--on);color:#fff}
+.slot.dead{background:var(--dead-soft);color:var(--dead);border:1.5px dashed var(--dead)}
+.slot.rep{background:var(--replay);color:#1c1a17}
+.slot.empty{background:transparent;border:1.5px dashed var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-size:.8rem;color:var(--muted);margin-top:.9rem}
+.legend span::before{content:"";display:inline-block;width:.8rem;height:.8rem;border-radius:3px;margin-right:.35rem;vertical-align:-1px;background:var(--c)}
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:1rem}
+.meter{background:var(--surface-2);border-radius:10px;padding:.6rem .8rem;font-size:.85rem}
+.meter b{font:800 1.4rem Fraunces,serif;display:block}
+input[type=range]{accent-color:var(--replay);width:140px}
+
+/* approaches */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:1.4rem 0}
+@media (max-width:640px){.cards{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1rem}
+.card h4{margin:0 0 .3rem;font:600 1rem Inter}
+.card .tag{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.card p{font-size:.9rem;margin:.4rem 0 0;color:var(--muted)}
+.card .cost{color:var(--bad)}
+
+/* equation */
+.eq{background:var(--surface-2);border-radius:12px;padding:1rem 1.1rem;font-family:"JetBrains Mono",monospace;font-size:.86rem;overflow-x:auto;white-space:nowrap;line-height:1.9}
+.eq .w{color:var(--replay);font-weight:600}
+.eq .r{color:var(--on);font-weight:600}
+.compare{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:1.2rem 0}
+@media (max-width:640px){.compare{grid-template-columns:1fr}}
+.cmp{border:1px solid var(--line);border-radius:12px;padding:.9rem;background:var(--surface)}
+.cmp.win{border:2px solid var(--replay)}
+.cmp h4{margin:0 0 .3rem;font:600 .95rem Inter}
+.cmp .mono{display:block;color:var(--muted);margin-bottom:.4rem}
+.cmp p{font-size:.86rem;margin:.2rem 0;color:var(--muted)}
+
+/* results */
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+.tab{font:600 .82rem Inter;padding:.4rem .8rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.tab.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.bars{display:grid;gap:.45rem}
+.bar{display:grid;grid-template-columns:70px 1fr 64px;gap:.6rem;align-items:center;font-size:.85rem}
+.bar .track{background:var(--surface-2);border-radius:6px;height:22px;overflow:hidden}
+.bar .fill{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.bar .val{font:600 .82rem "JetBrains Mono";text-align:right}
+.bar.popo .name{font-weight:700}
+.metric-h{font-size:.8rem;color:var(--muted);margin:1.1rem 0 .5rem;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.note{font-size:.82rem;color:var(--muted)}
+
+/* ablation */
+.abl{display:grid;gap:.6rem;margin:1.2rem 0}
+.ab{display:grid;grid-template-columns:auto 1fr;gap:.8rem;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem}
+.ab .icon{font-size:1.3rem;line-height:1.4}
+.ab b{font-family:"JetBrains Mono",monospace;font-size:.86rem}
+.ab p{margin:.15rem 0 0;font-size:.9rem;color:var(--muted)}
+
+pre{background:var(--code-bg);color:var(--code-ink);border-radius:14px;padding:1.1rem 1.2rem;overflow-x:auto;font:400 .82rem/1.65 "JetBrains Mono",monospace}
+pre .c{color:#8f887b}
+pre .k{color:#f2a93b}
+pre .h{background:rgba(242,169,59,.16);display:inline-block;width:100%}
+
+blockquote{margin:1.5rem 0;padding:.2rem 0 .2rem 1.1rem;border-left:3px solid var(--on);font-family:Fraunces,serif;font-size:1.2rem;color:var(--ink)}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 4rem;font-size:.88rem;color:var(--muted)}
+footer pre{font-size:.76rem}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="hero">
+  <div class="kicker">Research blog · RL for LLM reasoning</div>
+  <h1>Stop paying for rollouts that <em>teach nothing</em></h1>
+  <p class="dek">Meet POPO, a simple drop-in fix that fills every RLVR training batch with useful data, without generating a single extra sample.</p>
+  <div class="byline"><strong>Yixiu Mao, Yun Qu, Qi Wang, Heming Zou, Xiangyang Ji</strong> · Department of Automation, Tsinghua University</div>
+  <div class="pills">
+    <span class="pill">arXiv:2606.01281</span>
+    <span class="pill">GRPO · RLOO · PPO compatible</span>
+    <span class="pill">Math · Planning · Visual geometry</span>
+  </div>
+</header>
+
+<div class="tldr">
+  <strong>TL;DR</strong>
+  <ul>
+    <li>In RLVR training, <strong>half or more</strong> of each GRPO batch is often dead weight. These are prompts where the model got every answer right, or every answer wrong, so the gradient is zero.</li>
+    <li>DAPO fixes this by rolling out <em>more</em> prompts and throwing the dead ones away. That works, but it's expensive.</li>
+    <li><strong>POPO</strong> swaps each dead group for a <em>recent</em> useful group from a tiny replay buffer. It then corrects for the fact that this data is slightly off-policy, while keeping the usual PPO-style leash on the current policy.</li>
+    <li>The result: <strong>DAPO-level accuracy using ~30% of DAPO's rollouts and about half its runtime.</strong></li>
+  </ul>
+</div>
+
+<div class="stats">
+  <div class="stat"><b>100%</b><span>of every training batch is informative, versus under 50% for vanilla GRPO</span></div>
+  <div class="stat"><b>~30%</b><span>of DAPO's rollout budget to reach comparable accuracy</span></div>
+  <div class="stat"><b>0</b><span>extra rollouts or likelihood passes; the buffer holds just one batch</span></div>
+</div>
+
+<!-- ───────────── Section 1 ───────────── -->
+<h2>The silent waste inside GRPO</h2>
+<p>RL with verifiable rewards (RLVR) works like a very patient tutor. Give the model a problem, let it try <em>k</em> times, check each answer, and nudge it toward the attempts that beat the group average. GRPO turns this into an <strong>advantage</strong>: each response's reward minus the group mean, divided by the group's standard deviation.</p>
+<p>Now picture a problem the model already solves every time, or one it never solves. Every attempt gets the same score. There is no "better than average" in that group, so every advantage is zero. The model spent GPU-minutes writing eight long chains of thought and learned exactly nothing.</p>
+<p>Try it yourself below. Click the attempts to flip them between right and wrong.</p>
+
+<div class="widget" id="demo1">
+  <div class="wtitle">Demo · One prompt, eight attempts</div>
+  <div class="chips" id="chips"></div>
+  <div class="advs" id="advs"></div>
+  <div class="verdict" id="verdict"></div>
+  <div class="row" style="margin-top:.9rem">
+    <button class="btn" data-preset="all1">All correct</button>
+    <button class="btn" data-preset="all0">All wrong</button>
+    <button class="btn" data-preset="mix">Mixed</button>
+    <button class="btn" data-preset="rand">Random</button>
+  </div>
+</div>
+
+<p>This isn't an edge case. In the paper's experiments, vanilla GRPO typically trains on batches where <strong>fewer than half the groups are effective</strong>. That holds across math (DeepScaleR), arithmetic planning (Countdown) and visual geometry. As the model improves, more prompts turn into easy "all correct" groups, so the problem gets worse over time.</p>
+
+<!-- ───────────── Section 2 ───────────── -->
+<h2>Three existing fixes, three different catches</h2>
+<div class="cards">
+  <div class="card">
+    <span class="tag" style="color:var(--dapo)">Oversample &amp; filter</span>
+    <h4>DAPO</h4>
+    <p>Roll out extra prompts, drop the zero-variance ones, and repeat until the batch is full.</p>
+    <p class="cost">Catch: the extra rollouts can cost more than the RL update itself.</p>
+  </div>
+  <div class="card">
+    <span class="tag" style="color:var(--good)">Predict first</span>
+    <h4>Predictive sampling</h4>
+    <p>Guess which prompts are "medium difficulty" before rolling out, e.g. MoPPS or GRESO.</p>
+    <p class="cost">Catch: guessing is hard when the model keeps changing and each prompt has little history.</p>
+  </div>
+  <div class="card">
+    <span class="tag" style="color:var(--on)">Replay answers</span>
+    <h4>Trajectory replay</h4>
+    <p>Stick an old correct answer into an all-wrong group, e.g. ARPO.</p>
+    <p class="cost">Catch: all-correct groups stay dead, and mixing policies inside a group muddies the advantage.</p>
+  </div>
+</div>
+
+<!-- ───────────── Section 3 ───────────── -->
+<h2>POPO's idea: replay whole groups, not single answers</h2>
+<p>Think of a football coach with a strict rule: <em>every</em> slot on the pitch must be filled by someone who can actually play. When a starter turns up injured, the coach doesn't recruit a stranger from the street, which is what DAPO's extra rollouts amount to. They also don't patch one half-fit player into the lineup, which is what trajectory replay does. They bring in a substitute who <strong>played well in the last match</strong>.</p>
+<p>That's <strong>prioritized group replay</strong>. It follows two rules:</p>
+<ul>
+  <li><strong>Quality decides who gets on the bench.</strong> Only effective groups, the ones with mixed right and wrong answers, ever go into the buffer.</li>
+  <li><strong>Freshness decides who gets called up.</strong> The buffer is a first-in-first-out queue, and POPO always takes the <em>most recent</em> groups. Recent groups came from a policy very close to the current one.</li>
+</ul>
+<p>Why is recency a good stand-in for "close to the current policy"? PPO-style clipping keeps each update small. So the gap between two policies, measured by total variation distance, grows at most <em>linearly</em> with the number of steps between them: it is at most εn/2 after n steps. Freshness is therefore a free proxy for similarity, with no KL computations needed.</p>
+
+<div class="widget" id="demo2">
+  <div class="wtitle">Demo · Watch POPO fill a batch (12 prompts per step)</div>
+  <div class="row" style="justify-content:space-between">
+    <div class="row">
+      <button class="btn primary" id="stepBtn">▶ Next training step</button>
+      <button class="btn" id="autoBtn">Auto-play</button>
+      <button class="btn" id="resetBtn">Reset</button>
+    </div>
+    <label class="note">Chance a prompt is effective: <strong id="pLabel">40%</strong><br><input type="range" id="pSlider" min="10" max="90" value="40"></label>
+  </div>
+  <div class="lane-label"><span>Fresh rollouts (what GRPO trains on)</span><span id="stepLabel">step 0</span></div>
+  <div class="lane" id="laneOnline"></div>
+  <div class="lane-label"><span>POPO's training batch (dead groups swapped for recent replays; number = age in steps)</span></div>
+  <div class="lane" id="lanePopo"></div>
+  <div class="lane-label"><span>Replay buffer (FIFO, capacity = batch size; newest on the right)</span></div>
+  <div class="lane" id="laneBuf"></div>
+  <div class="legend">
+    <span style="--c:var(--on)">fresh, effective</span>
+    <span style="--c:var(--dead)">fresh, dead (zero variance)</span>
+    <span style="--c:var(--replay)">replayed from buffer</span>
+  </div>
+  <div class="meters">
+    <div class="meter">GRPO effective ratio<b id="mGrpo">–</b></div>
+    <div class="meter">POPO effective ratio<b id="mPopo">–</b></div>
+  </div>
+</div>
+
+<p>Two details make this cheap and clean. First, the buffer never holds more than <strong>one batch</strong> of groups, so memory overhead is negligible. Second, because an entire group is replayed together, every answer in it came from the <em>same</em> policy. The group's advantage is still well defined, and the behavior policy is known exactly. That second point matters a lot for the next step.</p>
+
+<!-- ───────────── Section 4 ───────────── -->
+<h2>Using slightly stale data without getting burned</h2>
+<p>A replayed group was generated by an older policy, call it π<sub>β</sub>. If you just pretend it's fresh, your gradient is biased. Prior work handled this in two ways, and POPO takes a third.</p>
+
+<div class="compare">
+  <div class="cmp">
+    <h4>Pretend it's on-policy</h4>
+    <span class="mono">clip(π<sub>θ</sub>/π<sub>old</sub>)</span>
+    <p>✗ Biased whenever π<sub>β</sub> ≠ π<sub>old</sub></p>
+    <p>In the ablation it <strong>collapses</strong>.</p>
+  </div>
+  <div class="cmp">
+    <h4>Clip toward the old policy</h4>
+    <span class="mono">clip(π<sub>θ</sub>/π<sub>β</sub>)</span>
+    <p>✓ Unbiased</p>
+    <p>✗ Leashes the model to a <em>worse</em> policy, and a different leash for every replayed sample. Clipping triggers too often.</p>
+  </div>
+  <div class="cmp win">
+    <h4>POPO: decouple the two jobs</h4>
+    <span class="mono">(π<sub>old</sub>/π<sub>β</sub>) · clip(π<sub>θ</sub>/π<sub>old</sub>)</span>
+    <p>✓ Unbiased: the first factor fixes the distribution</p>
+    <p>✓ Same leash as on-policy data: the clip always anchors to π<sub>old</sub></p>
+  </div>
+</div>
+
+<p>The trick is that the full importance ratio π<sub>θ</sub>/π<sub>β</sub> factors into two pieces, each with its own job:</p>
+<div class="eq">
+  π<sub>θ</sub>/π<sub>β</sub> &nbsp;=&nbsp; <span class="r">π<sub>θ</sub>/π<sub>old</sub></span> &nbsp;×&nbsp; <span class="w">π<sub>old</sub>/π<sub>β</sub></span><br>
+  loss<sub>replay</sub> &nbsp;=&nbsp; <span class="w">w</span> · min( <span class="r">r</span>·Â , clip(<span class="r">r</span>, 1±ε)·Â ) &nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">// w is a constant, no gradient</span>
+</div>
+<p>The <span style="color:var(--replay);font-weight:600">orange factor</span> corrects <em>where the data came from</em>. The <span style="color:var(--on);font-weight:600">blue ratio</span> sets <em>how far this update may move</em>, and it uses exactly the same trust region as fresh data.</p>
+<p>The paper proves that wherever neither ratio is clipped, this objective gives the same value and the same gradient as the fully corrected π<sub>β</sub> version. The only thing that changes is <em>which policy the leash is tied to</em>. It's like a GPS that accounts for where your map was drawn, but still measures your next turn from where you're standing now.</p>
+<blockquote>Correct for the past, but stay anchored to the present.</blockquote>
+
+<!-- ───────────── Section 5 ───────────── -->
+<h2>The whole algorithm fits on a napkin</h2>
+<p>In code, POPO adds a filter, a tiny queue and one multiplication:</p>
+<pre><span class="k">buffer</span> = FIFO(capacity=B)          <span class="c"># stores groups + their rollout-time log-probs</span>
+
+<span class="k">for</span> step <span class="k">in</span> range(T):
+    groups  = rollout(policy, sample_prompts(B), k)          <span class="c"># same cost as GRPO</span>
+    on_eff  = [g <span class="k">for</span> g <span class="k">in</span> groups <span class="k">if</span> std(g.rewards) &gt; 0]      <span class="c"># drop dead groups</span>
+    off_eff = buffer.newest(B - len(on_eff))                  <span class="c"># refill with most recent</span>
+
+    loss = grpo_loss(on_eff)
+<span class="h">    w    = exp(logp_old(off_eff) - off_eff.logp_beta).clamp(max=2.0).detach()</span>
+<span class="h">    loss += (w * grpo_token_loss(off_eff)).aggregate()       # the decoupled correction</span>
+    optimize(policy, loss)
+
+    buffer.push(on_eff)                                       <span class="c"># today's effective groups</span></pre>
+<p class="note">In practice, the paper also caps the importance weight w at 2.0 to suppress rare outliers. It reports no variance-related instability.</p>
+
+<!-- ───────────── Section 6 ───────────── -->
+<h2>Does it work? Pick a benchmark.</h2>
+<p>POPO was compared against GRPO, DAPO (the costly gold standard), MoPPS (predictive sampling) and ARPO (trajectory replay). The comparisons cover four settings: Qwen2.5-3B on Countdown, Qwen2.5-VL-3B on Geometry3k, and DeepSeek-R1-Distill-Qwen 1.5B and 7B on DeepScaleR math.</p>
+
+<div class="widget">
+  <div class="wtitle">Interactive results · final accuracy &amp; cost</div>
+  <div class="tabs" id="tabs"></div>
+  <div class="metric-h" id="accH">Accuracy (%)</div>
+  <div class="bars" id="accBars"></div>
+  <div class="metric-h">Wall-clock runtime (hours)</div>
+  <div class="bars" id="rtBars"></div>
+  <div id="roWrap">
+    <div class="metric-h">Total rollouts generated (thousands)</div>
+    <div class="bars" id="roBars"></div>
+  </div>
+  <p class="note" id="resNote" style="margin-top:.9rem"></p>
+</div>
+
+<p>The pattern holds everywhere. POPO lands <strong>on top of or right next to DAPO</strong> and clearly ahead of GRPO, ARPO and MoPPS. Its cost stays close to plain GRPO. The small runtime bump over GRPO is actually a good sign: POPO's models write longer reasoning chains, in a way that tracks DAPO's, and longer reasoning is a known correlate of stronger reasoning.</p>
+<p>A few highlights worth pausing on:</p>
+<ul>
+  <li>On the 1.5B math model, POPO scores <strong>29.9 on AIME25</strong>, versus 26.9 for GRPO and 27.5 for DAPO.</li>
+  <li>The gains carry over to held-out <strong>general reasoning</strong>. On GPQA-diamond, POPO reaches 30.3 against GRPO's 27.5.</li>
+  <li>POPO reaches GRPO's <em>final</em> accuracy using only <strong>40–70% of the training steps</strong>.</li>
+</ul>
+
+<!-- ───────────── Section 7 ───────────── -->
+<h2>Break it on purpose: what the ablations show</h2>
+<p>Every piece of POPO earns its place. Here is what happens on Countdown when you remove or swap each one:</p>
+<div class="abl">
+  <div class="ab"><div class="icon">🐢</div><div><b>POPO-KL</b> — pick replays by explicit KL distance from a 5× larger buffer
+    <p>About the same accuracy, but slower: 4.8h versus 3.2h. Recency is a free and effective stand-in for distance.</p></div></div>
+  <div class="ab"><div class="icon">📉</div><div><b>GRPO-filter</b> — drop dead groups and train on a smaller batch
+    <p>Only slightly better than GRPO. Smaller batches mean noisier gradients, so <em>refilling</em> the batch is what matters.</p></div></div>
+  <div class="ab"><div class="icon">🗑️</div><div><b>POPO-ineff</b> — replay recent groups whether or not they're effective
+    <p>Substantial degradation. The quality filter matters.</p></div></div>
+  <div class="ab"><div class="icon">🧟</div><div><b>POPO-stale(10)</b> — replay random effective groups from a 10× bigger buffer
+    <p>Collapses. A 1× random buffer is only slightly worse, so freshness matters, but POPO isn't brittle to small changes in recency.</p></div></div>
+  <div class="ab"><div class="icon">⚓</div><div><b>POPO-π<sub>β</sub></b> — clip toward the behavior policy instead
+    <p>Learning slows down. This is the "leash tied to the past" problem in action.</p></div></div>
+  <div class="ab"><div class="icon">💥</div><div><b>POPO-π<sub>old</sub></b> — treat replayed data as on-policy
+    <p>Performance collapses because of the uncorrected bias.</p></div></div>
+</div>
+
+<!-- ───────────── Section 8 ───────────── -->
+<h2>Plays well with others</h2>
+<p>POPO is a plug-in rather than a whole new algorithm, and the paper tests it that way:</p>
+<ul>
+  <li><strong>Other base algorithms:</strong> adding POPO to RLOO or PPO speeds up training and raises final accuracy on Countdown.</li>
+  <li><strong>Group sizes from 4 to 32:</strong> POPO consistently beats GRPO and stays level with DAPO.</li>
+  <li><strong>Predictive sampling:</strong> POPO + MoPPS keeps batches 100% effective <em>and</em> raises the share of fresh on-policy groups. It learns faster than either method alone, since MoPPS finds more good prompts and POPO covers the rest.</li>
+  <li><strong>Refill ratio:</strong> accuracy rises steadily as more of the batch is refilled. Across that range POPO matches DAPO while its rollout cost stays flat.</li>
+</ul>
+
+<!-- ───────────── Section 9 ───────────── -->
+<h2>Honest limitations</h2>
+<p>A buffer that only remembers the latest batch is deliberately forgetful. It trades reuse of older, possibly valuable groups for a tight off-policy gap, and it doesn't try to pick the <em>most</em> informative group. The authors suggest a hybrid as future work: a short-term buffer plus a small long-term "reservoir" of standout groups. They also suggest generating fewer fresh rollouts per step and leaning harder on replay. Finally, the zero-variance test assumes binary-ish rewards. With continuous rewards, it would become a low-variance threshold instead.</p>
+
+<h2>The takeaway</h2>
+<p>RLVR's most expensive ingredient is generation, and a surprisingly large share of it gets thrown away as zero-gradient groups. POPO's answer is refreshingly small. It keeps the last batch's useful groups, swaps them in for today's dead ones, and applies one importance weight so the math stays honest. The payoff is DAPO-level results on a GRPO-sized rollout budget.</p>
+<blockquote>Every slot in the batch should teach the model something, and it shouldn't cost you another rollout to make that happen.</blockquote>
+
+<footer>
+  <p><strong>Paper:</strong> Yixiu Mao, Yun Qu, Qi Wang, Heming Zou, Xiangyang Ji. <em>RLVR without Ineffective Samples: Group Prioritized Off-Policy Optimization for LLM Reasoning.</em> arXiv:2606.01281, 2026.</p>
+<pre>@article{mao2026popo,
+  title   = {RLVR without Ineffective Samples: Group Prioritized
+             Off-Policy Optimization for LLM Reasoning},
+  author  = {Mao, Yixiu and Qu, Yun and Wang, Qi and Zou, Heming and Ji, Xiangyang},
+  journal = {arXiv preprint arXiv:2606.01281},
+  year    = {2026}
+}</pre>
+</footer>
+</div>
+
+<script>
+/* ---------- Demo 1: zero-variance advantages ---------- */
+(function(){
+  let r=[1,0,1,1,0,0,1,0];
+  const chips=document.getElementById('chips'), advs=document.getElementById('advs'), verdict=document.getElementById('verdict');
+  function render(){
+    const k=r.length, mean=r.reduce((a,b)=>a+b,0)/k;
+    const std=Math.sqrt(r.reduce((a,b)=>a+(b-mean)**2,0)/k);
+    chips.innerHTML=''; advs.innerHTML='';
+    r.forEach((v,i)=>{
+      const c=document.createElement('div');
+      c.className='chip '+(v?'ok':'no'); c.textContent=v?'✓':'✗';
+      c.title='Click to flip'; c.onclick=()=>{r[i]=1-r[i];render();};
+      chips.appendChild(c);
+      const a=std>0?(v-mean)/std:0;
+      const cell=document.createElement('div'); cell.className='adv';
+      const bar=document.createElement('i');
+      const h=Math.min(Math.abs(a)/2.7,1)*50;
+      bar.style.height=(h||1)+'%';
+      if(a>=0){bar.style.bottom='50%';bar.style.background='var(--good)';}
+      else{bar.style.top='50%';bar.style.background='var(--bad)';}
+      if(std===0){bar.style.background='var(--dead)';bar.style.top='calc(50% - 1px)';bar.style.bottom='';bar.style.height='2px';}
+      const lab=document.createElement('small'); lab.textContent=(a>=0?'+':'')+a.toFixed(2);
+      lab.style[a>=0?'top':'bottom']='2px';
+      cell.appendChild(bar); cell.appendChild(lab); advs.appendChild(cell);
+    });
+    if(std===0){
+      verdict.className='verdict dead';
+      verdict.innerHTML='🪦 <strong>Ineffective group.</strong> Every reward is '+r[0]+', so std = 0 and every advantage is 0. Eight full rollouts, zero gradient.';
+    }else{
+      verdict.className='verdict live';
+      verdict.innerHTML='⚡ <strong>Effective group.</strong> Mean reward '+mean.toFixed(2)+', std '+std.toFixed(2)+'. Correct answers get pushed up and wrong ones get pushed down.';
+    }
+  }
+  document.querySelectorAll('#demo1 [data-preset]').forEach(b=>b.onclick=()=>{
+    const p=b.dataset.preset;
+    if(p==='all1') r=r.map(()=>1);
+    else if(p==='all0') r=r.map(()=>0);
+    else if(p==='mix') r=[1,0,1,1,0,0,1,0];
+    else r=r.map(()=>Math.random()<.5?1:0);
+    render();
+  });
+  render();
+})();
+
+/* ---------- Demo 2: prioritized group replay ---------- */
+(function(){
+  const B=12;
+  let step=0, buffer=[], online=[], popo=[], p=.4, timer=null, sumG=0, sumP=0;
+  const $=id=>document.getElementById(id);
+  function drawLane(el,items){
+    el.innerHTML='';
+    for(let i=0;i<B;i++){
+      const it=items[i]; const s=document.createElement('div');
+      if(!it){s.className='slot empty';}
+      else{s.className='slot '+it.kind; s.textContent=it.label||'';}
+      el.appendChild(s);
+    }
+  }
+  function render(){
+    drawLane($('laneOnline'),online.map(o=>({kind:o.eff?'on':'dead',label:o.eff?'':'∅'})));
+    drawLane($('lanePopo'),popo);
+    const padded=Array(Math.max(0,B-buffer.length)).fill(null).concat(buffer.map(g=>({kind:'rep',label:'t'+g.t})));
+    drawLane($('laneBuf'),padded);
+    $('stepLabel').textContent='step '+step;
+    $('mGrpo').textContent=step?Math.round(sumG/step*100)+'%':'–';
+    $('mPopo').textContent=step?Math.round(sumP/step*100)+'%':'–';
+  }
+  function doStep(){
+    step++;
+    online=Array.from({length:B},()=>({eff:Math.random()<p}));
+    const eff=online.filter(o=>o.eff);
+    const need=B-eff.length;
+    const replay=buffer.slice(-need).reverse();   // most recent first
+    popo=eff.map(()=>({kind:'on',label:''}));
+    replay.forEach(g=>popo.push({kind:'rep',label:'−'+(step-g.t)}));
+    // push today's effective groups; FIFO evicts oldest
+    eff.forEach(()=>buffer.push({t:step}));
+    if(buffer.length>B) buffer=buffer.slice(buffer.length-B);
+    sumG+=eff.length/B; sumP+=(eff.length+replay.length)/B;
+    render();
+  }
+  function reset(){step=0;buffer=[];online=[];popo=[];sumG=0;sumP=0;stopAuto();render();}
+  function stopAuto(){if(timer){clearInterval(timer);timer=null;$('autoBtn').textContent='Auto-play';}}
+  $('stepBtn').onclick=doStep;
+  $('resetBtn').onclick=reset;
+  $('autoBtn').onclick=()=>{ if(timer){stopAuto();} else {doStep(); timer=setInterval(doStep,900); $('autoBtn').textContent='Pause';} };
+  $('pSlider').oninput=e=>{p=e.target.value/100;$('pLabel').textContent=e.target.value+'%';};
+  render();
+})();
+
+/* ---------- Results explorer ---------- */
+(function(){
+  const M=['GRPO','ARPO','MoPPS','DAPO','POPO'];
+  const color={GRPO:'var(--dead)',ARPO:'var(--dead)',MoPPS:'var(--dead)',DAPO:'var(--dapo)',POPO:'var(--replay)'};
+  const D={
+    'Countdown · 3B':{acc:[51.6,52.3,53.5,61.5,60.4],base:1.5,accName:'Avg of CD-4 & CD-34',rt:[2.8,2.9,3.4,5.6,3.2],ro:[205,205,205,877,205],
+      note:'Base Qwen2.5-3B scores 1.5%. POPO gets within ~1 point of DAPO using 23% of its rollouts and 57% of its runtime.'},
+    'Geometry3k · VL-3B':{acc:[44.9,45.7,48.9,50.6,50.0],base:24.6,accName:'Test accuracy',rt:[6.8,6.5,7.4,11.2,6.8],ro:[492,492,492,1438,492],
+      note:'Base Qwen2.5-VL-3B scores 24.6%. POPO matches DAPO within 0.6 points with 34% of the rollouts and the same runtime as GRPO.'},
+    'Math · 1.5B':{acc:[53.8,53.3,54.3,55.1,55.1],base:43.2,accName:'In-distribution math avg (AIME25, AMC23, Minerva, MATH500, Olympiad)',rt:[16,16,17,30,16],ro:null,
+      note:'Base DeepSeek-R1-Distill-Qwen-1.5B averages 43.2. POPO ties DAPO at 55.1 in about half the wall-clock time.'},
+    'Math · 7B':{acc:[61.7,62.2,61.9,63.2,63.3],base:55.4,accName:'In-distribution math avg (AIME25, AMC23, Minerva, MATH500, Olympiad)',rt:[31,31,32,55,34],ro:null,
+      note:'Base DeepSeek-R1-Distill-Qwen-7B averages 55.4. POPO edges past DAPO (63.3 vs 63.2) using 62% of its runtime.'}
+  };
+  const tabs=document.getElementById('tabs');
+  function bars(el,vals,fmt,lo,hi){
+    el.innerHTML='';
+    M.forEach((m,i)=>{
+      const w=Math.max(3,(vals[i]-lo)/(hi-lo)*100);
+      el.insertAdjacentHTML('beforeend',
+        `<div class="bar ${m==='POPO'?'popo':''}"><span class="name">${m}</span><div class="track"><div class="fill" style="width:0;background:${color[m]}" data-w="${w}"></div></div><span class="val">${fmt(vals[i])}</span></div>`);
+    });
+    requestAnimationFrame(()=>el.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+  }
+  function show(key){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.k===key));
+    const d=D[key];
+    document.getElementById('accH').textContent='Accuracy (%) — '+d.accName;
+    const lo=Math.floor(Math.min(...d.acc)-4), hi=Math.max(...d.acc)+1;
+    bars(document.getElementById('accBars'),d.acc,v=>v.toFixed(1),lo,hi);
+    bars(document.getElementById('rtBars'),d.rt,v=>v+'h',0,Math.max(...d.rt));
+    const wrap=document.getElementById('roWrap');
+    if(d.ro){wrap.style.display='';bars(document.getElementById('roBars'),d.ro,v=>v+'k',0,Math.max(...d.ro));}
+    else wrap.style.display='none';
+    document.getElementById('resNote').textContent=d.note+' Accuracy bars are zoomed in to show differences.';
+  }
+  Object.keys(D).forEach((k,i)=>{
+    const b=document.createElement('button'); b.className='tab'; b.textContent=k; b.dataset.k=k;
+    b.onclick=()=>show(k); tabs.appendChild(b);
+  });
+  show('Countdown · 3B');
+})();
+</script>
+</body>
+</html>

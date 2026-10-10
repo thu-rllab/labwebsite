@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EMNLP26 TRACE: Branch Where It Counts</title>
+<meta name="description" content="TRACE is a rollout-budget allocation framework for agentic RL: it decides which prompts to sample, how many times, and which mid-trajectory turns to replay, so outcome-only rewards produce more contrast.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F6; --surface:#FFFFFF; --ink:#18213A; --muted:#5B6781; --line:#D5DBE6;
+  --violet:#6A4BD6; --lav:#DDD4FB; --ok:#1C9A6E; --bad:#DD4B45; --grey:#AEB7C6; --edge:#8C97AD;
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --text:"Literata", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151F; --surface:#182031; --ink:#E7EBF3; --muted:#9AA6BD; --line:#2A3448;
+    --violet:#A08BF4; --lav:#3A2F6B; --ok:#3CC08F; --bad:#F06A62; --grey:#56627A; --edge:#6B7690;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10151F; --surface:#182031; --ink:#E7EBF3; --muted:#9AA6BD; --line:#2A3448;
+  --violet:#A08BF4; --lav:#3A2F6B; --ok:#3CC08F; --bad:#F06A62; --grey:#56627A; --edge:#6B7690;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-size:18px;line-height:1.7;}
+a{color:var(--violet);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--violet);outline-offset:3px;border-radius:4px}
+
+.wrap{max-width:700px;margin:0 auto;padding:0 16px}
+.wide{max-width:1020px;margin:0 auto;padding:0 16px}
+
+h1,h2,h3{font-family:var(--display);line-height:1.12;letter-spacing:-0.015em;margin:0}
+h2{font-size:clamp(1.7rem,3.6vw,2.3rem);font-weight:800;margin:4.2rem 0 1rem}
+h3{font-size:1.2rem;font-weight:700;margin:2rem 0 .5rem}
+p{margin:0 0 1.1rem}
+strong{font-weight:600}
+
+/* Hero */
+.hero{padding:56px 0 24px}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(2.4rem,6vw,4.3rem);font-weight:800;letter-spacing:-0.03em;line-height:1.0}
+.hero h1 .venue{display:block;color:var(--violet);margin-bottom:.12em}
+.dek{font-size:1.2rem;color:var(--muted);margin:1.3rem 0 1.4rem;max-width:34em}
+.byline{font-size:.95rem;color:var(--muted);line-height:1.55}
+.byline b{color:var(--ink);font-weight:600}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:1.4rem}
+.btn{font-family:var(--display);font-weight:700;font-size:1rem;text-decoration:none;padding:.65rem 1.1rem;border-radius:999px;border:2px solid var(--ink);color:var(--ink);background:transparent}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn:hover{background:var(--violet);border-color:var(--violet);color:#fff}
+.hero-tree{width:100%;height:auto;display:block}
+.hero-key{display:flex;gap:6px 14px;flex-wrap:wrap;font-family:var(--display);font-size:.85rem;color:var(--muted);margin-top:6px;justify-content:center}
+.hero-key span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:50%;display:inline-block}
+
+/* TL;DR */
+.tldr{background:var(--surface);border-left:6px solid var(--violet);padding:22px 24px;border-radius:0 14px 14px 0;margin:28px 0 0}
+.tldr h3{margin:0 0 .6rem;font-size:1.05rem}
+.tldr ul{margin:0;padding-left:1.2rem}
+.tldr li{margin:.35rem 0}
+
+/* Equations */
+.eq{font-family:var(--text);font-size:1.25rem;text-align:center;background:var(--surface);border-radius:12px;padding:18px 16px;margin:1.2rem 0 .6rem;overflow-x:auto;white-space:nowrap}
+.eq i{font-style:italic}
+.eq .lbl{font-family:var(--display);font-size:.8rem;color:var(--muted);display:block;margin-top:.4rem;white-space:normal}
+.gloss{font-size:.95rem;color:var(--muted)}
+
+/* Interactive panels */
+.panel{background:var(--surface);border-radius:18px;padding:24px;margin:1.8rem 0;border:1px solid var(--line)}
+.panel h3{margin:0 0 .3rem}
+.panel .hint{font-size:.92rem;color:var(--muted);margin:0 0 1rem}
+.controls{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;font-family:var(--display);font-size:.95rem}
+.controls label{display:flex;flex-direction:column;gap:4px;min-width:200px;flex:1}
+.controls output{font-weight:700;color:var(--violet)}
+input[type=range]{accent-color:var(--violet);width:100%}
+.ghost{font-family:var(--display);font-weight:700;font-size:.95rem;border:2px solid var(--violet);color:var(--violet);background:transparent;padding:.5rem 1rem;border-radius:999px;cursor:pointer}
+.ghost:hover{background:var(--violet);color:#fff}
+
+.groupA{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;margin-top:18px;align-items:start}
+.dots{display:flex;flex-wrap:wrap;gap:10px 8px}
+.dot{display:flex;flex-direction:column;align-items:center;width:42px;font-family:var(--display);font-size:.78rem;color:var(--muted)}
+.dot .c{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1rem;margin-bottom:3px}
+.dot.s .c{background:var(--ok)} .dot.f .c{background:var(--bad)}
+.dot .a{font-variant-numeric:tabular-nums}
+.dot .a.zero{color:var(--bad);font-weight:700}
+.verdict{font-family:var(--display);font-size:1rem;margin-top:14px;padding:10px 14px;border-radius:10px;background:var(--bg)}
+.verdict.dead{color:var(--bad)} .verdict.live{color:var(--ok)}
+.bignum{font-family:var(--display);font-weight:800;font-size:2.4rem;line-height:1;color:var(--violet);font-variant-numeric:tabular-nums}
+.bigcap{font-family:var(--display);font-size:.9rem;color:var(--muted);margin-bottom:8px}
+.curve{width:100%;height:auto}
+.curve text{font-family:var(--display);font-size:11px;fill:var(--muted)}
+
+/* Allocation game */
+.alloc{width:100%;border-collapse:collapse;margin-top:16px;font-size:.95rem}
+.alloc th{font-family:var(--display);font-weight:700;font-size:.85rem;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.alloc td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.alloc .ptxt{font-size:.92rem;line-height:1.35}
+.vchip{font-family:var(--display);font-weight:700;font-size:.8rem;padding:2px 8px;border-radius:999px;background:var(--bg);white-space:nowrap}
+.pips{display:flex;flex-wrap:wrap;gap:3px;max-width:190px}
+.pip{width:9px;height:9px;border-radius:2px;background:var(--edge)}
+.pip.t{background:var(--violet)}
+.skipped{font-family:var(--display);font-size:.8rem;color:var(--muted)}
+.prob{font-family:var(--display);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:3px}
+.totals{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.tot{border-radius:12px;padding:14px 16px;background:var(--bg);font-family:var(--display)}
+.tot .n{font-size:1.9rem;font-weight:800;font-variant-numeric:tabular-nums}
+.tot.u .n{color:var(--muted)} .tot.t .n{color:var(--violet)}
+.tot .k{font-size:.85rem;color:var(--muted)}
+
+/* Tree figure */
+.treefig{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:1.6rem 0}
+.treefig figure{margin:0;background:var(--surface);border-radius:16px;padding:16px;border:1px solid var(--line)}
+.treefig figcaption{font-family:var(--display);font-size:.9rem;color:var(--muted);margin-top:8px}
+.treefig figcaption b{color:var(--ink)}
+.tree svg,.treefig svg{width:100%;height:auto;display:block}
+.cap{font-size:.9rem;color:var(--muted);margin-top:-.4rem}
+
+/* Win-probability meter */
+.meter{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:1.4rem 0}
+.meter > div{background:var(--surface);border-radius:12px;padding:14px;border:1px solid var(--line);font-family:var(--display)}
+.meter .v{font-size:1.5rem;font-weight:800}
+.meter .bar{height:8px;border-radius:4px;background:var(--bg);margin:8px 0 6px;overflow:hidden}
+.meter .bar i{display:block;height:100%;background:var(--violet)}
+.meter .k{font-size:.85rem;color:var(--muted);line-height:1.35}
+
+/* Steps */
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:1.2rem 0}
+ol.steps li{counter-increment:s;position:relative;padding:0 0 1rem 3rem}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:.05rem;width:2rem;height:2rem;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--display);font-weight:800;display:grid;place-items:center;font-size:.95rem}
+ol.steps li:not(:last-child)::after{content:"";position:absolute;left:.97rem;top:2.2rem;bottom:.2rem;width:2px;background:var(--line)}
+
+/* Results */
+.seg{display:inline-flex;background:var(--bg);border-radius:999px;padding:4px;gap:2px;flex-wrap:wrap}
+.seg button{font-family:var(--display);font-weight:700;font-size:.9rem;border:0;background:transparent;color:var(--muted);padding:.45rem .9rem;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.res{margin-top:18px}
+.res-row{display:grid;grid-template-columns:210px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.res-row .d{font-family:var(--display);font-weight:700;font-size:.98rem;line-height:1.25}
+.res-row .d small{display:block;font-weight:500;color:var(--muted);font-size:.8rem;margin-top:3px}
+.bars{position:relative;display:flex;flex-direction:column;gap:5px}
+.brow{position:relative;height:18px}
+.brow .zero{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--line)}
+.brow .b{position:absolute;top:0;height:100%;border-radius:3px}
+.brow .lab{position:absolute;top:0;font-family:var(--display);font-size:.75rem;line-height:18px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.b.pcl{background:var(--grey)} .b.tree{background:var(--edge)} .b.trace{background:var(--violet)}
+.axis{display:grid;grid-template-columns:210px 1fr;gap:14px;margin-top:6px}
+.axis .ticks{position:relative;height:18px;font-family:var(--display);font-size:.75rem;color:var(--muted)}
+.axis .ticks span{position:absolute;transform:translateX(-50%)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--display);font-size:.85rem;color:var(--muted);margin-top:14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:10px;border-radius:2px;display:inline-block}
+
+.callout{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:1.6rem 0}
+.callout > div{background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--line)}
+.callout .from{font-family:var(--display);font-size:1rem;color:var(--muted)}
+.callout .to{font-family:var(--display);font-size:2.2rem;font-weight:800;color:var(--violet);line-height:1.05}
+.callout .k{font-family:var(--display);font-size:.88rem;color:var(--muted);margin-top:4px}
+
+table.data{width:100%;border-collapse:collapse;font-size:.95rem;margin:1rem 0 .4rem;background:var(--surface);border-radius:12px;overflow:hidden}
+table.data th{font-family:var(--display);font-size:.85rem;color:var(--muted);text-align:left;padding:10px 12px;font-weight:700;border-bottom:1px solid var(--line)}
+table.data td{padding:10px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+table.data tr:last-child td{border-bottom:0}
+table.data tr.hl td{background:color-mix(in srgb, var(--lav) 55%, transparent);font-weight:600}
+.tablewrap{overflow-x:auto}
+
+/* Stacked time bar */
+.stack{display:flex;height:28px;border-radius:8px;overflow:hidden;margin:6px 0 14px}
+.stack i{display:block;height:100%}
+.stacklab{font-family:var(--display);font-size:.9rem;display:flex;justify-content:space-between;color:var(--muted)}
+.stacklab b{color:var(--ink)}
+
+pre.bib{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:.8rem;line-height:1.5;overflow-x:auto;white-space:pre}
+.bibhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:4.2rem 0 1rem}
+.bibhead h2{margin:0}
+footer{padding:48px 0 64px;color:var(--muted);font-size:.9rem}
+
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr;gap:18px}
+  .groupA{grid-template-columns:1fr}
+  .treefig{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  body{font-size:17px}
+  .panel{padding:18px 14px}
+  .res-row,.axis{grid-template-columns:1fr}
+  .axis > div:first-child{display:none}
+  .meter{grid-template-columns:1fr}
+  .eq{white-space:normal;font-size:1.1rem}
+  .callout{grid-template-columns:1fr}
+  .totals{grid-template-columns:1fr}
+  .alloc th:nth-child(1),.alloc td:nth-child(1){max-width:130px}
+  .pips{max-width:110px}
+}
+
+/* One orchestrated moment: the hero tree grows on load */
+.grow-edge{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .55s ease-out forwards;animation-delay:var(--d)}
+@keyframes draw{to{stroke-dashoffset:0}}
+.grow-node{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.3);animation:pop .35s cubic-bezier(.3,1.5,.6,1) forwards;animation-delay:var(--d)}
+@keyframes pop{to{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){
+  .grow-edge{animation:none;stroke-dashoffset:0}
+  .grow-node{animation:none;opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wide hero-grid">
+    <div>
+      <h1><span class="venue">EMNLP26 TRACE:</span> Branch where the outcome is still undecided</h1>
+      <p class="dek">TRACE is a rollout-budget allocator for agentic reinforcement learning. It decides which prompts to try, how many times to try them, and which mid-trajectory turns to replay, so that a fixed sampling budget keeps producing successes and failures the policy can compare.</p>
+      <p class="byline"><b>Tree Rollout Allocation for Contrastive Exploration</b><br>
+      Heming Zou, Qi Wang, Yun Qu, Yuhang Jiang, Lizhou Cai, Yixiu Mao, Ru Peng, Xin Xu, Weijie Liu, Kai Yang, Saiyong Yang, Xiangyang Ji<br>
+      Tsinghua University and Tencent</p>
+      <div class="actions">
+        <a class="btn primary" href="https://arxiv.org/abs/2606.11119">Read the paper</a>
+        <a class="btn" href="#cite">Cite this work</a>
+      </div>
+    </div>
+    <div>
+      <svg id="heroTree" class="hero-tree" viewBox="0 0 520 380" role="img" aria-label="A rollout tree growing from a batch of candidate prompts. Two prompts are skipped; highlighted prefixes receive extra branches whose leaves end in a mix of successes and failures."></svg>
+      <div class="hero-key">
+        <span><i class="sw" style="background:var(--lav);border:2px solid var(--violet)"></i>Prefix TRACE replays</span>
+        <span><i class="sw" style="border:2px dashed var(--grey)"></i>Skipped prompt</span>
+        <span><i class="sw" style="background:var(--ok)"></i>Success</span>
+        <span><i class="sw" style="background:var(--bad)"></i>Failure</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+  <div class="tldr">
+    <h3>The short version</h3>
+    <ul>
+      <li>Outcome-only RL learns by comparison. A group of rollouts that all succeed, or all fail, produces no gradient at all.</li>
+      <li>In multi-turn agents, every thought-action-observation turn is a natural save point. Replaying from the right save point turns one terminal reward into a controlled side-by-side comparison.</li>
+      <li>TRACE uses a small learned predictor to spend a fixed budget on the prompts and prefixes most likely to split into success and failure. Same budget, more signal: up to +2.8 points on Qwen3-14B multi-hop QA over GRPO, and more than double the share of useful training groups on math.</li>
+    </ul>
+  </div>
+
+  <h2>Eight rollouts, zero signal</h2>
+  <p>Most scalable RL pipelines for language models reward only the final outcome: the answer is right or it isn't. GRPO-style training squeezes a learning signal out of that by comparison. Sample a group of rollouts for the same prompt, score each one 1 or 0, and push the policy toward the rollouts that beat the group average.</p>
+  <p>That works well until the group agrees. If all eight rollouts succeed, every advantage is exactly zero. The same happens when all eight fail. You paid for eight long, tool-calling trajectories and got a gradient of nothing. Try it below: push the success rate toward either end and watch the signal disappear.</p>
+</div>
+
+<div class="wide">
+  <section class="panel" aria-labelledby="wa">
+    <h3 id="wa">When does a group actually teach anything?</h3>
+    <p class="hint">Each circle is one rollout. The number under it is its group-relative advantage, (reward − mean) ÷ std.</p>
+    <div class="controls">
+      <label>Prompt success rate <output id="pOut">50%</output>
+        <input id="pIn" type="range" min="0" max="1" step="0.01" value="0.5">
+      </label>
+      <label>Rollouts per prompt <output id="mOut">8</output>
+        <input id="mIn" type="range" min="2" max="16" step="1" value="8">
+      </label>
+      <button class="ghost" id="resample" type="button">Sample again</button>
+    </div>
+    <div class="groupA">
+      <div>
+        <div class="dots" id="dots" aria-live="polite"></div>
+        <div class="verdict" id="verdict"></div>
+      </div>
+      <div>
+        <div class="bigcap">Chance the group contains both a success and a failure</div>
+        <div class="bignum" id="pmix">99%</div>
+        <svg class="curve" id="curve" viewBox="0 0 320 150" aria-hidden="true"></svg>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <p>There is a second, quieter problem. In a multi-turn agent, one terminal reward is stamped onto every turn of the trajectory. A search agent that issued three sharp queries and then fumbled the final answer receives the same 0 as one that went wrong at the very first step. The reward says <em>something</em> failed, not <em>where</em>.</p>
+  <p>Prior work on prompt selection and rollout allocation attacks the first problem at the prompt level: skip prompts that are too easy or too hard, and give more rollouts to the promising ones. But once a prompt is chosen, each rollout is still sampled as one indivisible trajectory. TRACE goes one level deeper.</p>
+
+  <h2>Your rollout is secretly a tree</h2>
+  <p>A ReAct-style agent works in turns: think, act (search, run code, call an API), read the observation. Each finished turn is a clean, meaningful save point. Load that save point, keep the history fixed, and sample a fresh future. If the replay ends differently from the original, you have a controlled experiment: same past, different continuation, opposite outcome. That is local credit assignment without a hand-built process reward.</p>
+  <p>The catch is choosing which save points to replay. Some are already doomed: the search returned junk and the agent is going nowhere. Some are already won: the answer is in hand. Replaying those just buys more copies of a known ending. The valuable ones are knife-edge states where the next few decisions still determine the result.</p>
+</div>
+
+<div class="wide">
+  <div class="treefig">
+    <figure>
+      <svg id="treeU" viewBox="0 0 440 300" role="img" aria-label="Uniform branching: replays from randomly chosen prefixes all repeat the original outcome."></svg>
+      <figcaption><b>Random branching.</b> Six leaves, and every replay repeats the ending it branched from. Contrast pairs below prefixes: <b id="cntU">0</b>.</figcaption>
+    </figure>
+    <figure>
+      <svg id="treeT" viewBox="0 0 440 300" role="img" aria-label="TRACE branching: replays from selected prefixes split into success and failure."></svg>
+      <figcaption><b>TRACE branching.</b> Same six leaves, spent on prefixes that were still undecided. Contrast pairs below prefixes: <b id="cntT">0</b>.</figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="wrap">
+  <p>Seen this way, the whole rollout budget is a tree-building budget. Prompts are depth-zero anchors, visited prefixes are deeper anchors, and every sampling decision is a choice of which anchor gets more descendants.</p>
+
+  <h2>One rule, at two scales</h2>
+  <p>TRACE's allocation principle fits in one sentence: <strong>give budget to the anchors whose descendants are most likely to contain both a success and a failure.</strong> It applies twice.</p>
+
+  <h3>At the prompt</h3>
+  <p>If a predictor estimates that prompt <i>x</i> succeeds with probability <i>v</i>, then <i>m</i> fresh rollouts form a mixed group with probability</p>
+  <div class="eq"><i>V</i><sub>root</sub>(<i>x</i>, <i>m</i>) = 1 − <i>v</i><sup><i>m</i></sup> − (1 − <i>v</i>)<sup><i>m</i></sup>
+    <span class="lbl">Probability that not all m rollouts agree</span></div>
+  <p class="gloss">TRACE picks a count <i>m</i> ∈ {0, 2, 3, …} for every candidate prompt so the total equals the root budget. Zero means skip the prompt; two or more means keep it and sets how many rollouts it gets. One knob replaces both prompt filtering and rollout-count allocation.</p>
+
+  <h3>At a prefix</h3>
+  <p>For a prefix, we already know how the original rollout ended: reward <i>r</i>. Let <i>q</i> be the predicted chance that a fresh continuation repeats that ending. Then <i>k</i> replays produce at least one flip with probability</p>
+  <div class="eq"><i>V</i><sub>pref</sub> = 1 − <i>q</i><sup><i>k</i></sup>,&nbsp;&nbsp; <i>q</i> = <i>r</i>·<i>Ṽ</i>(<i>H</i>) + (1 − <i>r</i>)·(1 − <i>Ṽ</i>(<i>H</i>))
+    <span class="lbl">Probability that at least one replay disagrees with what already happened</span></div>
+  <p class="gloss">Each active prompt gets a local continuation budget proportional to its rollouts, spread across its visited prefixes. Both problems are solved exactly with a small dynamic program whose cost is negligible next to generation.</p>
+
+  <p>Play the allocator yourself. Six prompts, one budget. Uniform sampling spreads rollouts evenly; TRACE solves the root-allocation problem above.</p>
+</div>
+
+<div class="wide">
+  <section class="panel" aria-labelledby="wb">
+    <h3 id="wb">You have a rollout budget. Where does it go?</h3>
+    <p class="hint">Illustrative prompts with made-up predicted success rates. Each square is one rollout.</p>
+    <div class="controls">
+      <label>Root rollout budget <output id="bOut">24</output>
+        <input id="bIn" type="range" min="12" max="48" step="6" value="24">
+      </label>
+    </div>
+    <div class="tablewrap">
+    <table class="alloc">
+      <thead><tr><th>Prompt</th><th>Predicted success</th><th>Uniform</th><th>TRACE</th></tr></thead>
+      <tbody id="allocBody"></tbody>
+    </table>
+    </div>
+    <div class="totals">
+      <div class="tot u"><div class="n" id="totU">0</div><div class="k">Expected mixed groups, uniform</div></div>
+      <div class="tot t"><div class="n" id="totT">0</div><div class="k">Expected mixed groups, TRACE</div></div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <p>Notice what the optimum does. At a tight budget, everything goes to the prompts in the middle and the lopsided ones are skipped. As the budget grows, the coin-flip prompts saturate (five rollouts already give them a better than 90% chance of a mixed group), so extra rollouts flow to the 90% and 15% prompts, where each one still buys real contrast. The 99% prompt is never worth it, and the 2% prompt only earns rollouts near the top of the slider, once a lucky success becomes plausible.</p>
+
+  <h2>Why the middle is where the action is</h2>
+  <p>Picture a win-probability meter in a sports broadcast. Early in the game it hovers near 50% and swings with every play. Late in a blowout it sits at 98% and barely twitches. A policy's chance of solving a task behaves the same way as a rollout unfolds turn by turn, and the paper makes this precise with three results.</p>
+
+  <div class="meter" aria-hidden="true">
+    <div><div class="v">50%</div><div class="bar"><i style="width:50%"></i></div><div class="k">Undecided. The most swing left, so replays here are most likely to disagree.</div></div>
+    <div><div class="v">90%</div><div class="bar"><i style="width:90%"></i></div><div class="k">Leaning. Some contrast left, at a lower rate.</div></div>
+    <div><div class="v">99%</div><div class="bar"><i style="width:99%"></i></div><div class="k">Decided. Replays mostly buy copies of the same ending.</div></div>
+  </div>
+
+  <p><strong>More history, better forecasts.</strong> Predicting how a group of continuations will score can only get easier as you observe more turns: the best achievable squared error never increases with depth. Scoring prefixes is therefore at least as informed as scoring prompts. On Qwen3-8B HotpotQA, the predictor's group-success error falls to roughly a third of its prompt-level value by the fourth turn.</p>
+  <p><strong>Uncertainty is remaining contrast.</strong> Treat the success probability <i>V</i> as that live meter. From any prefix, the expected total squared movement of the meter until the rollout ends equals exactly</p>
+  <div class="eq">𝔼[ Σ<sub><i>s</i></sub> (<i>Z</i><sub><i>s</i>+1</sub> − <i>Z</i><sub><i>s</i></sub>)² | <i>H</i><sub><i>t</i></sub> ] = <i>V</i><sub><i>t</i></sub>(1 − <i>V</i><sub><i>t</i></sub>)
+    <span class="lbl">Expected accumulated swing of the success forecast below a prefix</span></div>
+  <p>So <i>V</i>(1 − <i>V</i>) is more than a static uncertainty score: it measures how much the outcome can still move below that prefix. The empirical picture agrees. Many prompts and prefixes sit near 0% or 100%, and ranking anchors by this contrast lets a small fraction of the budget capture most of the available pairwise contrast.</p>
+  <p><strong>Contrast is what turns on the gradient.</strong> With binary rewards, both pairwise and group-relative updates vanish below an anchor unless its descendants include a success and a failure. The expected squared gradient therefore factors into an activation probability times a gradient scale. Under the paper's normalization assumption, maximizing activation probability, which is exactly what TRACE's two objectives do, yields at least as much expected gradient energy as uniform allocation at every stage.</p>
+
+  <h2>A 0.6B model tells a 14B model where to look</h2>
+  <p>Every formula above needs a success estimate for a prompt or a partial trajectory before sampling. TRACE uses one shared predictor for both: a Qwen3-0.6B critic that reads the serialized prompt plus interaction history and outputs a score between 0 and 1.</p>
+  <p>It trains online from the trees TRACE collects. Every node gets a target equal to the success rate of the leaves beneath it, computed bottom-up, and the predictor regresses onto those targets after each step. Training is dominated by prompt-level examples, with prefixes making up only 6% of each predictor batch. Even so, its rank correlation with real outcomes stays positive at the prefix level, which suggests it learns a history-conditioned sense of difficulty rather than memorizing prompt identities.</p>
+  <p>And it is cheap. On HotpotQA, predictor scoring plus updates take about 3% of wall-clock time:</p>
+
+  <div aria-label="Training time breakdown">
+    <div class="stacklab"><b>Qwen3-8B</b><span>predictor total 3.2%</span></div>
+    <div class="stack" id="stack8"></div>
+    <div class="stacklab"><b>Qwen3-14B</b><span>predictor total 2.3%</span></div>
+    <div class="stack" id="stack14"></div>
+    <div class="legend" id="stackLegend"></div>
+  </div>
+
+  <h2>How one training step runs</h2>
+  <ol class="steps">
+    <li><strong>Score the candidate pool.</strong> The predictor estimates a success rate for every candidate prompt.</li>
+    <li><strong>Allocate root rollouts.</strong> Solve the budgeted root problem: most candidates get zero, active prompts get two or more bare rollouts.</li>
+    <li><strong>Expand locally, right away.</strong> As soon as one prompt's rollouts return, score its visited prefixes and spend its continuation budget there. No waiting for the slowest prompt in the batch.</li>
+    <li><strong>Refresh the predictor.</strong> Compute bottom-up success targets on the finished trees and take a regression step.</li>
+    <li><strong>Update the policy.</strong> Hand the trees to any tree-aware optimizer. The paper uses TreeRPO for math and QA and Tree-GRPO for function calling.</li>
+  </ol>
+  <p>The per-prompt design in step 3 is deliberately systems-aware. A fully global prefix allocator would have to wait for every prompt in the batch to finish; TRACE only needs one prompt's rollouts, which already live on the same worker.</p>
+
+  <h2>Results at equal budget</h2>
+  <p>The evaluation covers three agentic settings: mathematical reasoning with a Python interpreter (trained on DeepScaleR), multi-hop QA with a local Wikipedia retriever (trained on HotpotQA), and multi-turn function calling (BFCL v4). Baselines are GRPO, PCL (predictive prompt selection), and TreePO, which uses the same tree rollouts and tree-aware updates as TRACE but branches at random. Every method uses the same rollout-budget accounting, so differences come from where samples go, not how many there are.</p>
+</div>
+
+<div class="wide">
+  <section class="panel" aria-labelledby="wr">
+    <h3 id="wr">Accuracy gain over GRPO</h3>
+    <p class="hint">Bars show points above GRPO at the end of training; labels on the left give the absolute scores.</p>
+    <div class="seg" role="group" aria-label="Choose a policy model">
+      <button type="button" data-m="Qwen3-8B" aria-pressed="true">Qwen3-8B</button>
+      <button type="button" data-m="Qwen3-14B" aria-pressed="false">Qwen3-14B</button>
+      <button type="button" data-m="Llama-3.2-3B" aria-pressed="false">Llama-3.2-3B</button>
+    </div>
+    <div class="res" id="res"></div>
+    <div class="axis"><div></div><div class="ticks" id="ticks"></div></div>
+    <div class="legend">
+      <span><i style="background:var(--grey)"></i>PCL</span>
+      <span><i style="background:var(--edge)"></i>TreePO (random branching)</span>
+      <span><i style="background:var(--violet)"></i>TRACE</span>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <p>TRACE posts the best average in every setting and at both Qwen scales, and the gap is widest where trajectories are longest and most branching-friendly: multi-hop QA and function calling. The comparison with TreePO is the telling one. Both methods build trees and use the same optimizer; the only difference is whether branches go to random prefixes or predicted ones. The same pattern holds on Llama-3.2-3B-Instruct, where TRACE beats GRPO by 3.8 points and random branching by 3.1.</p>
+
+  <h3>Many more groups that actually teach</h3>
+  <p>The clearest effect is on the <em>effective ratio</em>: the share of prompts in a batch whose rollout trees end in both successes and failures. On DeepScaleR math:</p>
+  <div class="callout">
+    <div><div class="from">GRPO 26.8%</div><div class="to">60.6%</div><div class="k">Qwen3-8B, average effective ratio with TRACE</div></div>
+    <div><div class="from">GRPO 34.7%</div><div class="to">59.7%</div><div class="k">Qwen3-14B, average effective ratio with TRACE</div></div>
+  </div>
+
+  <h3>Both stages pull their weight</h3>
+  <p>Swapping each learned allocator for a uniform one on Qwen3-8B HotpotQA shows the gains stack: root allocation picks prompts likely to split, prefix allocation spends replays where they can still reveal contrast.</p>
+  <div class="tablewrap">
+  <table class="data">
+    <thead><tr><th>Prompt stage</th><th>Prefix stage</th><th>Avg. accuracy</th><th>Effective ratio</th></tr></thead>
+    <tbody>
+      <tr><td>Uniform</td><td>Uniform</td><td>49.5</td><td>42.8%</td></tr>
+      <tr><td>Adaptive</td><td>Uniform</td><td>49.8</td><td>49.1%</td></tr>
+      <tr><td>Uniform</td><td>Adaptive</td><td>50.0</td><td>47.3%</td></tr>
+      <tr class="hl"><td>Adaptive</td><td>Adaptive</td><td>50.6</td><td>52.3%</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>The shape of the budget matters, not just its size</h3>
+  <p>A mid-trajectory replay costs about half a full rollout, so a configuration with <i>M</i> root rollouts and <i>N</i> continuations per root costs roughly <i>M</i>(1 + <i>N</i>/2) trajectories. TRACE beats random branching at every budget, lifting the effective ratio by about ten points each time.</p>
+  <div class="tablewrap">
+  <table class="data">
+    <thead><tr><th>Budget</th><th>Roots M, replays N</th><th>TreePO acc. / eff.</th><th>TRACE acc. / eff.</th></tr></thead>
+    <tbody>
+      <tr><td>1024</td><td>512, 2</td><td>48.8 / 32.2%</td><td>49.7 / 42.4%</td></tr>
+      <tr><td>2048</td><td>512, 6</td><td>49.4 / 37.7%</td><td>50.3 / 47.8%</td></tr>
+      <tr class="hl"><td>2048</td><td>1024, 2</td><td>49.5 / 42.8%</td><td>50.6 / 52.3%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>At the same 2048 budget, broader root coverage beats deeper replay from fewer roots. The bottleneck isn't the raw number of rollouts; it is whether they reach states where rewards can disagree.</p>
+
+  <h2>Where the budget ends up</h2>
+  <p>Watching TRACE allocate on BFCL function calling, where episodes can run to dozens of turns, makes the behavior concrete. At the prompt level it is selective: about 71% of candidate prompts are skipped with Qwen3-8B and about 65% with Qwen3-14B, and active prompts typically receive five to seven rollouts. Importantly, the number of distinct prompts trained on never exceeds the fixed-size baselines, so the gains don't come from seeing more data.</p>
+  <p>At the prefix level, replays are spread along the whole trajectory. The earliest turns get the largest single share, but meaningful budget reaches prefixes as deep as turn 15. Stage 2 isn't quietly acting as extra root sampling; it is finding decision points throughout long interactions.</p>
+
+  <h2>Limits and next steps</h2>
+  <p>TRACE is built for outcome-verifiable tasks; settings without a clear terminal check would need the mixed-outcome objective rethought. The predictor here is intentionally plain, and a sharper one should place budget better, especially since it learns against targets that shift as the policy improves, a natural fit for continual-learning techniques. Experiments cover math, multi-hop QA and function calling with Qwen3-8B, Qwen3-14B and Llama-3.2-3B, leaving longer-horizon and non-stationary agent environments for future work.</p>
+  <p>The broader takeaway is a reframing. For agentic RL, the sampling question isn't only how many independent rollouts to draw. It is where in the rollout tree to branch.</p>
+
+  <section id="cite">
+    <div class="bibhead"><h2>Cite this work</h2><button class="ghost" id="copyBib" type="button">Copy BibTeX</button></div>
+<pre class="bib" id="bib">@article{zou2026trace,
+  title   = {TRACE: A Unified Rollout Budget Allocation Framework for
+             Efficient Agentic Reinforcement Learning},
+  author  = {Zou, Heming and Wang, Qi and Qu, Yun and Jiang, Yuhang and
+             Cai, Lizhou and Mao, Yixiu and Peng, Ru and Xu, Xin and
+             Liu, Weijie and Yang, Kai and Yang, Saiyong and Ji, Xiangyang},
+  journal = {arXiv preprint arXiv:2606.11119},
+  year    = {2026}
+}</pre>
+  </section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">Tsinghua University and the LLM Department, Tencent. Questions about the work can go to the corresponding authors listed in <a href="https://arxiv.org/abs/2606.11119">the paper</a>.</div>
+</footer>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+
+  /* ---------- Tree renderer ---------- */
+  // node: {sel, skip, n (new branch), r (leaf reward 1/0), c:[children]}
+  function layout(node, depth, st){
+    node.d = depth; st.maxD = Math.max(st.maxD, depth);
+    if (!node.c){ node.x = st.i++; return; }
+    node.c.forEach(ch => layout(ch, depth + 1, st));
+    node.x = (node.c[0].x + node.c[node.c.length - 1].x) / 2;
+  }
+  function renderTree(svg, tree, o){
+    const vb = svg.viewBox.baseVal, W = vb.width, H = vb.height;
+    const st = {i:0, maxD:0}; layout(tree, 0, st);
+    const px = o.padX || 30, py = o.padY || 24;
+    const sx = x => px + x * (W - 2*px) / Math.max(1, st.i - 1);
+    const sy = d => py + d * (H - 2*py) / Math.max(1, st.maxD);
+    const gE = el("g", {}, svg), gN = el("g", {}, svg);
+    const step = o.animate ? 0.28 : 0;
+    (function walk(n){
+      const x = sx(n.x), y = sy(n.d);
+      if (n.c) n.c.forEach(ch => {
+        const cx = sx(ch.x), cy = sy(ch.d), my = (y + cy) / 2;
+        const newEdge = ch.n;
+        const p = el("path", {
+          d:`M${x},${y} C${x},${my} ${cx},${my} ${cx},${cy}`,
+          fill:"none",
+          stroke: newEdge ? (o.newColor || "var(--violet)") : "var(--edge)",
+          "stroke-width": newEdge ? 2.6 : 1.8,
+          "stroke-dasharray": (newEdge && o.dashNew) ? "5 4" : null,
+          pathLength: o.animate ? 1 : null
+        }, gE);
+        if (!(newEdge && o.dashNew)) p.removeAttribute("stroke-dasharray");
+        if (!o.animate) p.removeAttribute("pathLength");
+        if (o.animate){ p.classList.add("grow-edge"); p.style.setProperty("--d", (0.15 + n.d*step) + "s"); }
+        walk(ch);
+      });
+      const outer = el("g", {transform:`translate(${x},${y})`}, gN);
+      const g = el("g", {}, outer);
+      if (o.animate){ g.classList.add("grow-node"); g.style.setProperty("--d", (0.15 + n.d*step + (n.d ? 0.2 : 0)) + "s"); }
+      if (!n.c && n.skip){
+        el("circle", {r:7.5, fill:"var(--surface)", stroke:"var(--grey)", "stroke-width":2, "stroke-dasharray":"3 3"}, g);
+      } else if (!n.c){
+        el("circle", {r: o.leafR || 9, fill: n.r ? "var(--ok)" : "var(--bad)"}, g);
+        const s = (o.leafR || 9) / 9;
+        el("path", {d: n.r ? `M${-3.6*s},${0.2*s} L${-1*s},${2.8*s} L${3.8*s},${-2.6*s}` : `M${-3*s},${-3*s} L${3*s},${3*s} M${3*s},${-3*s} L${-3*s},${3*s}`,
+          stroke:"#fff", "stroke-width":2.2, fill:"none", "stroke-linecap":"round", "stroke-linejoin":"round"}, g);
+      } else {
+        const r = n.d === 0 ? 11 : 7.5;
+        let fill = "var(--surface)", stroke = "var(--ink)";
+        if (n.sel){ fill = o.selFill || "var(--lav)"; stroke = o.selStroke || "var(--violet)"; }
+        if (n.skip){ fill = "var(--surface)"; stroke = "var(--grey)"; }
+        el("circle", {r, fill, stroke, "stroke-width": n.sel ? 2.6 : 2}, g);
+      }
+    })(tree);
+  }
+  function leaves(n){ return n.c ? n.c.flatMap(leaves) : [n.r]; }
+  function prefixPairs(n, isRoot){
+    if (!n.c) return 0;
+    let tot = 0;
+    if (!isRoot && n.c.length > 1){
+      const L = n.c.map(leaves);
+      for (let a = 0; a < L.length; a++) for (let b = a+1; b < L.length; b++)
+        for (const x of L[a]) for (const y of L[b]) if (x !== y) tot++;
+    }
+    return tot + n.c.reduce((s, ch) => s + prefixPairs(ch, false), 0);
+  }
+
+  const L = (r, n) => ({r, n});
+  const hero = {c:[
+    {c:[{c:[{sel:true, c:[{c:[L(0)]}, {n:1, c:[L(1,1)]}, {n:1, c:[L(1,1)]}]}]}]},
+    {sel:true, c:[{c:[{c:[L(1)]}]}, {n:1, c:[L(0,1)]}]},
+    {skip:true},
+    {c:[{sel:true, c:[L(1), L(0,1), L(0,1)]}]},
+    {skip:true}
+  ]};
+  renderTree(document.getElementById("heroTree"), hero, {animate:true, padX:28, padY:22, leafR:10});
+
+  const treeU = {c:[
+    {c:[{sel:true, selFill:"", c:[L(0), L(0,1)]}]},
+    {sel:true, c:[{c:[L(0)]}, {n:1, c:[L(0,1)]}]},
+    {c:[{sel:true, c:[L(1), L(1,1)]}]}
+  ]};
+  const treeT = {c:[
+    {sel:true, c:[{c:[L(1)]}, {n:1, c:[L(0,1)]}, {n:1, c:[L(1,1)]}]},
+    {c:[{sel:true, c:[L(0), L(1,1)]}]},
+    {c:[{c:[L(1)]}]}
+  ]};
+  renderTree(document.getElementById("treeU"), treeU, {newColor:"var(--edge)", dashNew:true, selFill:"var(--bg)", selStroke:"var(--edge)"});
+  renderTree(document.getElementById("treeT"), treeT, {});
+  document.getElementById("cntU").textContent = prefixPairs(treeU, true);
+  document.getElementById("cntT").textContent = prefixPairs(treeT, true);
+
+  /* ---------- Widget A: zero-signal groups ---------- */
+  const pIn = document.getElementById("pIn"), mIn = document.getElementById("mIn");
+  const dotsEl = document.getElementById("dots"), verdict = document.getElementById("verdict");
+  const curve = document.getElementById("curve");
+  const mix = (p, m) => 1 - Math.pow(p, m) - Math.pow(1 - p, m);
+  const numWords = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen"];
+
+  function sample(){
+    const p = +pIn.value, m = +mIn.value;
+    const rs = Array.from({length:m}, () => Math.random() < p ? 1 : 0);
+    const mean = rs.reduce((a,b)=>a+b,0) / m;
+    const sd = Math.sqrt(rs.reduce((a,b)=>a+(b-mean)**2,0) / m);
+    dotsEl.innerHTML = "";
+    rs.forEach(r => {
+      const adv = sd === 0 ? 0 : (r - mean) / sd;
+      const d = document.createElement("div");
+      d.className = "dot " + (r ? "s" : "f");
+      d.innerHTML = `<span class="c">${r ? "✓" : "✗"}</span><span class="a ${sd===0?"zero":""}">${sd===0 ? "0" : (adv>0?"+":"")+adv.toFixed(2)}</span>`;
+      d.setAttribute("aria-label", (r ? "success" : "failure") + ", advantage " + adv.toFixed(2));
+      dotsEl.appendChild(d);
+    });
+    const w = numWords[m] || m;
+    if (sd === 0){
+      verdict.className = "verdict dead";
+      verdict.textContent = `All ${w} rollouts ${rs[0] ? "succeeded" : "failed"}. Every advantage is zero, so this group adds nothing to the update.`;
+    } else {
+      const k = rs.filter(x=>x).length;
+      verdict.className = "verdict live";
+      verdict.textContent = `${k} of ${m} succeeded. Successes get pushed up, failures pushed down: this group teaches.`;
+    }
+  }
+  function drawCurve(){
+    const p = +pIn.value, m = +mIn.value;
+    curve.innerHTML = "";
+    const X = v => 44 + v * 256, Y = v => 125 - v * 110;
+    el("line", {x1:X(0), y1:Y(0), x2:X(1), y2:Y(0), stroke:"var(--line)"}, curve);
+    el("line", {x1:X(0), y1:Y(0), x2:X(0), y2:Y(1), stroke:"var(--line)"}, curve);
+    let d = "";
+    for (let i = 0; i <= 100; i++){ const x = i/100; d += (i ? "L" : "M") + X(x).toFixed(1) + "," + Y(mix(x, m)).toFixed(1); }
+    el("path", {d, fill:"none", stroke:"var(--violet)", "stroke-width":2.5}, curve);
+    el("circle", {cx:X(p), cy:Y(mix(p,m)), r:6, fill:"var(--violet)", stroke:"var(--surface)", "stroke-width":2}, curve);
+    const t = (x,y,s,a) => { const e = el("text", {x, y, "text-anchor":a||"middle"}, curve); e.textContent = s; };
+    t(X(0), 142, "0%"); t(X(1), 142, "100%", "end"); t(X(.5), 142, "prompt success rate");
+    t(38, Y(1)+4, "100%", "end"); t(38, Y(0)+4, "0%", "end");
+    document.getElementById("pmix").textContent = Math.round(mix(p, m)*100) + "%";
+  }
+  function updA(){
+    document.getElementById("pOut").textContent = Math.round(pIn.value*100) + "%";
+    document.getElementById("mOut").textContent = mIn.value;
+    sample(); drawCurve();
+  }
+  pIn.addEventListener("input", updA); mIn.addEventListener("input", updA);
+  document.getElementById("resample").addEventListener("click", sample);
+  updA();
+
+  /* ---------- Widget B: root allocation game ---------- */
+  const prompts = [
+    {t:"Add two small numbers with the calculator tool", v:0.99},
+    {t:"Check whether two directors share a nationality", v:0.90},
+    {t:"Chain three Wikipedia lookups to find a birthplace", v:0.62},
+    {t:"Solve an AMC-style combinatorics problem", v:0.45},
+    {t:"Complete a 12-step trading workflow with a missing parameter", v:0.15},
+    {t:"Prove an olympiad inequality in one shot", v:0.02}
+  ];
+  const f = (v, m) => m < 2 ? 0 : mix(v, m);
+  function solveDP(M){
+    const n = prompts.length, NEG = -1e9;
+    const dp = Array.from({length:n+1}, () => new Array(M+1).fill(NEG));
+    const ch = Array.from({length:n+1}, () => new Array(M+1).fill(0));
+    dp[0][0] = 0;
+    for (let i = 1; i <= n; i++){
+      for (let b = 0; b <= M; b++){
+        for (let m = 0; m <= b; m++){
+          if (m === 1) continue;
+          const prev = dp[i-1][b-m]; if (prev <= NEG/2) continue;
+          const val = prev + f(prompts[i-1].v, m);
+          if (val > dp[i][b] + 1e-12){ dp[i][b] = val; ch[i][b] = m; }
+        }
+      }
+    }
+    const out = new Array(n).fill(0); let b = M;
+    for (let i = n; i >= 1; i--){ out[i-1] = ch[i][b]; b -= ch[i][b]; }
+    return out;
+  }
+  const pips = (k, cls) => k === 0 ? `<span class="skipped">skipped</span>` : `<div class="pips">${('<i class="pip '+cls+'"></i>').repeat(k)}</div>`;
+  function updB(){
+    const M = +document.getElementById("bIn").value;
+    document.getElementById("bOut").textContent = M;
+    const u = M / prompts.length, t = solveDP(M);
+    let tu = 0, tt = 0, rows = "";
+    prompts.forEach((p, i) => {
+      const fu = f(p.v, u), ft = f(p.v, t[i]); tu += fu; tt += ft;
+      rows += `<tr><td class="ptxt">${p.t}</td><td><span class="vchip">${Math.round(p.v*100)}%</span></td>
+        <td>${pips(u, "")}<div class="prob">${u} rollouts, ${Math.round(fu*100)}% mixed</div></td>
+        <td>${pips(t[i], "t")}<div class="prob">${t[i] ? t[i] + " rollouts, " + Math.round(ft*100) + "% mixed" : "saves budget"}</div></td></tr>`;
+    });
+    document.getElementById("allocBody").innerHTML = rows;
+    document.getElementById("totU").textContent = tu.toFixed(2);
+    document.getElementById("totT").textContent = tt.toFixed(2);
+  }
+  document.getElementById("bIn").addEventListener("input", updB);
+  updB();
+
+  /* ---------- Time breakdown ---------- */
+  const parts = [
+    ["Policy update", "var(--ink)", 66.5, 75.4],
+    ["LLM rollout", "var(--edge)", 28.6, 21.2],
+    ["Predictor scoring", "var(--violet)", 1.9, 1.4],
+    ["Predictor update", "var(--lav)", 1.3, 0.9],
+    ["Other", "var(--grey)", 1.7, 1.1]
+  ];
+  const s8 = document.getElementById("stack8"), s14 = document.getElementById("stack14");
+  parts.forEach(([name, c, a, b]) => {
+    const i1 = document.createElement("i"); i1.style.width = a + "%"; i1.style.background = c; i1.title = `${name}: ${a}%`; s8.appendChild(i1);
+    const i2 = document.createElement("i"); i2.style.width = b + "%"; i2.style.background = c; i2.title = `${name}: ${b}%`; s14.appendChild(i2);
+  });
+  document.getElementById("stackLegend").innerHTML = parts.map(([n, c, a, b]) => `<span><i style="background:${c}"></i>${n} (${a}% / ${b}%)</span>`).join("");
+
+  /* ---------- Results explorer ---------- */
+  const DOM = [
+    ["Math", "in-distribution, 5 benchmarks"],
+    ["Math", "out-of-distribution, 3 benchmarks"],
+    ["Multi-hop QA", "4 benchmarks"],
+    ["Function calling", "BFCL v4 multi-turn, 4 subsets"]
+  ];
+  const R = {
+    "Qwen3-8B":  {GRPO:[70.0,74.6,48.5,43.5], PCL:[70.4,74.8,48.9,44.3], TreePO:[70.4,74.9,49.5,44.2], TRACE:[71.1,75.3,50.6,46.2]},
+    "Qwen3-14B": {GRPO:[73.5,77.1,51.2,46.1], PCL:[73.9,77.3,51.5,45.9], TreePO:[74.0,77.4,53.0,46.6], TRACE:[74.9,77.8,54.0,48.0]},
+    "Llama-3.2-3B": {GRPO:[null,null,28.5,null], PCL:[null,null,28.9,null], TreePO:[null,null,29.2,null], TRACE:[null,null,32.3,null]}
+  };
+  const lo = -0.5, hi = 4.0, pct = v => (v - lo) / (hi - lo) * 100;
+  const ticks = document.getElementById("ticks");
+  ticks.innerHTML = [0,1,2,3,4].map(v => `<span style="left:${pct(v)}%">${v ? "+" + v : "0"}</span>`).join("");
+  function renderRes(model){
+    const d = R[model]; let html = "";
+    DOM.forEach((dm, k) => {
+      if (d.GRPO[k] == null) return;
+      const bars = [["PCL","pcl"],["TreePO","tree"],["TRACE","trace"]].map(([m, cls]) => {
+        const delta = +(d[m][k] - d.GRPO[k]).toFixed(1);
+        const a = pct(Math.min(0, delta)), b = pct(Math.max(0, delta));
+        const txt = (delta > 0 ? "+" : delta < 0 ? "−" : "±") + Math.abs(delta).toFixed(1);
+        return `<div class="brow" aria-label="${m}: ${txt} points"><span class="zero" style="left:${pct(0)}%"></span>
+          <span class="b ${cls}" style="left:${a}%;width:${Math.max(0.6, b - a)}%"></span>
+          <span class="lab" style="left:calc(${b}% + 6px)">${txt}</span></div>`;
+      }).join("");
+      html += `<div class="res-row"><div class="d">${dm[0]}<small>${dm[1]}. TRACE ${d.TRACE[k].toFixed(1)} vs GRPO ${d.GRPO[k].toFixed(1)}</small></div><div class="bars">${bars}</div></div>`;
+    });
+    document.getElementById("res").innerHTML = html;
+  }
+  document.querySelectorAll(".seg button").forEach(btn => btn.addEventListener("click", () => {
+    document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    renderRes(btn.dataset.m);
+  }));
+  renderRes("Qwen3-8B");
+
+  /* ---------- Copy BibTeX ---------- */
+  document.getElementById("copyBib").addEventListener("click", async (e) => {
+    try { await navigator.clipboard.writeText(document.getElementById("bib").textContent); e.target.textContent = "Copied"; }
+    catch(_) { e.target.textContent = "Select the text to copy"; }
+    setTimeout(() => e.target.textContent = "Copy BibTeX", 1800);
+  });
+})();
+</script>
+</body>
+</html>
