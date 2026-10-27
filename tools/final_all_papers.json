@@ -502,5 +502,32 @@
         "nan",
         "nan",
         "MARL"
+    ],
+    "You Only Edit Once: Incentivizing In-Context Capability of LLMs via Local Demonstration Refinement": [
+        "2026",
+        "arXiv 2026",
+        "Jia-Rong Wen, Qi Wang, Yun Qu, Yi-Xiu Mao, Heming Zou, Hao-Ang Chi, Li-Zhou Cai, Yi-Qin Lv, Kai-Yu Zhang, Yuhang Jiang, Xiang-Yang Ji",
+        "https://arxiv.org/abs/2609.33609",
+        "nan",
+        "nan",
+        "nan"
+    ],
+    "Bridging Risk Approximation Gaps in Model Predictive Task Sampling via In-Context Modeling": [
+        "2026",
+        "arXiv 2026",
+        "Jia-Rong Wen, Qing-Chao Tao, Kai-Yu Zhang, Yun Qu, Li-Zhou Cai, Heming Zou, Yuhang Jiang, Qi Wang",
+        "https://arxiv.org/abs/2610.14913",
+        "nan",
+        "nan",
+        "nan"
+    ],
+    "Tree-Aware Posterior Distillation for Long-Horizon Agentic Reinforcement Learning": [
+        "2026",
+        "arXiv 2026",
+        "Heming Zou, Qi Wang, Yi-Xiu Mao, Yun Qu, Yu-Yi Guo, Ze-Yuan Liu, Cheng-Lin Li, Wei-Jie Liu, Sai-Yong Yang, Xiang-Yang Ji",
+        "https://arxiv.org/abs/2610.23181",
+        "nan",
+        "nan",
+        "nan"
     ]
 }
