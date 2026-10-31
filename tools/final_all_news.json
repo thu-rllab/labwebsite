@@ -1,5 +1,17 @@
 [
     {
+        "date": "20260926",
+        "content": "Our paper <strong>Listwise Policy Optimization: Group-based RLVR as Target-Projection on the LLM Response Simplex</strong> has been accepted to NeurIPS2026! Check out the <a href='https://arxiv.org/abs/2605.06139'>full paper</a> for more details!"
+    },
+    {
+        "date": "20260926",
+        "content": "Our paper <strong>TRACE: A Unified Rollout Budget Allocation Framework for Efficient Agentic Reinforcement Learning</strong> has been accepted to NeurIPS2026! Check out the <a href='https://arxiv.org/abs/2606.11119'>full paper</a> for more details!"
+    },
+    {
+        "date": "20260926",
+        "content": "Our paper <strong>Bridging Risk Approximation Gaps in Model Predictive Task Sampling via In-Context Modeling</strong> has been accepted to NeurIPS2026! Check out the <a href='https://arxiv.org/abs/2610.14913'>full paper</a> for more details!"
+    },
+    {
         "date": "20260601",
         "content": "Our paper <strong>Model Predictive Task Sampling for Efficient and Robust Adaptation</strong> has been accepted to <strong>Nature Communications</strong>! Check out the <a href='https://arxiv.org/pdf/2501.11039'>full paper</a> for more details!"
     },
