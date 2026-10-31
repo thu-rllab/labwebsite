@@ -37,7 +37,7 @@
     ],
     "Model Predictive Task Sampling for Efficient and Robust Adaptation": [
         "2025",
-        "arXiv 2025",
+        "Nature Communications",
         "Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji",
         "https://arxiv.org/pdf/2501.11039",
         "https://github.com/thu-rllab/MPTS",
@@ -225,8 +225,8 @@
         "Unsupervised RL"
     ],
     "Choices are More Important than Efforts: LLM Enables Efficient Multi-Agent Exploration": [
-        "2024",
-        "arXiv 2024",
+        "2026",
+        "scis 2026",
         "Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji",
         "https://arxiv.org/pdf/2410.02511",
         "nan",
@@ -460,7 +460,7 @@
     ],
     "TRACE: A Unified Rollout Budget Allocation Framework for Efficient Agentic Reinforcement Learning": [
         "2026",
-        "NeurIPS 2026",
+        "EMNLP 2026",
         "Heming Zou, Qi Wang, Yun Qu, Yuhang Jiang, Lizhou Cai, Yixiu Mao, Runsi Peng, Xingzhong Xu, Weijie Liu, Kaixuan Yang, Saiyong Yang, Xiangyang Ji",
         "https://arxiv.org/abs/2606.11119",
         "nan",
@@ -493,15 +493,6 @@
         "nan",
         "nan",
         "Multi-Task Learning"
-    ],
-    "Stop Wandering, Find the Keys: LLMs Discriminate Key States for Efficient Multi-Agent Exploration": [
-        "2024",
-        "arXiv 2024",
-        "Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji",
-        "https://arxiv.org/abs/2410.02511",
-        "nan",
-        "nan",
-        "MARL"
     ],
     "You Only Edit Once: Incentivizing In-Context Capability of LLMs via Local Demonstration Refinement": [
         "2026",

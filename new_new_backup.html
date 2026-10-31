@@ -12,20 +12,17 @@
   <style>
     /* ══════════ Variables ══════════ */
     :root {
-      --navy:        #1e3a5f;
-      --navy-dark:   #0f2240;
-      --blue:        #2563eb;
-      --blue-hover:  #1d4ed8;
-      --blue-light:  #eff6ff;
-      --blue-mid:    #dbeafe;
-      --green:       #059669;
-      --teal:        #0284c7;
-      --bg:          #f1f5f9;
+      /* Light palette aligned with https://cheemswang.github.io/style.css */
+      --accent:      #660874;
+      --accent-hover:#4f065a;
+      --accent-light:#f7f1fa;
+      --accent-mid:  #e2cfec;
+      --bg:          #ffffff;
       --surface:     #ffffff;
-      --border:      #e2e8f0;
-      --text:        #1e293b;
-      --text-muted:  #64748b;
-      --text-light:  #94a3b8;
+      --border:      #e9e3ee;
+      --text:        #231b2b;
+      --text-muted:  #675e72;
+      --text-light:  #675e72;
       --radius:      12px;
       --radius-sm:   8px;
       --shadow:      0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
@@ -45,26 +42,26 @@
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
     }
-    ::selection { background: var(--blue); color: #fff; }
-    a { color: var(--blue); text-decoration: none; transition: color .2s; }
-    a:hover { color: var(--blue-hover); text-decoration: none; }
+    ::selection { background: var(--accent); color: #fff; }
+    a { color: var(--accent); text-decoration: none; transition: color .2s; }
+    a:hover { color: var(--accent-hover); text-decoration: none; }
 
     /* ══════════ Navbar ══════════ */
     .navbar {
-      background: var(--navy-dark) !important;
+      background: var(--surface) !important;
       padding: .75rem 0;
-      box-shadow: 0 2px 20px rgba(0,0,0,.25);
+      box-shadow: 0 1px 0 var(--border);
       border: none;
     }
     .navbar-brand {
       font-weight: 800;
       font-size: 1.2rem;
       letter-spacing: -.02em;
-      color: #fff !important;
+      color: var(--text) !important;
     }
-    .navbar-brand .brand-accent { color: #60a5fa; }
+    .navbar-brand .brand-accent { color: var(--accent); }
     .nav-link {
-      color: rgba(255,255,255,.78) !important;
+      color: var(--text-muted) !important;
       font-weight: 500;
       font-size: .875rem;
       padding: .38rem .9rem !important;
@@ -72,13 +69,13 @@
       transition: background .18s, color .18s;
     }
     .nav-link:hover {
-      color: #fff !important;
-      background: rgba(255,255,255,.12);
+      color: var(--accent) !important;
+      background: var(--accent-light);
     }
 
     /* ══════════ Hero ══════════ */
     .hero {
-      background: linear-gradient(135deg, var(--navy-dark) 0%, #1a3468 45%, #1e4bb5 100%);
+      background: linear-gradient(135deg, #1c1425 0%, #3b1948 45%, var(--accent) 100%);
       padding: 5rem 0 4.5rem;
       position: relative;
       overflow: hidden;
@@ -86,7 +83,7 @@
     .hero::before {
       content: '';
       position: absolute; inset: 0;
-      background: radial-gradient(ellipse 70% 80% at 75% 50%, rgba(59,130,246,.18) 0%, transparent 65%);
+      background: radial-gradient(ellipse 70% 80% at 75% 50%, rgba(216,179,236,.14) 0%, transparent 65%);
       pointer-events: none;
     }
     .hero::after {
@@ -97,8 +94,8 @@
     .hero-inner { position: relative; z-index: 1; max-width: 1100px; width: 92%; margin: 0 auto; }
     .hero-eyebrow {
       display: inline-flex; align-items: center; gap: .4rem;
-      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
-      color: rgba(255,255,255,.88); font-size: .78rem; font-weight: 600;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16);
+      color: #e2cfec; font-size: .78rem; font-weight: 600;
       padding: .28rem .85rem; border-radius: 20px;
       margin-bottom: 1.2rem; letter-spacing: .04em; text-transform: uppercase;
     }
@@ -107,21 +104,21 @@
       font-weight: 800; color: #fff;
       line-height: 1.18; margin-bottom: .9rem; letter-spacing: -.03em;
     }
-    .hero h1 .brand-accent { color: #60a5fa; }
+    .hero h1 .brand-accent { color: #d8b3ec; }
     .hero-sub {
-      font-size: 1.05rem; color: rgba(255,255,255,.72);
+      font-size: 1.05rem; color: rgba(255,255,255,.78);
       max-width: 580px; margin-bottom: 1.6rem; line-height: 1.75;
     }
     .hero-topics { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 2.5rem; }
     .hero-topic {
-      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.16);
-      color: rgba(255,255,255,.88); font-size: .78rem; font-weight: 500;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16);
+      color: #e2cfec; font-size: .78rem; font-weight: 500;
       padding: .28rem .72rem; border-radius: 20px;
     }
     .hero-stats {
       display: inline-flex; gap: 0; flex-wrap: wrap;
       padding-top: 2rem;
-      border-top: 1px solid rgba(255,255,255,.12);
+      border-top: 1px solid rgba(255,255,255,.16);
     }
     .hero-stats > div {
       padding: 0 2.8rem;
@@ -136,7 +133,7 @@
       font-size: 2.8rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: .4rem;
     }
     .hero-stat-label {
-      font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.58);
+      font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.7);
       text-transform: uppercase; letter-spacing: .1em;
     }
 
@@ -170,13 +167,13 @@
       margin-bottom: 1.6rem;
     }
     .section-title {
-      font-size: 1.4rem; font-weight: 700; color: var(--navy);
+      font-size: 1.4rem; font-weight: 700; color: var(--text);
       margin: 0; display: flex; align-items: center; gap: .55rem;
     }
     .section-title::before {
       content: ''; display: inline-block;
       width: 4px; height: 1.35em;
-      background: var(--blue); border-radius: 2px; flex-shrink: 0;
+      background: var(--accent); border-radius: 2px; flex-shrink: 0;
     }
     .section-filters { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
 
@@ -189,19 +186,19 @@
       font-size: .8rem; font-weight: 500; color: var(--text);
       cursor: pointer; outline: none;
       transition: border-color .2s, box-shadow .2s;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2364748b' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23675e72' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right .65rem center;
     }
-    .filter-select:hover { border-color: var(--blue); }
-    .filter-select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+    .filter-select:hover { border-color: var(--accent); }
+    .filter-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(102,8,116,.1); }
 
     /* ══════════ Publication Cards ══════════ */
     .pub-card {
       background: var(--surface) !important;
       background-image: none !important;
       border: 1px solid var(--border) !important;
-      border-left: 4px solid var(--blue) !important;
+      border-left: 4px solid var(--accent) !important;
       border-radius: var(--radius-sm) !important;
       box-shadow: var(--shadow) !important;
       margin-bottom: .8rem !important;
@@ -221,16 +218,16 @@
       font-size: .7rem; font-weight: 700;
       padding: .22em .62em; border-radius: 4px; letter-spacing: .03em;
     }
-    .venue-top    { background: var(--navy); color: #fff; }
-    .venue-good   { background: var(--blue-mid); color: #1d4ed8; }
-    .venue-arxiv  { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); }
+    .venue-top    { background: var(--accent); color: #fff; }
+    .venue-good   { background: var(--accent-mid); color: var(--accent); }
+    .venue-arxiv  { background: var(--accent-light); color: var(--text-muted); border: 1px solid var(--border); }
     .tag-badge {
       font-size: .68rem; font-weight: 600;
       padding: .2em .6em; border-radius: 20px;
-      background: #ecfdf5; color: var(--green); border: 1px solid #a7f3d0;
+      background: var(--accent-light); color: var(--accent); border: 1px solid var(--border);
     }
     .pub-title {
-      font-size: .97rem; font-weight: 600; color: var(--navy); line-height: 1.5; margin-bottom: .3rem;
+      font-size: .97rem; font-weight: 600; color: var(--text); line-height: 1.5; margin-bottom: .3rem;
     }
     .pub-authors {
       font-size: .83rem; color: var(--text-muted); margin-bottom: .5rem; line-height: 1.5;
@@ -242,12 +239,12 @@
       border: 1.5px solid transparent;
       transition: all .18s; margin-right: .3rem; margin-top: .22rem;
     }
-    .pub-btn-paper { border-color: var(--blue); color: var(--blue); }
-    .pub-btn-paper:hover { background: var(--blue); color: #fff; }
-    .pub-btn-code  { border-color: var(--green); color: var(--green); }
-    .pub-btn-code:hover  { background: var(--green); color: #fff; }
-    .pub-btn-demo  { border-color: var(--teal); color: var(--teal); }
-    .pub-btn-demo:hover  { background: var(--teal); color: #fff; }
+    .pub-btn-paper { border-color: var(--accent); color: var(--accent); }
+    .pub-btn-paper:hover { background: var(--accent); color: #fff; }
+    .pub-btn-code  { border-color: var(--accent); color: var(--accent); }
+    .pub-btn-code:hover  { background: var(--accent); color: #fff; }
+    .pub-btn-demo  { border-color: var(--accent); color: var(--accent); }
+    .pub-btn-demo:hover  { background: var(--accent); color: #fff; }
 
     /* ══════════ News & Blog ══════════ */
     .news-item, .blog-item {
@@ -256,7 +253,7 @@
       background: transparent;
     }
     .news-item:hover, .blog-item:hover {
-      background: var(--blue-light);
+      background: var(--accent-light);
       margin-left: -1.5rem; margin-right: -1.5rem;
       padding-left: 1.5rem; padding-right: 1.5rem;
       border-radius: var(--radius-sm); border-bottom-color: transparent;
@@ -266,7 +263,7 @@
       display: flex; align-items: flex-start; gap: 1rem;
     }
     .news-date, .blog-date {
-      min-width: 106px; font-weight: 600; color: var(--blue);
+      min-width: 106px; font-weight: 600; color: var(--accent);
       font-size: .82rem; padding-top: .15rem; flex-shrink: 0;
     }
     .news-text, .blog-text { font-size: .93rem; line-height: 1.65; color: var(--text); flex: 1; }
@@ -282,14 +279,14 @@
       transition: all .18s; animation: none !important;
     }
     .blog-links .btn:hover {
-      border-color: var(--blue) !important;
-      color: var(--blue) !important;
+      border-color: var(--accent) !important;
+      color: var(--accent) !important;
       animation: none !important;
     }
 
     /* ══════════ Show More / Status ══════════ */
     .show-more-btn, .showMoreBtn {
-      background: var(--blue) !important;
+      background: var(--accent) !important;
       background-image: none !important;
       color: #fff !important;
       border: none !important;
@@ -300,16 +297,16 @@
       animation: none !important;
     }
     .show-more-btn:hover, .showMoreBtn:hover {
-      background: var(--blue-hover) !important;
-      box-shadow: 0 4px 16px rgba(37,99,235,.35);
+      background: var(--accent-hover) !important;
+      box-shadow: 0 4px 16px rgba(102,8,116,.2);
       animation: none !important;
     }
     .status-all, #thatsAllBtn, #thatsAllNewsBtn, #thatsAllBlogsBtn {
-      color: var(--green); font-size: .9rem; font-weight: 600;
+      color: var(--accent); font-size: .9rem; font-weight: 600;
       font-family: 'Inter', sans-serif; border: none; padding: .4rem 0;
     }
     .status-none, #noNews, #noBlogs, #noPapers {
-      color: #ef4444; font-size: .9rem; font-weight: 600;
+      color: var(--text-muted); font-size: .9rem; font-weight: 600;
       font-family: 'Inter', sans-serif; border: none; padding: .4rem 0;
     }
 
@@ -348,32 +345,32 @@
       transition: border-color .22s;
     }
     #teamList > .col-md-6 > .card:hover .member-avatar,
-    #teamList > .col-lg-4 > .card:hover .member-avatar { border-color: var(--blue); }
+    #teamList > .col-lg-4 > .card:hover .member-avatar { border-color: var(--accent); }
     .member-name {
-      font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .38rem;
+      font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: .38rem;
     }
     .member-badge {
       font-size: .72rem; font-weight: 600; padding: .24em .72em; border-radius: 20px;
     }
-    .badge-faculty   { background: #fef3c7; color: #92400e; }
-    .badge-postdoc   { background: #ede9fe; color: #6d28d9; }
-    .badge-phd       { background: var(--blue-mid); color: #1d4ed8; }
-    .badge-master    { background: #d1fae5; color: #065f46; }
-    .badge-undergrad { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-faculty   { background: var(--accent-mid); color: var(--accent); }
+    .badge-postdoc   { background: var(--accent-light); color: var(--accent); }
+    .badge-phd       { background: var(--accent-mid); color: var(--accent); }
+    .badge-master    { background: var(--accent-light); color: var(--accent); }
+    .badge-undergrad { background: var(--accent-light); color: var(--accent); border: 1px solid var(--border); }
     .badge-alumni    { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
-    .badge-webadmin  { background: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
+    .badge-webadmin  { background: var(--accent-light); color: var(--accent); border: 1px solid var(--border); }
     .member-bio { font-size: .8rem; color: var(--text-muted); margin-top: .45rem; line-height: 1.5; }
     .member-links {
       display: flex; justify-content: center; gap: .75rem;
       margin-top: .85rem; font-size: 1rem;
     }
     .member-links a { color: var(--text-muted); transition: color .18s; }
-    .member-links a:hover { color: var(--blue); }
+    .member-links a:hover { color: var(--accent); }
 
     /* ══════════ About Section ══════════ */
     .prof-card {
       display: flex; align-items: center; gap: 1.8rem;
-      background: var(--bg); border-radius: var(--radius);
+      background: var(--accent-light); border-radius: var(--radius);
       padding: 1.6rem 2rem; margin-bottom: 1.4rem;
       border: 1px solid var(--border);
     }
@@ -381,34 +378,34 @@
       width: 108px; height: 108px; border-radius: 50%;
       object-fit: cover; border: 3px solid var(--border); flex-shrink: 0;
     }
-    .prof-name { font-size: 1.12rem; font-weight: 700; color: var(--navy); margin-bottom: .2rem; }
+    .prof-name { font-size: 1.12rem; font-weight: 700; color: var(--text); margin-bottom: .2rem; }
     .prof-meta { font-size: .86rem; color: var(--text-muted); margin: .15rem 0; }
-    .prof-meta a { color: var(--blue); }
-    .prof-meta i { color: var(--blue); width: 1.1em; }
+    .prof-meta a { color: var(--accent); }
+    .prof-meta i { color: var(--accent); width: 1.1em; }
     .about-description { font-size: .95rem; line-height: 1.8; color: var(--text); }
     .research-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem; }
     .research-tag {
-      background: var(--blue-light); color: var(--blue);
+      background: var(--accent-light); color: var(--accent);
       font-size: .8rem; font-weight: 600;
       padding: .3rem .8rem; border-radius: 20px;
-      border: 1px solid var(--blue-mid);
+      border: 1px solid var(--accent-mid);
     }
 
     /* ══════════ Footer ══════════ */
     .site-footer {
-      background: var(--navy-dark); color: rgba(255,255,255,.8);
+      background: var(--accent-light); color: var(--text);
       border-radius: var(--radius); padding: 2.5rem 3rem;
       margin-bottom: 2rem;
     }
     .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-    .footer-brand-name { font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: .4rem; }
-    .footer-brand-name .brand-accent { color: #60a5fa; }
-    .footer-tagline { font-size: .86rem; color: rgba(255,255,255,.5); margin-bottom: 0; }
+    .footer-brand-name { font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: .4rem; }
+    .footer-brand-name .brand-accent { color: var(--accent); }
+    .footer-tagline { font-size: .86rem; color: var(--text-muted); margin-bottom: 0; }
     .footer-info p { font-size: .88rem; line-height: 1.95; margin: 0; }
-    .footer-info a { color: #93c5fd; }
-    .footer-info a:hover { color: #fff; }
-    .footer-divider { border: none; border-top: 1px solid rgba(255,255,255,.1); margin: 1.6rem 0 1rem; }
-    .footer-credits { font-size: .78rem; color: rgba(255,255,255,.3); text-align: center; }
+    .footer-info a { color: var(--accent); }
+    .footer-info a:hover { color: var(--accent-hover); }
+    .footer-divider { border: none; border-top: 1px solid var(--border); margin: 1.6rem 0 1rem; }
+    .footer-credits { font-size: .78rem; color: var(--text-muted); text-align: center; }
 
     /* ══════════ Responsive ══════════ */
     @media (max-width: 991px) {
@@ -434,7 +431,7 @@
 
 <body>
   <!-- ══════════ Navbar ══════════ -->
-  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container" style="max-width:1100px;width:92%;">
       <a class="navbar-brand" href="#">
         THU-<span class="brand-accent">IDM</span>
@@ -593,6 +590,7 @@
 
 
 
+
 <!-- wby: 注意，切勿删除，程序代码识别news开始部分 -->
 
     <div class="section-header">
@@ -620,7 +618,7 @@
       <div class="news-item" style="display:none" data-year="2026">
         <div class="news-item-body">
           <div class="news-date">Sep 26, 2026</div>
-          <div class="news-text">Our paper <strong>TRACE: A Unified Rollout Budget Allocation Framework for Efficient Agentic Reinforcement Learning</strong> has been accepted to NeurIPS2026! Check out the <a href='https://arxiv.org/abs/2606.11119'>full paper</a> for more details!</div>
+          <div class="news-text">Our paper <strong>TRACE: A Unified Rollout Budget Allocation Framework for Efficient Agentic Reinforcement Learning</strong> has been accepted to EMNLP2026! Check out the <a href='https://arxiv.org/abs/2606.11119'>full paper</a> for more details!</div>
         </div>
       </div>
 
@@ -824,6 +822,7 @@
 
 
 
+
 <!-- wby: 注意，切勿删除，程序代码识别publications开始部分 -->
 
     <div class="section-header">
@@ -885,17 +884,36 @@
           <option value="AAAI">AAAI</option>
           <option value="COLT">COLT</option>
           <option value="CVPR">CVPR</option>
+          <option value="EMNLP">EMNLP</option>
           <option value="ICLR">ICLR</option>
           <option value="ICML">ICML</option>
           <option value="KDD">KDD</option>
+          <option value="Nature Communications">Nature Communications</option>
           <option value="NeurIPS">NeurIPS</option>
           <option value="The Innovation">The Innovation</option>
           <option value="arXiv">arXiv</option>
+          <option value="scis">scis</option>
         </select>
       </div>
     </div>
 
     <div id="publicationsList">
+
+      <div class="card mb-3 pub-card" style="display:none"
+           data-year="2026" data-authors="Heming Zou, Qi Wang, Yun Qu, Yuhang Jiang, Lizhou Cai, Yixiu Mao, Runsi Peng, Xingzhong Xu, Weijie Liu, Kaixuan Yang, Saiyong Yang, Xiangyang Ji" data-conference="EMNLP 2026" data-tag="Reasoning Models">
+        <div class="card-body">
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-top">EMNLP 2026</span>
+            <span class="tag-badge">Reasoning Models</span>
+          </div>
+          <div class="pub-title">TRACE: A Unified Rollout Budget Allocation Framework for Efficient Agentic Reinforcement Learning</div>
+          <div class="pub-authors">Heming Zou, Qi Wang, Yun Qu, Yuhang Jiang, Lizhou Cai, Yixiu Mao, Runsi Peng, Xingzhong Xu, Weijie Liu, Kaixuan Yang, Saiyong Yang, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/abs/2606.11119" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+
+          </div>
+        </div>
+      </div>
 
       <div class="card mb-3 pub-card" style="display:none"
            data-year="2026" data-authors="Yixiu Mao, Yun Qu, Qi Wang, Heming Zou, Xiangyang Ji" data-conference="ICLR 2026" data-tag="Reasoning Models">
@@ -997,22 +1015,6 @@
       </div>
 
       <div class="card mb-3 pub-card" style="display:none"
-           data-year="2026" data-authors="Heming Zou, Qi Wang, Yun Qu, Yuhang Jiang, Lizhou Cai, Yixiu Mao, Runsi Peng, Xingzhong Xu, Weijie Liu, Kaixuan Yang, Saiyong Yang, Xiangyang Ji" data-conference="NeurIPS 2026" data-tag="Reasoning Models">
-        <div class="card-body">
-          <div class="pub-venue-row">
-            <span class="venue-badge venue-top">NeurIPS 2026</span>
-            <span class="tag-badge">Reasoning Models</span>
-          </div>
-          <div class="pub-title">TRACE: A Unified Rollout Budget Allocation Framework for Efficient Agentic Reinforcement Learning</div>
-          <div class="pub-authors">Heming Zou, Qi Wang, Yun Qu, Yuhang Jiang, Lizhou Cai, Yixiu Mao, Runsi Peng, Xingzhong Xu, Weijie Liu, Kaixuan Yang, Saiyong Yang, Xiangyang Ji</div>
-          <div>
-            <a href="https://arxiv.org/abs/2606.11119" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="card mb-3 pub-card" style="display:none"
            data-year="2026" data-authors="Jia-Rong Wen, Qing-Chao Tao, Kai-Yu Zhang, Yun Qu, Li-Zhou Cai, Heming Zou, Yuhang Jiang, Qi Wang" data-conference="NeurIPS 2026" data-tag="nan">
         <div class="card-body">
           <div class="pub-venue-row">
@@ -1093,6 +1095,22 @@
       </div>
 
       <div class="card mb-3 pub-card" style="display:none"
+           data-year="2026" data-authors="Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji" data-conference="scis 2026" data-tag="LLM4RL">
+        <div class="card-body">
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-good">scis 2026</span>
+            <span class="tag-badge">LLM4RL</span>
+          </div>
+          <div class="pub-title">Choices are More Important than Efforts: LLM Enables Efficient Multi-Agent Exploration</div>
+          <div class="pub-authors">Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2410.02511" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2025" data-authors="Yun Qu, Yuhang Jiang, Boyuan Wang, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji" data-conference="AAAI 2025" data-tag="LLM4RL">
         <div class="card-body">
           <div class="pub-venue-row">
@@ -1160,6 +1178,23 @@
       </div>
 
       <div class="card mb-3 pub-card" style="display:none"
+           data-year="2025" data-authors="Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji" data-conference="Nature Communications" data-tag="Robust Adaptation">
+        <div class="card-body">
+          <div class="pub-venue-row">
+            <span class="venue-badge venue-good">Nature Communications</span>
+            <span class="tag-badge">Robust Adaptation</span>
+          </div>
+          <div class="pub-title">Model Predictive Task Sampling for Efficient and Robust Adaptation</div>
+          <div class="pub-authors">Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji</div>
+          <div>
+            <a href="https://arxiv.org/pdf/2501.11039" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+<a href="https://github.com/thu-rllab/MPTS" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3 pub-card" style="display:none"
            data-year="2025" data-authors="Yixiu Mao, Yun Qu, Qi Wang, Xiangyang Ji" data-conference="NeurIPS 2025" data-tag="Offline RL">
         <div class="card-body">
           <div class="pub-venue-row">
@@ -1188,23 +1223,6 @@
           <div>
             <a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/0f234479d4be0102b6a9ec5ebf75e881-Abstract-Conference.html" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 <a href="https://github.com/gfyddha/FlyLoRA" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="card mb-3 pub-card" style="display:none"
-           data-year="2025" data-authors="Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji" data-conference="arXiv 2025" data-tag="Robust Adaptation">
-        <div class="card-body">
-          <div class="pub-venue-row">
-            <span class="venue-badge venue-arxiv">arXiv 2025</span>
-            <span class="tag-badge">Robust Adaptation</span>
-          </div>
-          <div class="pub-title">Model Predictive Task Sampling for Efficient and Robust Adaptation</div>
-          <div class="pub-authors">Qi (Cheems) Wang, Zehao Xiao, Yixiu Mao, Yun Qu, Jiayi Shen, Yiqin Lv, Xiangyang Ji</div>
-          <div>
-            <a href="https://arxiv.org/pdf/2501.11039" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
-<a href="https://github.com/thu-rllab/MPTS" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
 
           </div>
         </div>
@@ -1372,38 +1390,6 @@
           <div>
             <a href="https://arxiv.org/pdf/2411.07934" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 <a href="https://github.com/thu-rllab/DMG" class="pub-btn pub-btn-code" target="_blank"><i class="fab fa-github"></i> Code</a>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="card mb-3 pub-card" style="display:none"
-           data-year="2024" data-authors="Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji" data-conference="arXiv 2024" data-tag="LLM4RL">
-        <div class="card-body">
-          <div class="pub-venue-row">
-            <span class="venue-badge venue-arxiv">arXiv 2024</span>
-            <span class="tag-badge">LLM4RL</span>
-          </div>
-          <div class="pub-title">Choices are More Important than Efforts: LLM Enables Efficient Multi-Agent Exploration</div>
-          <div class="pub-authors">Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji</div>
-          <div>
-            <a href="https://arxiv.org/pdf/2410.02511" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="card mb-3 pub-card" style="display:none"
-           data-year="2024" data-authors="Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji" data-conference="arXiv 2024" data-tag="MARL">
-        <div class="card-body">
-          <div class="pub-venue-row">
-            <span class="venue-badge venue-arxiv">arXiv 2024</span>
-            <span class="tag-badge">MARL</span>
-          </div>
-          <div class="pub-title">Stop Wandering, Find the Keys: LLMs Discriminate Key States for Efficient Multi-Agent Exploration</div>
-          <div class="pub-authors">Yun Qu, Boyuan Wang, Yuhang Jiang, Jianzhun Shao, Yixiu Mao, Cheems Wang, Chang Liu, Xiangyang Ji</div>
-          <div>
-            <a href="https://arxiv.org/abs/2410.02511" class="pub-btn pub-btn-paper" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
 
           </div>
         </div>
@@ -1938,6 +1924,7 @@
 
 
 
+
 <!-- wby: 注意，切勿删除，程序代码识别blog开始部分 -->
 
     <div class="section-header">
@@ -2116,6 +2103,7 @@
 
 
  
+
 
 
 
@@ -2620,14 +2608,14 @@
         </div>
         <div class="footer-info">
           <p>
-            <i class="fas fa-map-marker-alt" style="color:#60a5fa;width:1.2em;"></i>
+            <i class="fas fa-map-marker-alt" style="color:var(--accent);width:1.2em;"></i>
             Room 825, Main Building, Tsinghua University, Beijing 100084<br>
-            <i class="fas fa-envelope" style="color:#60a5fa;width:1.2em;"></i>
+            <i class="fas fa-envelope" style="color:var(--accent);width:1.2em;"></i>
             <a href="mailto:cheemswang@mail.tsinghua.edu.cn">cheemswang@mail.tsinghua.edu.cn</a><br>
-            <i class="fab fa-github" style="color:#60a5fa;width:1.2em;"></i>
+            <i class="fab fa-github" style="color:var(--accent);width:1.2em;"></i>
             <a href="https://github.com/thu-rllab" target="_blank">github.com/thu-rllab</a><br>
-            <i class="fab fa-weixin" style="color:#60a5fa;width:1.2em;"></i>
-            WeChat Official Account: <strong style="color:rgba(255,255,255,.7);">SIG-IDM</strong>
+            <i class="fab fa-weixin" style="color:var(--accent);width:1.2em;"></i>
+            WeChat Official Account: <strong style="color:var(--text);">SIG-IDM</strong>
           </p>
         </div>
       </div>
